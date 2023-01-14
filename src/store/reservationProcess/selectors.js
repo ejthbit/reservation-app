@@ -23,6 +23,8 @@ export const getDisabledReservationBtn = path([
     stateId,
     'isReservationBtnDisabled',
 ])
+export const getLastBooking = path([stateId, 'lastBooking'])
+
 export const makeReservationProcessInfo = () =>
     createSelector(
         [

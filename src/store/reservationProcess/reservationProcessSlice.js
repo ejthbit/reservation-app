@@ -21,6 +21,12 @@ const reservationProcessInitialState = {
         birthDate: null,
     },
     isReservationBtnDisabled: false,
+    lastBooking: {
+        isLoading: false,
+        errors: undefined,
+        completed: false,
+        data: {},
+    },
 }
 const reservationProcessSlice = createSlice({
     name: 'reservationProcess',
