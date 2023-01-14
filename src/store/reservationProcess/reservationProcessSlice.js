@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import { createSlice } from '@reduxjs/toolkit'
-import getISODateStringWithCorrectOffset from '@utilities/getISODateStringWithCorrectOffset'
 import { isNil } from 'ramda'
+import { getISODateStringWithCorrectOffset } from '../../utils'
 
 /* RTK uses on background Immer library.
 This means you can write code that "mutates" the state inside the reducer,
@@ -13,7 +13,7 @@ const reservationProcessInitialState = {
     selectedDate: getISODateStringWithCorrectOffset(new Date()).slice(0, 10),
     selectedTime: '',
     selectedCategory: '',
-    activeStep: 0,
+    activeStep: 'COMPLETED',
     contactInformation: {
         name: '',
         email: null,
