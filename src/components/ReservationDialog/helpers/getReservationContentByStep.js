@@ -1,5 +1,11 @@
 import DEFAULT_STEPS from '../constants/defaultSteps'
 
+const remapToObjectsByStepName = (stepsConfiguration) =>
+    stepsConfiguration.reduce(
+        (acc, { component, step }) => (acc = { ...acc, [step]: component }),
+        {}
+    )
+
 /**
  * It returns the content for the current step of the reservation process
  * @param step - The current step of the reservation process.
@@ -9,10 +15,10 @@ import DEFAULT_STEPS from '../constants/defaultSteps'
  */
 const getReservationContentByStep = (step, stepsConfiguration) => {
     const content = {
-        ...stepsConfiguration,
-        READY: DEFAULT_STEPS.last.component,
-        COMPLETED: DEFAULT_STEPS.success.component,
-        ERROR: DEFAULT_STEPS.error.component,
+        ...remapToObjectsByStepName(stepsConfiguration),
+        READY: DEFAULT_STEPS.ready.component,
+        COMPLETED: DEFAULT_STEPS.status.component,
+        ERROR: DEFAULT_STEPS.status.component,
         default: DEFAULT_STEPS.default.component,
     }
     return content[step] ?? content['default']

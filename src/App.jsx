@@ -1,8 +1,15 @@
+import { Provider } from 'react-redux'
 import ReservationDialog from './components/ReservationDialog/ReservationDialog'
+import { store } from './store/store'
 function App() {
     return (
         <div className="App">
-            <ReservationDialog isOpen={true} onClose={() => console.log()} />
+            <Provider store={store}>
+                <ReservationDialog
+                    isOpen={true}
+                    onClose={() => console.log()}
+                />
+            </Provider>
         </div>
     )
 }

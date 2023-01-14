@@ -20,7 +20,7 @@ const StepContentWithBtn = ({
     return (
         <Paper square elevation={0}>
             {equals(typeof text, 'string') ? (
-                <Typography color={variant} end>
+                <Typography color={variant}>
                     {text}
                     {equals(variant, 'primary') ? <Done /> : <Error />}
                 </Typography>

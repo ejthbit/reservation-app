@@ -40,7 +40,9 @@ const ReservationSummary = () => {
         <Grid container direction="column">
             {map(
                 ({ title, value }) =>
-                    !isNilOrEmpty(value) && <Typography>{title}</Typography>,
+                    !isNilOrEmpty(value) && (
+                        <Typography key={value}>{title}</Typography>
+                    ),
                 summaryInformation
             )}
         </Grid>

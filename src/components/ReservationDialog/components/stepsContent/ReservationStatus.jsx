@@ -1,19 +1,13 @@
-import { equals, values } from 'ramda'
-import StepContentWithBtn from './StepContentWithBtn'
-import PropTypes from 'prop-types'
 import { CircularProgress } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { getLastBooking } from '../../../../store/reservationProcess/selectors'
+import { isNilOrEmpty } from '../../../../utils'
+import StepContentWithBtn from './StepContentWithBtn'
 
-export const VARIANTS = {
-    SUCCESS: 'success',
-    ERROR: 'error',
-}
-
-const ReservationStatus = ({ variant }) => {
+const ReservationStatus = () => {
     const { completed, errors } = useSelector(getLastBooking)
-
-    if (equals(variant, VARIANTS.ERROR))
+    console.log(completed)
+    if (!isNilOrEmpty(errors))
         return (
             <StepContentWithBtn
                 text={errors}
@@ -40,9 +34,6 @@ const ReservationStatus = ({ variant }) => {
     ) : (
         <CircularProgress />
     )
-}
-ReservationStatus.propTypes = {
-    variant: PropTypes.oneOf(values(VARIANTS)),
 }
 
 export default ReservationStatus

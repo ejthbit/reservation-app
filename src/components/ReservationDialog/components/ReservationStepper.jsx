@@ -3,7 +3,7 @@ import { Box } from '@mui/system'
 import DEFAULT_STEPS from '../constants/defaultSteps'
 import getReservationContentByStep from '../helpers/getReservationContentByStep'
 import PropTypes from 'prop-types'
-import { reject } from 'ramda'
+import { findIndex, propEq, reject } from 'ramda'
 import { useMemo } from 'react'
 import isNilOrEmpty from '../../../utils/isNilOrEmpty'
 import { ReservationStepperControls } from './stepsContent'
@@ -14,14 +14,39 @@ import {
 } from '../../../store/reservationProcess/selectors'
 
 const mockStepsConfiguration = [
-    // { label: 'Výběr ambulance', step: reservationSteps.FIRST },
-    // { label: 'Preference lékaře', step: reservationSteps.SECOND },
-    // { label: 'Vyberte termín své navštevy', step: reservationSteps.THIRD },
-    // {
-    //     label: 'Prosím vyplňte své kontaktni údaje',
-    //     step: reservationSteps.FORTH,
-    // },
+    {
+        label: 'Výběr ambulance',
+        component: <>Výběr ambulance</>,
+        step: 'FIRST',
+    },
+    {
+        label: 'Preference lékaře',
+        component: <>Preference lékaře</>,
+        step: 'SECOND',
+    },
+    {
+        label: 'Vyberte termín své navštevy',
+        component: <>Vyberte termín své navštevy</>,
+        step: 'THIRD',
+    },
+    {
+        label: 'Prosím vyplňte své kontaktni údaje',
+        component: <>Prosím vyplňte své kontaktni údaje</>,
+        step: 'FORTH',
+    },
 ]
+
+const getNumberStepByName = (name, steps) => {
+    const numberOfSteps = steps.length
+    switch (name) {
+        case 'COMPLETED':
+        case 'READY':
+        case 'ERROR':
+            return numberOfSteps - 1
+        default:
+            return findIndex(propEq('step', name))(steps)
+    }
+}
 const getStepsConfiguration = (
     stepsConfiguration,
     error,
@@ -47,7 +72,6 @@ export const ReservationStepper = ({
             ),
         [stepsConfiguration, errors, completed]
     )
-
     return (
         <Box
             sx={(theme) => ({
@@ -62,7 +86,10 @@ export const ReservationStepper = ({
                 },
             })}
         >
-            <Stepper activeStep={activeStep} orientation="vertical">
+            <Stepper
+                activeStep={getNumberStepByName(activeStep, steps)}
+                orientation="vertical"
+            >
                 {steps.map(({ label, step }) => (
                     <Step key={label}>
                         <StepLabel error={!!errors}>{label}</StepLabel>

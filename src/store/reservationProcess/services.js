@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query'
-import axiosGynInstance from 'src/api/config'
+import axiosGynInstance from '../../api/config'
 
 const ID = 'configuration'
 

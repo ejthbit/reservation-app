@@ -13,7 +13,7 @@ const reservationProcessInitialState = {
     selectedDate: getISODateStringWithCorrectOffset(new Date()).slice(0, 10),
     selectedTime: '',
     selectedCategory: '',
-    activeStep: 'COMPLETED',
+    activeStep: 'FIRST',
     contactInformation: {
         name: '',
         email: null,
@@ -23,7 +23,7 @@ const reservationProcessInitialState = {
     isReservationBtnDisabled: false,
     lastBooking: {
         isLoading: false,
-        errors: undefined,
+        errors: undefined /* 'stringos', */,
         completed: false,
         data: {},
     },
@@ -33,7 +33,7 @@ const reservationProcessSlice = createSlice({
     initialState: reservationProcessInitialState,
     reducers: {
         setActiveStep: (state, action) => {
-            state.activeStep += action.payload
+            state.activeStep = action.payload
         },
         setSelectedDate: (state, action) => {
             state.selectedDate = action.payload.slice(0, 10)
@@ -64,6 +64,11 @@ const reservationProcessSlice = createSlice({
         setReservationBtnDisabled: (state, action) => {
             state.isReservationBtnDisabled = action.payload
         },
+        setLastBookingInfo: (state) => {
+            state.lastBooking.isLoading = false
+            state.lastBooking.errors = undefined
+            state.lastBooking.completed = true
+        },
         clearReservation: (state) =>
             (state = { ...state, ...reservationProcessInitialState }),
     },
@@ -80,5 +85,6 @@ export const {
     setOrderFinishedOk,
     clearReservation,
     setReservationBtnDisabled,
+    setLastBookingInfo,
 } = reservationProcessSlice.actions
 export default reservationProcessSlice.reducer

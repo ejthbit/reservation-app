@@ -7,16 +7,24 @@ import {
     getDisabledReservationBtn,
     getLastBooking,
 } from '../../../../store/reservationProcess/selectors'
-import { setActiveStep } from '../../../../store/reservationProcess/reservationProcessSlice'
+import {
+    setActiveStep,
+    setLastBookingInfo,
+} from '../../../../store/reservationProcess/reservationProcessSlice'
 import { isMobile } from '../../../../utils'
-
+import PropTypes from 'prop-types'
+import { findIndex, propEq } from 'ramda'
 const StyledButton = styled(Button)(({ theme }) => ({
     marginTop: theme.spacing(2),
     minHeight: isMobile ? theme.spacing(7.5) : theme.spacing(4),
     boxShadow: 'none',
 }))
 
-const ReservationStepperControls = () => {
+const getIndexOfActiveStep = (steps, activeStep) => {
+    return findIndex(propEq('step', activeStep))(steps)
+}
+
+const ReservationStepperControls = ({ steps }) => {
     const dispatch = useDispatch()
     const activeStep = useSelector(getActiveStep)
     const { isLoading, errors } = useSelector(getLastBooking)
@@ -26,21 +34,33 @@ const ReservationStepperControls = () => {
     const handleChangeStep = (stepValue) => dispatch(setActiveStep(stepValue))
     const handleConfirmAppointment = () => {
         // dispatch(bookAnAppointment())
-        handleChangeStep(errors ? 'ERROR' : 1)
+
+        handleChangeStep(errors ? 'ERROR' : 'COMPLETED')
+        dispatch(setLastBookingInfo())
     }
 
     return (
         <Box sx={(theme) => ({ marginBottom: theme.spacing(2) })}>
             <ButtonGroup orientation={isMobile ? 'vertical' : 'horizontal'}>
-                {activeStep !== 'COMPLETED' && (
-                    <StyledButton
-                        variant="contained"
-                        color="inherit"
-                        onClick={() => handleChangeStep('PREVIOUS')}
-                    >
-                        Vratit se zpět
-                    </StyledButton>
-                )}
+                {activeStep !== 'COMPLETED' &&
+                    getIndexOfActiveStep(steps, activeStep) !== 0 && (
+                        <StyledButton
+                            variant="contained"
+                            color="inherit"
+                            onClick={() =>
+                                handleChangeStep(
+                                    steps[
+                                        getIndexOfActiveStep(
+                                            steps,
+                                            activeStep
+                                        ) - 1
+                                    ].step
+                                )
+                            }
+                        >
+                            Vratit se zpět
+                        </StyledButton>
+                    )}
                 <StyledButton
                     variant="contained"
                     color="primary"
@@ -50,7 +70,12 @@ const ReservationStepperControls = () => {
                     onClick={() =>
                         activeStep === 'READY'
                             ? handleConfirmAppointment()
-                            : handleChangeStep('NEXT')
+                            : handleChangeStep(
+                                  steps[
+                                      getIndexOfActiveStep(steps, activeStep) +
+                                          1
+                                  ].step
+                              )
                     }
                     disabled={disabledReservationBtn}
                 >
@@ -61,6 +86,10 @@ const ReservationStepperControls = () => {
             </ButtonGroup>
         </Box>
     )
+}
+
+ReservationStepperControls.propTypes = {
+    steps: PropTypes.array,
 }
 
 export default ReservationStepperControls
