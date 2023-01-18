@@ -15,6 +15,8 @@ export default defineConfig({
                     './src/components/ReservationButton/ReservationButton.jsx',
 
                 './Home': './src/components/Home.jsx',
+                './ReservationDialog':
+                    './src/components/ReservationDialog/ReservationDialog.jsx',
             },
             shared: ['react'],
         }),

@@ -1,5 +1,7 @@
 import { Box, Dialog, DialogContent } from '@mui/material'
 import PropTypes from 'prop-types'
+import { Provider } from 'react-redux'
+import { store } from '../../store/store'
 import {
     ReservationDialogTitle,
     ReservationBackdropMessage,
@@ -8,18 +10,25 @@ import {
 } from './components'
 const ReservationDialog = ({ isOpen, onClose }) => {
     return (
-        isOpen && (
-            <Box>
-                <ReservationBackdropMessage />
-                <Dialog maxWidth="md" open={isOpen} onClose={onClose} fullWidth>
-                    <ReservationDialogTitle onClose={onClose} />
-                    <DialogContent>
-                        <ReservationStepper />
-                    </DialogContent>
-                    <ReservationDialogActions onClose={onClose} />
-                </Dialog>
-            </Box>
-        )
+        <Provider store={store}>
+            {isOpen && (
+                <Box>
+                    <ReservationBackdropMessage />
+                    <Dialog
+                        maxWidth="md"
+                        open={isOpen}
+                        onClose={onClose}
+                        fullWidth
+                    >
+                        <ReservationDialogTitle onClose={onClose} />
+                        <DialogContent>
+                            <ReservationStepper />
+                        </DialogContent>
+                        <ReservationDialogActions onClose={onClose} />
+                    </Dialog>
+                </Box>
+            )}
+        </Provider>
     )
 }
 

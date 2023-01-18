@@ -1,23 +1,25 @@
 import { useEffect, useState } from 'react'
 import { Backdrop, Box, Fade, Typography } from '@mui/material'
 import { CheckCircleOutlineOutlined } from '@mui/icons-material'
-// import { useSelector } from 'react-redux'
+import { getLastBooking } from '../../../store/reservationProcess/selectors'
+import { useSelector } from 'react-redux'
 
 const ReservationBackdropMessage = () => {
-    const isOrderCompleted = /* useSelector(getOrderFinishedOk) ??  */ false
+    const { completed } = useSelector(getLastBooking)
     const [isSuccessMsgVisible, setIsSuccessMsgVisible] = useState(false)
     const toggleSuccessMsgBackdrop = () =>
         setIsSuccessMsgVisible((prevState) => !prevState)
 
     useEffect(() => {
-        if (isOrderCompleted)
+        if (completed) {
             setTimeout(() => {
                 toggleSuccessMsgBackdrop()
             }, 200)
-        setTimeout(() => {
-            toggleSuccessMsgBackdrop()
-        }, 2500)
-    }, [isOrderCompleted])
+            setTimeout(() => {
+                toggleSuccessMsgBackdrop()
+            }, 2500)
+        }
+    }, [completed])
 
     return (
         <Backdrop
