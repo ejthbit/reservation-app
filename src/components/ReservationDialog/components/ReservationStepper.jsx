@@ -12,11 +12,11 @@ import {
     getActiveStep,
     getLastBooking,
 } from '../../../store/reservationProcess/selectors'
-
+import { ReservationAmbulanceSelect } from '../../ReservationControls/'
 const mockStepsConfiguration = [
     {
         label: 'Výběr ambulance',
-        component: <>Výběr ambulance</>,
+        component: <ReservationAmbulanceSelect />,
         step: 'FIRST',
     },
     {

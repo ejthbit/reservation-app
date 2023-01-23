@@ -33,7 +33,7 @@ const ReservationSummary = () => {
                 },
                 ...userInfo,
             ]),
-        [contactInformation, appointmentDate]
+        [appointmentDate, userInfo]
     )
 
     return (
