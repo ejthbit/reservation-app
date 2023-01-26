@@ -22,6 +22,8 @@ export const bookingCategoriesAPI = createApi({
     endpoints: (builder) => ({
         getBookingCategories: builder.query({
             query: () => `${ID}/getBookingCategories`,
+            transformResponse: (response) =>
+                makeArrayOfLabelValue('name', 'category_id', response.data),
         }),
     }),
 })
@@ -51,12 +53,25 @@ export const contactMessageAPI = createApi({
         }),
     }),
 })
+export const doctorServicesAPI = createApi({
+    reducerPath: 'reservationProcess/fetchDoctorServicesForSelectedMonth',
+    baseQuery: axiosGynInstance,
+    endpoints: (builder) => ({
+        getDoctorServicesForMonth: builder.query({
+            query: ({ month, workplace }) => ({
+                url: `/bookings/getDoctorServicesForMonth/${month}/${workplace}`,
+                method: 'GET',
+            }),
+        }),
+    }),
+})
 
-export const { useGetAmbulancesQuery, useLazyGetAmbulancesQuery } =
-    ambulancesAPI
-export const { useGetBookingCategories } = bookingCategoriesAPI
+export const { useGetAmbulancesQuery, useLazyGetAmbulancesQuery } = ambulancesAPI
+export const { useGetBookingCategories, useLazyGetBookingCategoriesQuery } = bookingCategoriesAPI
 export const {
     useGetDoctorsForSelectedAmbulanceQuery,
     useLazyGetDoctorsForSelectedAmbulanceQuery,
 } = doctorsForSelectedAmbulanceAPI
 export const { usePostContactMessage } = contactMessageAPI
+export const { useGetDoctorServicesForMonthQuery, useLazyGetDoctorServicesForMonthQuery } =
+    doctorServicesAPI

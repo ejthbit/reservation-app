@@ -2,49 +2,52 @@ import { Box, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import useReservationButton from '../../hooks/useReservationButton'
+import { setSelectedAmbulance } from '../../store/reservationProcess/reservationProcessSlice'
+import { makeReservationProcessInfo } from '../../store/reservationProcess/selectors'
 import {
-    setReservationBtnDisabled,
-    setSelectedAmbulance,
-} from '../../store/reservationProcess/reservationProcessSlice'
-import { getSelectedAmbulance } from '../../store/reservationProcess/selectors'
-import { useLazyGetAmbulancesQuery } from '../../store/reservationProcess/services'
+    useLazyGetAmbulancesQuery,
+    useLazyGetDoctorServicesForMonthQuery,
+} from '../../store/reservationProcess/services'
 import { isNilOrEmpty } from '../../utils'
 import Dropdown from '../BuildingBlocks/Dropdown'
+const getReservationProcessInfo = makeReservationProcessInfo()
+const ReservationAmbulanceSelect = ({ showLabel = false, step }) => {
+    const [getAmbulances, { data: ambulances, isLoading }] = useLazyGetAmbulancesQuery()
+    const [fetchDoctorServicesForSelectedMonth] = useLazyGetDoctorServicesForMonthQuery()
 
-const ReservationAmbulanceSelect = ({ showLabel = false }) => {
-    const [getAmbulances, { data: ambulances }] = useLazyGetAmbulancesQuery()
-
-    const selectedAmbulanceId = useSelector(getSelectedAmbulance)
+    const { selectedAmbulanceId, selectedMonth } = useSelector(getReservationProcessInfo)
+    useReservationButton({ dependency: [selectedAmbulanceId], step, isRequired: true })
     const dispatch = useDispatch()
 
     useEffect(() => {
         if (isNilOrEmpty(ambulances)) getAmbulances()
-    }, [ambulances, getAmbulances])
-
-    useEffect(() => {
-        if (!isNilOrEmpty(selectedAmbulanceId))
-            dispatch(setReservationBtnDisabled(true))
-        else dispatch(setReservationBtnDisabled(false))
-    }, [selectedAmbulanceId, dispatch])
+    }, [ambulances])
 
     return (
         <>
             {showLabel && (
                 <Box marginRight={2}>
-                    <Typography>Vybranná ambulance</Typography>
+                    <Typography>Vybrané pracoviště</Typography>
                 </Box>
             )}
             <Dropdown
-                variant="standard"
+                isLoading={isLoading}
                 options={ambulances}
                 value={selectedAmbulanceId}
-                onChange={(e) => dispatch(setSelectedAmbulance(e.target.value))}
-                label="Ambulance"
+                onChange={(e) => {
+                    dispatch(setSelectedAmbulance(e.target.value))
+                    fetchDoctorServicesForSelectedMonth({
+                        month: selectedMonth,
+                        workplace: e.target.value,
+                    })
+                }}
             />
         </>
     )
 }
 ReservationAmbulanceSelect.propTypes = {
     showLabel: PropTypes.bool,
+    step: PropTypes.string,
 }
 export default ReservationAmbulanceSelect

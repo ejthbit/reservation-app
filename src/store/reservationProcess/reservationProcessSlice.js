@@ -1,11 +1,41 @@
 /* eslint-disable camelcase */
-import { createSlice } from '@reduxjs/toolkit'
-import { isNil } from 'ramda'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { forEach, isNil } from 'ramda'
+import axiosGynInstance from '../../api/config'
 import { getISODateStringWithCorrectOffset } from '../../utils'
 
 /* RTK uses on background Immer library.
 This means you can write code that "mutates" the state inside the reducer,
 and Immer will safely return a correct immutably updated result. */
+export const fetchAvailableTimeSlots = createAsyncThunk(
+    'bookings/fetchAvailableTimeSlots',
+    async ({ from, to, workplace }) => {
+        const URL = `bookings/getAvailableSlots/${from}/${to}/${workplace}`
+        const res = await axiosGynInstance.get(URL)
+        return res.data
+    }
+)
+export const fetchAvailableTimeSlotsDoctors = createAsyncThunk(
+    'bookings/fetchAvailableTimeSlotsDoctors',
+    async ({ from, to, workplace }) => {
+        const URL = `bookings/getAvailableSlots/${from}/${to}/${workplace}`
+        const res = await axiosGynInstance.get(URL)
+        return res.data
+    }
+)
+export const fetchAvailableTimeSlotsForDoctors =
+    (servingDoctorsForDay, selectedAmbulanceId) => (dispatch) =>
+        forEach(
+            ({ start, end }) =>
+                dispatch(
+                    fetchAvailableTimeSlotsDoctors({
+                        from: start,
+                        to: end,
+                        workplace: selectedAmbulanceId,
+                    })
+                ),
+            servingDoctorsForDay
+        )
 
 const reservationProcessInitialState = {
     selectedAmbulance: null,
@@ -14,6 +44,11 @@ const reservationProcessInitialState = {
     selectedTime: '',
     selectedCategory: '',
     activeStep: 'FIRST',
+    availableTimeSlots: {
+        isLoading: false,
+        errors: undefined,
+        slots: [],
+    },
     contactInformation: {
         name: '',
         email: null,
@@ -69,9 +104,40 @@ const reservationProcessSlice = createSlice({
             state.lastBooking.errors = undefined
             state.lastBooking.completed = true
         },
-        clearReservation: (state) =>
-            (state = { ...state, ...reservationProcessInitialState }),
+        clearReservation: (state) => (state = { ...state, ...reservationProcessInitialState }),
+        clearTimeSlots: (state) => {
+            state.availableTimeSlots.slots = []
+        },
     },
+    extraReducers: (builder) =>
+        builder
+            .addCase(fetchAvailableTimeSlots.pending, (state) => {
+                state.availableTimeSlots.isLoading = true
+                state.availableTimeSlots.error = undefined
+            })
+            .addCase(fetchAvailableTimeSlots.fulfilled, (state, action) => {
+                state.availableTimeSlots.isLoading = false
+                state.availableTimeSlots.slots = action.payload
+            })
+            .addCase(fetchAvailableTimeSlots.rejected, (state, action) => {
+                state.availableTimeSlots.isLoading = false
+                state.availableTimeSlots.error = action.error
+            })
+            .addCase(fetchAvailableTimeSlotsDoctors.pending, (state) => {
+                state.availableTimeSlots.isLoading = true
+                state.availableTimeSlots.error = undefined
+            })
+            .addCase(fetchAvailableTimeSlotsDoctors.fulfilled, (state, action) => {
+                state.availableTimeSlots.isLoading = false
+                state.availableTimeSlots.slots = [
+                    ...state.availableTimeSlots.slots,
+                    ...action.payload,
+                ]
+            })
+            .addCase(fetchAvailableTimeSlotsDoctors.rejected, (state, action) => {
+                state.availableTimeSlots.isLoading = false
+                state.availableTimeSlots.error = action.error
+            }),
 })
 
 export const {
@@ -84,6 +150,7 @@ export const {
     setContactInformation,
     setOrderFinishedOk,
     clearReservation,
+    clearTimeSlots,
     setReservationBtnDisabled,
     setLastBookingInfo,
 } = reservationProcessSlice.actions

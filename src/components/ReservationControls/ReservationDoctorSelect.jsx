@@ -1,68 +1,28 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-// import { fetchDoctorServicesForSelectedMonth } from 'src/store/bookings/actions'
-// import { makeServicesSelector } from 'src/store/bookings/selectors'
-import {
-    setPreferredDoctor,
-    setReservationBtnDisabled,
-} from '../../store/reservationProcess/reservationProcessSlice'
-import {
-    getPreferredDoctor,
-    getSelectedAmbulance,
-    getSelectedDate,
-} from '../../store/reservationProcess/selectors'
+import { setPreferredDoctor } from '../../store/reservationProcess/reservationProcessSlice'
+import { makeReservationProcessInfo } from '../../store/reservationProcess/selectors'
 import { useLazyGetDoctorsForSelectedAmbulanceQuery } from '../../store/reservationProcess/services'
-// import { isNilOrEmpty } from '../../utils'
 import Dropdown from '../BuildingBlocks/Dropdown'
 
-const ReservationDoctorPreference = () => {
+import { isNilOrEmpty } from '../../utils'
+
+const getReservationProcessInfo = makeReservationProcessInfo()
+const ReservationDoctorSelect = () => {
     const dispatch = useDispatch()
+    const { selectedAmbulanceId, selectedDoctor } = useSelector(getReservationProcessInfo)
 
-    const selectedAmbulanceId = useSelector(getSelectedAmbulance)
-    const selectedDoctor = useSelector(getPreferredDoctor)
-    const selectedDate = useSelector(getSelectedDate)
-    // const selectedMonth = useMemo(
-    //     () => selectedDate.slice(0, 7),
-    //     [selectedDate]
-    // )
-    // const doctorServices = useMemoizedSelector(makeServicesSelector, {}, [
-    //     selectedDoctor,
-    //     selectedDate,
-    //     selectedAmbulanceId,
-    // ])
-
-    const [
-        getDoctorsForSelectedAmbulance,
-        { data: doctorsForSelectedAmbulance },
-    ] = useLazyGetDoctorsForSelectedAmbulanceQuery()
+    const [getDoctorsForSelectedAmbulance, { data: doctorsForSelectedAmbulance, isLoading }] =
+        useLazyGetDoctorsForSelectedAmbulanceQuery()
 
     useEffect(() => {
-        dispatch(setReservationBtnDisabled(false))
-        // TODO: Investigate
-        // const serviceItemExists = find(
-        //     ({ month, workplace }) =>
-        //         equals(month, selectedMonth) &&
-        //         equals(workplace, selectedAmbulanceId),
-        //     doctorServices
-        // )
-        // if (isNilOrEmpty(serviceItemExists))
-        //     dispatch(
-        //         fetchDoctorServicesForSelectedMonth({
-        //             month: format(new Date(selectedDate), 'yyyy-MM'),
-        //             workplace: selectedAmbulanceId,
-        //         })
-        //     )
-        getDoctorsForSelectedAmbulance()
-    }, [
-        selectedAmbulanceId,
-        selectedDate,
-        dispatch,
-        getDoctorsForSelectedAmbulance,
-    ])
+        if (!isNilOrEmpty(selectedAmbulanceId)) getDoctorsForSelectedAmbulance(selectedAmbulanceId)
+    }, [])
 
     return (
         <Dropdown
             value={selectedDoctor}
+            isLoading={isLoading}
             onChange={(e) => dispatch(setPreferredDoctor(e.target.value))}
             notSelectedLabel="Nemám preferenci"
             options={doctorsForSelectedAmbulance}
@@ -70,4 +30,4 @@ const ReservationDoctorPreference = () => {
     )
 }
 
-export default ReservationDoctorPreference
+export default ReservationDoctorSelect

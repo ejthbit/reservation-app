@@ -1,6 +1,6 @@
-import { MenuItem, Select } from '@mui/material'
+import { CircularProgress, InputLabel, MenuItem, Select } from '@mui/material'
 import PropTypes from 'prop-types'
-import { map, propEq, find } from 'ramda'
+import { find, map, propEq } from 'ramda'
 
 const Dropdown = ({
     value,
@@ -8,34 +8,49 @@ const Dropdown = ({
     onChange,
     className,
     label,
+    isLoading = false,
     notSelectedLabel,
+    required = false,
     ...otherSelectProps
 }) => {
     const isSelectedValuePartOfOptions = find(propEq('value', value), options)
 
-    return (
+    const SelectWithoutLabel = () => (
         <Select
             variant="standard"
             value={isSelectedValuePartOfOptions ? value : ''}
             onChange={onChange}
             displayEmpty
             className={className}
-            label={label}
             fullWidth
             {...otherSelectProps}
         >
-            <MenuItem key="" value="" disabled={!notSelectedLabel} selected>
+            <MenuItem key="empty" value="" disabled={!notSelectedLabel} selected>
                 {notSelectedLabel ? notSelectedLabel : 'Nevybráno'}
             </MenuItem>
-            {map(
-                ({ value, label }) => (
-                    <MenuItem key={value} value={value}>
-                        {label}
-                    </MenuItem>
-                ),
-                options
+            {!isLoading ? (
+                map(
+                    ({ value, label }) => (
+                        <MenuItem key={value} value={value}>
+                            {label}
+                        </MenuItem>
+                    ),
+                    options
+                )
+            ) : (
+                <MenuItem key="loading" value="loading" disabled>
+                    <CircularProgress size={20} />
+                </MenuItem>
             )}
         </Select>
+    )
+    return label ? (
+        <>
+            <InputLabel required={required}>{label}</InputLabel>
+            <SelectWithoutLabel />
+        </>
+    ) : (
+        <SelectWithoutLabel />
     )
 }
 
@@ -45,6 +60,8 @@ Dropdown.propTypes = {
     onChange: PropTypes.func,
     className: PropTypes.string,
     label: PropTypes.string,
+    isLoading: PropTypes.bool,
+    required: PropTypes.bool,
     notSelectedLabel: PropTypes.string,
 }
 

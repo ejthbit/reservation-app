@@ -5,6 +5,7 @@ import {
     ambulancesAPI,
     bookingCategoriesAPI,
     contactMessageAPI,
+    doctorServicesAPI,
     doctorsForSelectedAmbulanceAPI,
 } from './reservationProcess/services'
 
@@ -13,8 +14,8 @@ const rootReducer = combineReducers({
     [ambulancesAPI.reducerPath]: ambulancesAPI.reducer,
     [bookingCategoriesAPI.reducerPath]: bookingCategoriesAPI.reducer,
     [contactMessageAPI.reducerPath]: contactMessageAPI.reducer,
-    [doctorsForSelectedAmbulanceAPI.reducerPath]:
-        doctorsForSelectedAmbulanceAPI.reducer,
+    [doctorsForSelectedAmbulanceAPI.reducerPath]: doctorsForSelectedAmbulanceAPI.reducer,
+    [doctorServicesAPI.reducerPath]: doctorServicesAPI.reducer,
 })
 
 export const store = configureStore({
@@ -25,6 +26,7 @@ export const store = configureStore({
         bookingCategoriesAPI.middleware,
         contactMessageAPI.middleware,
         doctorsForSelectedAmbulanceAPI.middleware,
+        doctorServicesAPI.middleware,
     ],
     devTools: process.env.NODE_ENV !== 'production',
 })
