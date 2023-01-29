@@ -12,7 +12,7 @@ import TermPickerDay from './TermPickerDay'
 import TermPickerInput from './TermPickerInput'
 
 const getReservationProcessInfo = makeReservationProcessInfo()
-const TermPicker = ({ doctorServicesBySelectedDoctorIdAndMonth }) => {
+const TermPicker = ({ doctorServicesBySelectedDoctorIdAndMonth = [] }) => {
     const dispatch = useDispatch()
     const { selectedAmbulanceId, selectedDate } = useSelector(getReservationProcessInfo)
 

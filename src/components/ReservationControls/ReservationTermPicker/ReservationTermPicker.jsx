@@ -50,11 +50,10 @@ const ReservationTermPicker = ({ step }) => {
         month: selectedMonth,
         workplace: selectedAmbulanceId,
     })
-    const doctorServicesBySelectedDoctorIdAndMonth =
-        useMemo(
-            () => makeDoctorServicesByDoctorId(doctorsServicesForSelectedAmbulance, selectedDoctor),
-            [doctorsServicesForSelectedAmbulance, selectedDoctor]
-        ) ?? []
+    const doctorServicesBySelectedDoctorIdAndMonth = useMemo(
+        () => makeDoctorServicesByDoctorId(doctorsServicesForSelectedAmbulance, selectedDoctor),
+        [doctorsServicesForSelectedAmbulance, selectedDoctor]
+    )
 
     useEffect(() => {
         const servesItem = find(({ date, doctors }) => {
@@ -68,15 +67,6 @@ const ReservationTermPicker = ({ step }) => {
         if (!isNilOrEmpty(servingDoctor)) {
             dispatch(clearTimeSlots())
             setIsDoctorServing(servingDoctor)
-            dispatch(
-                !Array.isArray(servingDoctor)
-                    ? fetchAvailableTimeSlots({
-                          from: servingDoctor.start,
-                          to: servingDoctor.end,
-                          workplace: selectedAmbulanceId,
-                      })
-                    : fetchAvailableTimeSlotsForDoctors(servingDoctor, selectedAmbulanceId)
-            )
         } else {
             setIsDoctorServing(undefined)
             dispatch(setReservationBtnDisabled(true))
@@ -85,6 +75,20 @@ const ReservationTermPicker = ({ step }) => {
             if (!isNilOrEmpty(selectedCategory)) dispatch(setSelectedCategory(''))
         }
     }, [selectedDate, doctorServicesBySelectedDoctorIdAndMonth])
+
+    useEffect(() => {
+        if (!isNilOrEmpty(isDoctorServing)) {
+            dispatch(
+                !Array.isArray(isDoctorServing)
+                    ? fetchAvailableTimeSlots({
+                          from: isDoctorServing?.start,
+                          to: isDoctorServing?.end,
+                          workplace: selectedAmbulanceId,
+                      })
+                    : fetchAvailableTimeSlotsForDoctors(isDoctorServing, selectedAmbulanceId)
+            )
+        }
+    }, [isDoctorServing])
 
     return (
         <LocalizationProvider

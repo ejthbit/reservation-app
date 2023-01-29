@@ -1,6 +1,10 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setPreferredDoctor } from '../../store/reservationProcess/reservationProcessSlice'
+import {
+    setPreferredDoctor,
+    setSelectedCategory,
+    setSelectedTime,
+} from '../../store/reservationProcess/reservationProcessSlice'
 import { makeReservationProcessInfo } from '../../store/reservationProcess/selectors'
 import { useLazyGetDoctorsForSelectedAmbulanceQuery } from '../../store/reservationProcess/services'
 import Dropdown from '../BuildingBlocks/Dropdown'
@@ -10,7 +14,8 @@ import { isNilOrEmpty } from '../../utils'
 const getReservationProcessInfo = makeReservationProcessInfo()
 const ReservationDoctorSelect = ({ step }) => {
     const dispatch = useDispatch()
-    const { selectedAmbulanceId, selectedDoctor } = useSelector(getReservationProcessInfo)
+    const { selectedAmbulanceId, selectedDoctor, selectedTime, selectedCategory } =
+        useSelector(getReservationProcessInfo)
 
     useReservationButton({ step, isRequired: true })
 
@@ -25,7 +30,11 @@ const ReservationDoctorSelect = ({ step }) => {
         <Dropdown
             value={selectedDoctor}
             isLoading={isLoading}
-            onChange={(e) => dispatch(setPreferredDoctor(e.target.value))}
+            onChange={(e) => {
+                dispatch(setPreferredDoctor(e.target.value))
+                if (!isNilOrEmpty(selectedTime)) dispatch(setSelectedTime(''))
+                if (!isNilOrEmpty(selectedCategory)) dispatch(setSelectedCategory(''))
+            }}
             notSelectedLabel="Nemám preferenci"
             options={doctorsForSelectedAmbulance}
         />

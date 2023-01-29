@@ -1,4 +1,4 @@
-import { Step, StepContent, StepLabel, Stepper } from '@mui/material'
+import { Grid, Step, StepContent, StepLabel, Stepper } from '@mui/material'
 import { Box } from '@mui/system'
 import DEFAULT_STEPS from '../constants/defaultSteps'
 import getReservationContentByStep from '../helpers/getReservationContentByStep'
@@ -11,6 +11,12 @@ import { useSelector } from 'react-redux'
 import { getActiveStep, getLastBooking } from '../../../store/reservationProcess/selectors'
 import { ReservationAmbulanceSelect, ReservationDoctorSelect } from '../../ReservationControls/'
 import ReservationTermPicker from '../../ReservationControls/ReservationTermPicker/ReservationTermPicker'
+import {
+    ReservationBirthDate,
+    ReservationName,
+    ReservationEmail,
+    ReservationPhone,
+} from '../../ReservationControls/ReservationContact'
 const mockStepsConfiguration = [
     {
         label: 'Výběr ambulance',
@@ -29,7 +35,18 @@ const mockStepsConfiguration = [
     },
     {
         label: 'Prosím vyplňte své kontaktni údaje',
-        component: <>Prosím vyplňte své kontaktni údaje</>,
+        component: (
+            <Grid container>
+                <Grid item>
+                    {/* <ReservationButtonProvider dependencies={['name, birthDate, phone']}> */}
+                    <ReservationName step={'FORTH'} />
+                    <ReservationBirthDate step={'FORTH'} />
+                    <ReservationEmail step={'FORTH'} />
+                    <ReservationPhone step={'FORTH'} />
+                    {/* </ReservationButtonProvider> */}
+                </Grid>
+            </Grid>
+        ),
         step: 'FORTH',
     },
 ]

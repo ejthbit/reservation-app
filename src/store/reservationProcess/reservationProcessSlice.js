@@ -51,7 +51,7 @@ const reservationProcessInitialState = {
     },
     contactInformation: {
         name: '',
-        email: null,
+        email: '',
         phone: '',
         birthDate: null,
     },
@@ -85,15 +85,10 @@ const reservationProcessSlice = createSlice({
         setSelectedAmbulance: (state, action) => {
             state.selectedAmbulance = action.payload
         },
-        setContactInformation: (state, action) => {
-            const { name, email, phone, birthDate } = action.payload
+        setContactInformation: (state, { payload }) => {
             state.contactInformation = {
-                name,
-                email,
-                phone,
-                birthDate: !isNil(birthDate)
-                    ? birthDate.slice(0, 10)
-                    : state.contactInformation.birthDate,
+                ...state.contactInformation,
+                ...payload,
             }
         },
         setReservationBtnDisabled: (state, action) => {
@@ -103,6 +98,10 @@ const reservationProcessSlice = createSlice({
             state.lastBooking.isLoading = false
             state.lastBooking.errors = undefined
             state.lastBooking.completed = true
+        },
+        clearBooking: (state) => {
+            state.lastBooking.errors = undefined
+            state.lastBooking.completed = false
         },
         clearReservation: (state) => (state = { ...state, ...reservationProcessInitialState }),
         clearTimeSlots: (state) => {
@@ -151,6 +150,7 @@ export const {
     setOrderFinishedOk,
     clearReservation,
     clearTimeSlots,
+    clearBooking,
     setReservationBtnDisabled,
     setLastBookingInfo,
 } = reservationProcessSlice.actions

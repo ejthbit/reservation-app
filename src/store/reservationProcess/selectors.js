@@ -33,16 +33,26 @@ export const makeReservationProcessInfo = () =>
             getSelectedTime,
             getPreferredDoctor,
             getSelectedCategory,
+            getContactInformation,
         ],
-        (selectedAmbulanceId, selectedDate, selectedTime, selectedDoctor, selectedCategory) => ({
+        (
+            selectedAmbulanceId,
+            selectedDate,
+            selectedTime,
+            selectedDoctor,
+            selectedCategory,
+            contactInformation
+        ) => ({
             selectedAmbulanceId,
             selectedDate,
             selectedTime,
             selectedDoctor,
             selectedCategory,
             selectedMonth: selectedDate.slice(0, 7),
+            contactInformation,
         })
     )
+
 export const makeAppointmentDate = () =>
     createSelector(
         [getSelectedDate, getSelectedTime],
@@ -76,7 +86,7 @@ export const makeDoctorServicesByDoctorId = (service, doctorId) => {
               (day) => isNilOrEmpty(getDayDoctorsBySelectedId(day.doctors, doctorId)),
               service?.days ?? []
           )
-        : service?.days.filter((d) => {
+        : filter((d) => {
               return d.doctors.some((c) => [Number(doctorId)].includes(c.doctorId))
-          })
+          }, service?.days ?? [])
 }
