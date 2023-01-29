@@ -1,5 +1,4 @@
 import { Grid, Typography } from '@mui/material'
-import { styled } from '@mui/material/styles'
 import { equals, find, propEq } from 'ramda'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -18,6 +17,7 @@ import {
     clearTimeSlots,
     fetchAvailableTimeSlots,
     fetchAvailableTimeSlotsForDoctors,
+    setReservationBtnDisabled,
     setSelectedCategory,
     setSelectedTime,
 } from '../../../store/reservationProcess/reservationProcessSlice'
@@ -25,44 +25,7 @@ import { isNilOrEmpty } from '../../../utils'
 import ReservationCategorySelect from '../ReservationCategorySelect'
 import { ReservationTime } from './components'
 import TermPicker from './Components/TermPicker'
-const PREFIX = 'ReservationTermPicker'
 
-const classes = {
-    dayWithDotContainer: `${PREFIX}-dayWithDotContainer`,
-    disabledDayContainer: `${PREFIX}-disabledDayContainer`,
-    dayWithDot: `${PREFIX}-dayWithDot`,
-    timepicker: `${PREFIX}-timepicker`,
-}
-
-const StyledGrid = styled(Grid)(({ theme }) => ({
-    marginTop: theme.spacing(0.5),
-    [`& .${classes.dayWithDotContainer}`]: {
-        position: 'relative',
-    },
-
-    [`& .${classes.disabledDayContainer}`]: {
-        pointerEvents: 'none',
-        '& .MuiPickersDay-day': {
-            opacity: 0.25,
-        },
-    },
-
-    [`& .${classes.dayWithDot}`]: {
-        position: 'absolute',
-        height: 0,
-        width: 0,
-        border: '2px solid',
-        borderRadius: 4,
-        borderColor: theme.palette.primary.main,
-        right: '47%',
-        transform: 'translateX(1px)',
-        top: '10%',
-    },
-
-    [`& .${classes.timepicker}`]: {
-        marginTop: theme.spacing(1),
-    },
-}))
 const getReservationProcessInfo = makeReservationProcessInfo()
 const ReservationTermPicker = ({ step }) => {
     const dispatch = useDispatch()
@@ -116,6 +79,7 @@ const ReservationTermPicker = ({ step }) => {
             )
         } else {
             setIsDoctorServing(undefined)
+            dispatch(setReservationBtnDisabled(true))
             dispatch(clearTimeSlots())
             if (!isNilOrEmpty(selectedTime)) dispatch(setSelectedTime(''))
             if (!isNilOrEmpty(selectedCategory)) dispatch(setSelectedCategory(''))
@@ -128,21 +92,26 @@ const ReservationTermPicker = ({ step }) => {
             adapterLocale={cs}
             localeText={{ okButtonLabel: 'Potvrdit', cancelButtonLabel: 'Zavřít' }}
         >
-            <StyledGrid container direction="column">
+            <Grid container direction="column" sx={(theme) => ({ marginTop: theme.spacing(0.5) })}>
                 <TermPicker
                     doctorServicesBySelectedDoctorIdAndMonth={
                         doctorServicesBySelectedDoctorIdAndMonth
                     }
                 />
                 {!isNilOrEmpty(availableTimeSlots) ? (
-                    <StyledGrid container direction="row" spacing={2}>
+                    <Grid
+                        container
+                        direction="row"
+                        spacing={2}
+                        sx={(theme) => ({ marginTop: theme.spacing(0.5) })}
+                    >
                         <Grid item xs={12} sm={6}>
                             <ReservationTime step={step} />
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <ReservationCategorySelect step={step} />
                         </Grid>
-                    </StyledGrid>
+                    </Grid>
                 ) : !isNilOrEmpty(isDoctorServing) ? (
                     <Typography>Omlouváme se ale na tento den již nejsou volné termíny</Typography>
                 ) : (
@@ -150,7 +119,7 @@ const ReservationTermPicker = ({ step }) => {
                         Omlouváme se ale tento den vámi vybranný doktor neordinuje
                     </Typography>
                 )}
-            </StyledGrid>
+            </Grid>
         </LocalizationProvider>
     )
 }
