@@ -19,7 +19,7 @@ const mockStepsConfiguration = [
     },
     {
         label: 'Preference lékaře',
-        component: <ReservationDoctorSelect />,
+        component: <ReservationDoctorSelect step={'SECOND'} />,
         step: 'SECOND',
     },
     {

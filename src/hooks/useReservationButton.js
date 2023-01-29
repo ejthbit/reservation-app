@@ -5,7 +5,7 @@ import { getActiveStep, getDisabledReservationBtn } from '../store/reservationPr
 import { setReservationBtnDisabled } from '../store/reservationProcess/reservationProcessSlice'
 import { isNilOrEmpty } from '../utils'
 
-const useReservationButton = ({ dependency, step, isRequired = false }) => {
+const useReservationButton = ({ dependency = [], step, isRequired = false }) => {
     const dispatch = useDispatch()
     const activeStep = useSelector(getActiveStep)
     const isReservationBtnDisabled = useSelector(getDisabledReservationBtn)

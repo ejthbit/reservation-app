@@ -4,13 +4,15 @@ import { setPreferredDoctor } from '../../store/reservationProcess/reservationPr
 import { makeReservationProcessInfo } from '../../store/reservationProcess/selectors'
 import { useLazyGetDoctorsForSelectedAmbulanceQuery } from '../../store/reservationProcess/services'
 import Dropdown from '../BuildingBlocks/Dropdown'
-
+import useReservationButton from '../../hooks/useReservationButton'
 import { isNilOrEmpty } from '../../utils'
 
 const getReservationProcessInfo = makeReservationProcessInfo()
-const ReservationDoctorSelect = () => {
+const ReservationDoctorSelect = ({ step }) => {
     const dispatch = useDispatch()
     const { selectedAmbulanceId, selectedDoctor } = useSelector(getReservationProcessInfo)
+
+    useReservationButton({ step, isRequired: true })
 
     const [getDoctorsForSelectedAmbulance, { data: doctorsForSelectedAmbulance, isLoading }] =
         useLazyGetDoctorsForSelectedAmbulanceQuery()
