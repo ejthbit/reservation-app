@@ -11,14 +11,9 @@ export const getSelectedDate = path([stateId, 'selectedDate'])
 export const getSelectedAmbulance = path([stateId, 'selectedAmbulance'])
 export const getSelectedCategory = path([stateId, 'selectedCategory'])
 export const getAmbulances = path([stateId, '/', 'ambulances', 'data'])
+export const getAreAvailableTimeSlotsLoading = path([stateId, 'availableTimeSlots', 'isLoading'])
 export const getAvailableTimeSlots = path([stateId, 'availableTimeSlots', 'slots'])
 export const getBookingCategories = path([stateId, '/', 'bookingCategories', 'data'])
-export const getDoctorsForSelectedAmbulance = path([
-    stateId,
-    '/',
-    'doctorsForSelectedAmbulance',
-    'data',
-])
 export const getPreferredDoctor = path([stateId, 'preferredDoctor'])
 export const getSelectedTime = path([stateId, 'selectedTime'])
 export const getContactInformation = path([stateId, 'contactInformation'])
@@ -61,15 +56,12 @@ export const makeAppointmentDate = () =>
 
 export const makeAvailableTimeSlotsWithTimeOnly = () =>
     createSelector([getAvailableTimeSlots], (timeSlots) =>
-        sortBy(
-            propEq('timeSlotStart'),
-            map(({ timeSlotStart, timeSlotEnd }) => {
-                return {
-                    timeSlotStart: timeSlotStart.slice(11, 19),
-                    timeSlotEnd: timeSlotEnd.slice(11, 19),
-                }
-            }, timeSlots)
-        )
+        map(({ timeSlotStart, timeSlotEnd }) => {
+            return {
+                timeSlotStart: timeSlotStart.slice(11, 19),
+                timeSlotEnd: timeSlotEnd.slice(11, 19),
+            }
+        }, timeSlots)
     )
 export const makeServicesForSelectedMonth = (services = [], month, selectedWorkplace) =>
     filter(
@@ -82,10 +74,7 @@ export const makeDoctorServicesByDoctorId = (service, doctorId) => {
         find(propEq('doctorId', Number(doctorId)), doctors)
 
     return isEmpty(doctorId)
-        ? filter(
-              (day) => isNilOrEmpty(getDayDoctorsBySelectedId(day.doctors, doctorId)),
-              service?.days ?? []
-          )
+        ? filter((day) => isNilOrEmpty(getDayDoctorsBySelectedId(day.doctors, doctorId)), service?.days ?? [])
         : filter((d) => {
               return d.doctors.some((c) => [Number(doctorId)].includes(c.doctorId))
           }, service?.days ?? [])

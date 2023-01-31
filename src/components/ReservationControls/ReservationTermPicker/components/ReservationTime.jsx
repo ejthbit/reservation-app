@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 import {
+    getAreAvailableTimeSlotsLoading,
     makeAvailableTimeSlotsWithTimeOnly,
     makeReservationProcessInfo,
 } from '../../../../store/reservationProcess'
@@ -15,11 +16,12 @@ const ReservationTime = ({ step }) => {
     const dispatch = useDispatch()
     const { selectedDate, selectedTime } = useSelector(getReservationProcessInfo)
     useReservationButton({ dependency: [selectedTime], step, isRequired: true })
-    const availableTimeSlots = useMemoizedSelector(makeAvailableTimeSlotsWithTimeOnly, {}, [
-        selectedDate,
-    ])
+    const availableTimeSlots = useMemoizedSelector(makeAvailableTimeSlotsWithTimeOnly, {}, [selectedDate])
+    const areAvailableTimeSlotsLoading = useSelector(getAreAvailableTimeSlotsLoading)
+
     return (
         <Dropdown
+            isLoading={areAvailableTimeSlotsLoading}
             label="Čas návštevy"
             value={selectedTime}
             onChange={(e) => dispatch(setSelectedTime(e.target.value))}

@@ -1,3 +1,5 @@
 export * from './checkDeviceType'
 export { default as getISODateStringWithCorrectOffset } from './getISODateStringWithCorrectOffset'
 export { default as isNilOrEmpty } from './isNilOrEmpty'
+export { default as isSuccess } from './isSuccess'
+export { default as validationPatterns } from './validationPatterns'

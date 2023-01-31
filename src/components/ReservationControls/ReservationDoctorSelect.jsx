@@ -10,7 +10,7 @@ import { useLazyGetDoctorsForSelectedAmbulanceQuery } from '../../store/reservat
 import Dropdown from '../BuildingBlocks/Dropdown'
 import useReservationButton from '../../hooks/useReservationButton'
 import { isNilOrEmpty } from '../../utils'
-
+import PropTypes from 'prop-types'
 const getReservationProcessInfo = makeReservationProcessInfo()
 const ReservationDoctorSelect = ({ step }) => {
     const dispatch = useDispatch()
@@ -41,4 +41,7 @@ const ReservationDoctorSelect = ({ step }) => {
     )
 }
 
+ReservationDoctorSelect.propTypes = {
+    step: PropTypes.string.isRequired,
+}
 export default ReservationDoctorSelect

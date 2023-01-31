@@ -1,33 +1,39 @@
 import { CircularProgress } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import {
+    bookAnAppointment,
     clearBooking,
     clearReservation,
     setActiveStep,
 } from '../../../../store/reservationProcess/reservationProcessSlice'
-import {
-    getLastBooking,
-    makeReservationProcessInfo,
-} from '../../../../store/reservationProcess/selectors'
+import { getLastBooking } from '../../../../store/reservationProcess/selectors'
 import { isNilOrEmpty } from '../../../../utils'
-import { prepareReservationForCreation } from '../../helpers'
 import StepContentWithBtn from './StepContentWithBtn'
-const getReservationProcessInfo = makeReservationProcessInfo()
 
 const ReservationStatus = () => {
     const { completed, errors } = useSelector(getLastBooking)
-    const reservationProcessData = useSelector(getReservationProcessInfo)
-    console.log(prepareReservationForCreation(reservationProcessData))
 
-    console.log(completed)
     const dispatch = useDispatch()
+
+    if (completed)
+        return (
+            <StepContentWithBtn
+                text="Vaše objednávka byla uspěšná!"
+                variant="primary"
+                btnText="Vytvořit novou objednávku"
+                onBtnClick={() => {
+                    dispatch(clearBooking())
+                    dispatch(clearReservation())
+                }}
+            />
+        )
     if (!isNilOrEmpty(errors))
         return (
             <StepContentWithBtn
-                text={errors}
+                text={errors.message}
                 variant="error"
                 btnText="Zkusit znovu"
-                onBtnClick={() => console.log('BOOK AN APPOINTMENT')}
+                onBtnClick={() => dispatch(bookAnAppointment())}
                 secondaryBtnText="Vratit se zpět"
                 onSecondaryBtnClick={() => {
                     dispatch(clearBooking())
@@ -35,19 +41,7 @@ const ReservationStatus = () => {
                 }}
             />
         )
-    return completed ? (
-        <StepContentWithBtn
-            text="Vaše objednávka byla uspěšná!"
-            variant="primary"
-            btnText="Vytvořit novou objednávku"
-            onBtnClick={() => {
-                dispatch(clearBooking())
-                dispatch(clearReservation())
-            }}
-        />
-    ) : (
-        <CircularProgress />
-    )
+    return <CircularProgress />
 }
 
 export default ReservationStatus

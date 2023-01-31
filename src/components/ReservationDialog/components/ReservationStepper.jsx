@@ -62,20 +62,21 @@ const getNumberStepByName = (name, steps) => {
             return findIndex(propEq('step', name))(steps)
     }
 }
-const getStepsConfiguration = (stepsConfiguration, error, completedOk = false) => [
+const getStepsConfiguration = (stepsConfiguration, loading, error, completedOk = false) => [
     ...stepsConfiguration,
     DEFAULT_STEPS.ready,
+    { ...(loading && DEFAULT_STEPS.default) },
     { ...(completedOk && DEFAULT_STEPS.completed) },
     { ...(error && DEFAULT_STEPS.error) },
 ]
 
 export const ReservationStepper = ({ stepsConfiguration = mockStepsConfiguration }) => {
-    const activeStep = useSelector(getActiveStep) // 'COMPLETED'
-    const { errors, completed } = useSelector(getLastBooking)
+    const activeStep = useSelector(getActiveStep)
+    const { errors, completed, isLoading } = useSelector(getLastBooking)
 
     const steps = useMemo(
-        () => reject(isNilOrEmpty, getStepsConfiguration(stepsConfiguration, errors, completed)),
-        [stepsConfiguration, errors, completed]
+        () => reject(isNilOrEmpty, getStepsConfiguration(stepsConfiguration, isLoading, errors, completed)),
+        [stepsConfiguration, isLoading, errors, completed]
     )
     return (
         <Box

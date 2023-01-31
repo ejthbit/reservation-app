@@ -1,21 +1,19 @@
 import { Box, Button, ButtonGroup, CircularProgress } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { useDispatch, useSelector } from 'react-redux'
-// import { bookAnAppointment } from 'src/store/bookings/actions'
+import PropTypes from 'prop-types'
+import { findIndex, includes, propEq } from 'ramda'
+import {
+    bookAnAppointment,
+    setActiveStep,
+} from '../../../../store/reservationProcess/reservationProcessSlice'
 import {
     getActiveStep,
     getDisabledReservationBtn,
     getLastBooking,
-    makeReservationProcessInfo,
 } from '../../../../store/reservationProcess/selectors'
-import {
-    setActiveStep,
-    setLastBookingInfo,
-} from '../../../../store/reservationProcess/reservationProcessSlice'
 import { isMobile } from '../../../../utils'
-import PropTypes from 'prop-types'
-import { findIndex, propEq } from 'ramda'
-import { prepareReservationForCreation } from '../../helpers'
+
 const StyledButton = styled(Button)(({ theme }) => ({
     marginTop: theme.spacing(2),
     minHeight: isMobile ? theme.spacing(7.5) : theme.spacing(4),
@@ -25,25 +23,18 @@ const StyledButton = styled(Button)(({ theme }) => ({
 const getIndexOfActiveStep = (steps, activeStep) => {
     return findIndex(propEq('step', activeStep))(steps)
 }
-const getReservationProcessInfo = makeReservationProcessInfo()
 
 const ReservationStepperControls = ({ steps }) => {
     const dispatch = useDispatch()
     const activeStep = useSelector(getActiveStep)
-    const { isLoading, errors } = useSelector(getLastBooking)
+    const { isLoading } = useSelector(getLastBooking)
 
     const disabledReservationBtn = useSelector(getDisabledReservationBtn)
-    const reservationProcessData = useSelector(getReservationProcessInfo)
     const handleChangeStep = (stepValue) => dispatch(setActiveStep(stepValue))
-    const handleConfirmAppointment = () => {
-        console.log(prepareReservationForCreation(reservationProcessData))
-
-        handleChangeStep(errors ? 'ERROR' : 'COMPLETED')
-        dispatch(setLastBookingInfo())
-    }
+    const handleConfirmAppointment = () => dispatch(bookAnAppointment())
 
     return (
-        activeStep !== 'COMPLETED' && (
+        !includes(activeStep, ['COMPLETED', 'ERROR', 'LOADING']) && (
             <Box sx={(theme) => ({ marginBottom: theme.spacing(2) })}>
                 <ButtonGroup orientation={isMobile ? 'vertical' : 'horizontal'}>
                     {getIndexOfActiveStep(steps, activeStep) !== 0 && (
@@ -51,9 +42,7 @@ const ReservationStepperControls = ({ steps }) => {
                             variant="contained"
                             color="inherit"
                             onClick={() =>
-                                handleChangeStep(
-                                    steps[getIndexOfActiveStep(steps, activeStep) - 1].step
-                                )
+                                handleChangeStep(steps[getIndexOfActiveStep(steps, activeStep) - 1].step)
                             }
                         >
                             Vratit se zpět
@@ -66,9 +55,7 @@ const ReservationStepperControls = ({ steps }) => {
                         onClick={() =>
                             activeStep === 'READY'
                                 ? handleConfirmAppointment()
-                                : handleChangeStep(
-                                      steps[getIndexOfActiveStep(steps, activeStep) + 1].step
-                                  )
+                                : handleChangeStep(steps[getIndexOfActiveStep(steps, activeStep) + 1].step)
                         }
                         disabled={disabledReservationBtn}
                     >

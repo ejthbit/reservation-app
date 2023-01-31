@@ -21,7 +21,7 @@ const ReservationName = ({ step, isRequired }) => {
     return (
         <TextField
             id="name"
-            label="Jméno a přijímení"
+            label="Jméno a přijmení"
             variant="standard"
             required={isRequired}
             value={nonDebounceValue}

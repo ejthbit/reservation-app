@@ -1,8 +1,5 @@
 import { CircularProgress } from '@mui/material'
-import {
-    ReservationStatus,
-    ReservationSummary,
-} from '../components/stepsContent'
+import { ReservationStatus, ReservationSummary } from '../components/stepsContent'
 const DEFAULT_STEPS = {
     ready: {
         label: 'Shrnutí objednávky',
@@ -18,9 +15,6 @@ const DEFAULT_STEPS = {
         label: 'Nastala chyba',
         component: <ReservationStatus />,
         step: 'ERROR',
-    },
-    status: {
-        component: <ReservationStatus />,
     },
     default: {
         label: 'Načítaní',

@@ -8,6 +8,7 @@ import { InputAdornment, TextField } from '@mui/material'
 import { Today } from '@mui/icons-material'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { cs } from 'date-fns/locale'
+import { getISODateStringWithCorrectOffset } from '../../../utils'
 
 const ReservationBirthDate = ({ step, isRequired }) => {
     const { birthDate } = useSelector(getContactInformation)
@@ -34,10 +35,15 @@ const ReservationBirthDate = ({ step, isRequired }) => {
                 openTo="year"
                 disableFuture
                 onChange={(date) => {
-                    dispatch(setContactInformation({ birthDate: date.toISOString().slice(0, 10) }))
+                    dispatch(
+                        setContactInformation({
+                            birthDate: getISODateStringWithCorrectOffset(date).slice(0, 10),
+                        })
+                    )
                 }}
                 renderInput={({ inputRef, inputProps, label, placeholder, InputProps }) => (
                     <TextField
+                        sx={{ cursor: 'pointer' }}
                         ref={inputRef}
                         {...inputProps}
                         label={label}

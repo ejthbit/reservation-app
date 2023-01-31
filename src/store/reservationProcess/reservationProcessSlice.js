@@ -1,8 +1,10 @@
 /* eslint-disable camelcase */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { forEach, isNil } from 'ramda'
+import { forEach, propEq, sortBy } from 'ramda'
 import axiosGynInstance from '../../api/config'
-import { getISODateStringWithCorrectOffset } from '../../utils'
+import { prepareReservationForCreation } from '../../components/ReservationDialog/helpers'
+import { getISODateStringWithCorrectOffset, isSuccess } from '../../utils'
+import { makeReservationProcessInfo } from './selectors'
 
 /* RTK uses on background Immer library.
 This means you can write code that "mutates" the state inside the reducer,
@@ -10,7 +12,8 @@ and Immer will safely return a correct immutably updated result. */
 export const fetchAvailableTimeSlots = createAsyncThunk(
     'bookings/fetchAvailableTimeSlots',
     async ({ from, to, workplace }) => {
-        const URL = `bookings/getAvailableSlots/${from}/${to}/${workplace}`
+        const URL = `bookings/getAvailableSlots/${from}/${to}/${import.meta.env.VITE_APPOINTMENT_DURATION}
+        /${workplace}`
         const res = await axiosGynInstance.get(URL)
         return res.data
     }
@@ -18,24 +21,43 @@ export const fetchAvailableTimeSlots = createAsyncThunk(
 export const fetchAvailableTimeSlotsDoctors = createAsyncThunk(
     'bookings/fetchAvailableTimeSlotsDoctors',
     async ({ from, to, workplace }) => {
-        const URL = `bookings/getAvailableSlots/${from}/${to}/${workplace}`
+        const URL = `bookings/getAvailableSlots/${from}/${to}/${import.meta.env.VITE_APPOINTMENT_DURATION}
+        /${workplace}`
         const res = await axiosGynInstance.get(URL)
         return res.data
     }
 )
-export const fetchAvailableTimeSlotsForDoctors =
-    (servingDoctorsForDay, selectedAmbulanceId) => (dispatch) =>
-        forEach(
-            ({ start, end }) =>
-                dispatch(
-                    fetchAvailableTimeSlotsDoctors({
-                        from: start,
-                        to: end,
-                        workplace: selectedAmbulanceId,
-                    })
-                ),
-            servingDoctorsForDay
-        )
+export const bookAnAppointment = createAsyncThunk(
+    'bookings/bookAnAppointment',
+    async (arg, { getState, rejectWithValue }) => {
+        const state = getState()
+        const reservationProcessData = makeReservationProcessInfo()(state)
+        const body = prepareReservationForCreation(reservationProcessData)
+        const URL = `bookings/booking`
+        try {
+            const res = await axiosGynInstance.post(URL, body)
+            if (isSuccess(res)) {
+                return res.data
+            }
+        } catch (error) {
+            if (!error.response) throw error
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
+export const fetchAvailableTimeSlotsForDoctors = (servingDoctorsForDay, selectedAmbulanceId) => (dispatch) =>
+    forEach(
+        ({ start, end }) =>
+            dispatch(
+                fetchAvailableTimeSlotsDoctors({
+                    from: start,
+                    to: end,
+                    workplace: selectedAmbulanceId,
+                })
+            ),
+        servingDoctorsForDay
+    )
 
 const reservationProcessInitialState = {
     selectedAmbulance: null,
@@ -94,11 +116,7 @@ const reservationProcessSlice = createSlice({
         setReservationBtnDisabled: (state, action) => {
             state.isReservationBtnDisabled = action.payload
         },
-        setLastBookingInfo: (state) => {
-            state.lastBooking.isLoading = false
-            state.lastBooking.errors = undefined
-            state.lastBooking.completed = true
-        },
+
         clearBooking: (state) => {
             state.lastBooking.errors = undefined
             state.lastBooking.completed = false
@@ -128,14 +146,32 @@ const reservationProcessSlice = createSlice({
             })
             .addCase(fetchAvailableTimeSlotsDoctors.fulfilled, (state, action) => {
                 state.availableTimeSlots.isLoading = false
-                state.availableTimeSlots.slots = [
+                state.availableTimeSlots.slots = sortBy(propEq('timeSlotStart'), [
                     ...state.availableTimeSlots.slots,
                     ...action.payload,
-                ]
+                ])
             })
             .addCase(fetchAvailableTimeSlotsDoctors.rejected, (state, action) => {
                 state.availableTimeSlots.isLoading = false
                 state.availableTimeSlots.error = action.error
+            })
+            .addCase(bookAnAppointment.pending, (state) => {
+                state.lastBooking.isLoading = true
+                state.lastBooking.errors = undefined
+                state.activeStep = 'LOADING'
+            })
+            .addCase(bookAnAppointment.fulfilled, (state, action) => {
+                state.lastBooking.isLoading = false
+                state.lastBooking.errors = undefined
+                state.lastBooking.completed = true
+                state.lastBooking.data = action.payload
+                state.activeStep = 'COMPLETED'
+            })
+            .addCase(bookAnAppointment.rejected, (state, action) => {
+                state.lastBooking.isLoading = false
+                state.lastBooking.errors = action.error
+                state.lastBooking.completed = false
+                state.activeStep = 'ERROR'
             }),
 })
 
@@ -152,6 +188,5 @@ export const {
     clearTimeSlots,
     clearBooking,
     setReservationBtnDisabled,
-    setLastBookingInfo,
 } = reservationProcessSlice.actions
 export default reservationProcessSlice.reducer

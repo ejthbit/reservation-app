@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material'
+import { Grid, LinearProgress, Typography } from '@mui/material'
 import { equals, find, propEq } from 'ramda'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -8,6 +8,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { cs } from 'date-fns/locale'
 import { useMemoizedSelector } from '../../../hooks'
 import {
+    getAreAvailableTimeSlotsLoading,
     makeAvailableTimeSlotsWithTimeOnly,
     makeDoctorServicesByDoctorId,
     makeReservationProcessInfo,
@@ -41,9 +42,7 @@ const ReservationTermPicker = ({ step }) => {
 
     const [isDoctorServing, setIsDoctorServing] = useState(undefined)
 
-    const availableTimeSlots = useMemoizedSelector(makeAvailableTimeSlotsWithTimeOnly, {}, [
-        selectedDate,
-    ])
+    const availableTimeSlots = useMemoizedSelector(makeAvailableTimeSlotsWithTimeOnly, {}, [selectedDate])
 
     // eslint-disable-next-line no-unused-vars
     const { data: doctorsServicesForSelectedAmbulance } = useGetDoctorServicesForMonthQuery({
@@ -98,9 +97,7 @@ const ReservationTermPicker = ({ step }) => {
         >
             <Grid container direction="column" sx={(theme) => ({ marginTop: theme.spacing(0.5) })}>
                 <TermPicker
-                    doctorServicesBySelectedDoctorIdAndMonth={
-                        doctorServicesBySelectedDoctorIdAndMonth
-                    }
+                    doctorServicesBySelectedDoctorIdAndMonth={doctorServicesBySelectedDoctorIdAndMonth}
                 />
                 {!isNilOrEmpty(availableTimeSlots) ? (
                     <Grid
@@ -119,9 +116,7 @@ const ReservationTermPicker = ({ step }) => {
                 ) : !isNilOrEmpty(isDoctorServing) ? (
                     <Typography>Omlouváme se ale na tento den již nejsou volné termíny</Typography>
                 ) : (
-                    <Typography>
-                        Omlouváme se ale tento den vámi vybranný doktor neordinuje
-                    </Typography>
+                    <Typography>Omlouváme se ale tento den vámi vybranný doktor neordinuje</Typography>
                 )}
             </Grid>
         </LocalizationProvider>
