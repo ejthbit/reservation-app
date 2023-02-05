@@ -2,11 +2,11 @@ import { createSlice } from '@reduxjs/toolkit'
 import STATE_KEYS from '../../../constants/stateKeys'
 
 const userInfoInitialState = {
-    userName: null,
-    userId: null,
-    defaultWorkspace: null,
     userRole: 1,
-    isLoggedIn: false,
+    isLoggedIn: JSON.parse(localStorage.getItem('user'))?.success ?? false,
+    automaticallyLoggedOut: false,
+    userName: JSON.parse(localStorage.getItem('user'))?.user?.name ?? null,
+    defaultWorkspace: JSON.parse(localStorage.getItem('user'))?.user?.default_workplace ?? null,
 }
 const userInfoSlice = createSlice({
     name: STATE_KEYS.USER_INFO,
@@ -16,9 +16,7 @@ const userInfoSlice = createSlice({
             const { property, value } = payload
             return { ...state, [property]: value }
         },
-        setUser: (state, { payload }) => {
-            state = { ...payload, isLoggedIn: true }
-        },
+        setUser: (state, { payload }) => (state = { ...payload.user, isLoggedIn: true }),
         logOut: () => userInfoInitialState,
     },
 })

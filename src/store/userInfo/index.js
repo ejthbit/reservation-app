@@ -1,2 +1,3 @@
 export * from './selectors'
-export { default as userInfo } from './userInfoSlice'
+export * from './services'
+export { default as userInfoSlice } from './userInfoSlice'

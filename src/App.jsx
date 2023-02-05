@@ -1,13 +1,34 @@
-import { Provider } from 'react-redux'
-import ReservationDialog from './components/Reservation/ReservationDialog/ReservationDialog'
-import { store } from './store/store'
+import { Route, Routes as RRoutes, useNavigate } from 'react-router-dom'
+import { Login } from './components'
+import ProtectedRoute from './components/common/ProtectedRoute'
+
 function App() {
+    const navigate = useNavigate()
     return (
-        <div className="App">
-            <Provider store={store}>
-                <ReservationDialog isOpen={true} onClose={() => console.log()} />
-            </Provider>
-        </div>
+        <RRoutes>
+            <Route path="/" exact element={<>Root</>} />
+            <Route
+                path={'/admin'}
+                element={
+                    <ProtectedRoute shouldLogin loginPath={'/login'}>
+                        <>Admin content</>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path={'/login'}
+                exact
+                element={
+                    <Login
+                        onGetUser={() => {
+                            navigate('/admin')
+                            return console.log('route changed to /admin')
+                        }}
+                        isRegistrationEnabled
+                    />
+                }
+            />
+        </RRoutes>
     )
 }
 

@@ -1,14 +1,15 @@
+import { yupResolver } from '@hookform/resolvers/yup'
+import { Button, CircularProgress, Typography, Link } from '@mui/material'
+import Grid from '@mui/material/Unstable_Grid2/Grid2'
 import PropTypes from 'prop-types'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
-import Grid from '@mui/material/Unstable_Grid2/Grid2'
+import { useLazySignInQuery } from '../../../store/userInfo/services'
+import { isSuccess } from '../../../utils'
 import FormInput from '../../common/Form/FormInput'
-import { Button, CircularProgress, Typography } from '@mui/material'
-import { useLazyLogInQuery } from '../../../store/userInfo/services'
 
-const LoginPage = ({ onGetUser }) => {
-    const [logIn, { isLoading, error }] = useLazyLogInQuery()
+const LoginPage = ({ onGetUser, onRegisterClick, isRegistrationEnabled }) => {
+    const [signIn, { isLoading, error }] = useLazySignInQuery()
     const { handleSubmit, control, formState } = useForm({
         mode: 'onSubmit',
         reValidateMode: 'onChange',
@@ -21,9 +22,33 @@ const LoginPage = ({ onGetUser }) => {
         defaultValues: { email: '', password: '' },
     })
 
-    const onSubmit = ({ email, password }) => logIn({ email, password, onGetUser })
+    const onSubmit = async ({ email, password }) => {
+        const res = await signIn({ email, password }).unwrap()
+        if (isSuccess(res)) onGetUser()
+    }
     return (
-        <Grid container alignContent="center" direction="column">
+        <Grid
+            container
+            justifyContent="center"
+            alignContent="center"
+            direction="column"
+            sx={{ height: '100vh', margin: 'auto' }}
+            spacing={2}
+        >
+            <Grid>
+                <Typography variant="h2">Administrace</Typography>
+            </Grid>
+            <Grid>
+                <FormInput
+                    type="email"
+                    name={'email'}
+                    control={control}
+                    placeholder="E-mail"
+                    label="E-mail"
+                    required
+                    fullWidth
+                />
+            </Grid>
             <Grid>
                 <FormInput
                     type="password"
@@ -45,8 +70,24 @@ const LoginPage = ({ onGetUser }) => {
                     fullWidth
                     disabled={!formState.isValid || formState.submitCount >= 3 || isLoading}
                 >
-                    {!isLoading ? 'Přihlásit se' : <CircularProgress />}
+                    {!isLoading ? 'Přihlásit se' : <CircularProgress size={22} />}
                 </Button>
+                {isRegistrationEnabled && (
+                    <Grid sx={{ textAlign: 'center' }}>
+                        <Link
+                            underline="hover"
+                            sx={{
+                                fontSize: 10,
+                                color: 'primary',
+                                cursor: 'pointer',
+                                textTransform: 'uppercase',
+                            }}
+                            onClick={onRegisterClick}
+                        >
+                            Vytvořít nový účet
+                        </Link>
+                    </Grid>
+                )}
             </Grid>
             {error && (
                 <Grid>
@@ -61,6 +102,8 @@ const LoginPage = ({ onGetUser }) => {
 
 LoginPage.propTypes = {
     onGetUser: PropTypes.func,
+    onRegisterClick: PropTypes.func,
+    isRegistrationEnabled: PropTypes.bool,
 }
 
 export default LoginPage

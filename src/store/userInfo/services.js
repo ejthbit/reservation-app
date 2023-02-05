@@ -1,28 +1,35 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
+import STATE_KEYS from '../../../constants/stateKeys'
 import axiosGynInstance from '../../api/config'
 import { setUser } from './userInfoSlice'
 
 export const userAPI = createApi({
-    reducerPath: 'reservationProcess/contactMessage',
+    reducerPath: `${STATE_KEYS.USER_INFO}/user`,
     baseQuery: axiosGynInstance,
     endpoints: (builder) => ({
-        logIn: builder.query({
+        signIn: builder.query({
             query: ({ email, password }) => ({
-                url: `administration/logIntoAdministration`,
+                url: `administration/signIn`,
                 method: 'POST',
                 data: { email, password },
             }),
-            async onQueryStarted({ onGetUser }, { dispatch, queryFulfilled }) {
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
                 try {
                     const { data } = await queryFulfilled
                     localStorage.setItem('user', JSON.stringify(data))
                     dispatch(setUser(data))
-                    onGetUser()
                 } catch (err) {
-                    console.error('There was an error while logIn as current user.')
+                    return console.error('There was an error while logIn as current user.')
                 }
             },
         }),
+        signUp: builder.mutation({
+            query: ({ name, email, password }) => ({
+                url: `administration/signUp`,
+                method: 'POST',
+                data: { name, email, password },
+            }),
+        }),
     }),
 })
-export const { useLazyLogInQuery, useLogInQuery } = userAPI
+export const { useLazySignInQuery, useSignUpMutation } = userAPI
