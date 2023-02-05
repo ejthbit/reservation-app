@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import eslint from 'vite-plugin-eslint'
 import federation from '@originjs/vite-plugin-federation'
-// https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
         react(),
@@ -11,12 +10,9 @@ export default defineConfig({
             name: 'home',
             filename: 'homepage.js',
             exposes: {
-                './Button':
-                    './src/components/ReservationButton/ReservationButton.jsx',
-
+                './Button': './src/components/Reservation/ReservationButton/ReservationButton.jsx',
                 './Home': './src/components/Home.jsx',
-                './ReservationDialog':
-                    './src/components/ReservationDialog/ReservationDialog.jsx',
+                './ReservationDialog': './src/components/Reservation/ReservationDialog/ReservationDialog.jsx',
             },
             shared: ['react'],
         }),
