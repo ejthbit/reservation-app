@@ -1,16 +1,17 @@
+import PropTypes from 'prop-types'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import useReservationButton from '../../../hooks/useReservationButton'
 import {
     setPreferredDoctor,
     setSelectedCategory,
     setSelectedTime,
-} from '../../store/reservationProcess/reservationProcessSlice'
-import { makeReservationProcessInfo } from '../../store/reservationProcess/selectors'
-import { useLazyGetDoctorsForSelectedAmbulanceQuery } from '../../store/reservationProcess/services'
-import Dropdown from '../BuildingBlocks/Dropdown'
-import useReservationButton from '../../hooks/useReservationButton'
-import { isNilOrEmpty } from '../../utils'
-import PropTypes from 'prop-types'
+} from '../../../store/reservationProcess/reservationProcessSlice'
+import { makeReservationProcessInfo } from '../../../store/reservationProcess/selectors'
+import { useLazyGetDoctorsForSelectedAmbulanceQuery } from '../../../store/reservationProcess/services'
+import { isNilOrEmpty } from '../../../utils'
+import { Dropdown } from '../../common'
+
 const getReservationProcessInfo = makeReservationProcessInfo()
 const ReservationDoctorSelect = ({ step }) => {
     const dispatch = useDispatch()

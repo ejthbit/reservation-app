@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
-import { getContactInformation } from '../../../store/reservationProcess'
-import { setContactInformation } from '../../../store/reservationProcess/reservationProcessSlice'
+import { getContactInformation } from '../../../../store/reservationProcess'
+import { setContactInformation } from '../../../../store/reservationProcess/reservationProcessSlice'
 import { TextField, InputAdornment } from '@mui/material'
-import useReservationButton from '../../../hooks/useReservationButton'
+import useReservationButton from '../../../../hooks/useReservationButton'
 import { AccountCircle } from '@mui/icons-material'
-import { useDebounce } from '../../../hooks'
+import { useDebounce } from '../../../../hooks'
 import { useState } from 'react'
 
 const ReservationName = ({ step, isRequired }) => {

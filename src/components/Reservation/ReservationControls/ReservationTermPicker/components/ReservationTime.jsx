@@ -3,12 +3,12 @@ import {
     getAreAvailableTimeSlotsLoading,
     makeAvailableTimeSlotsWithTimeOnly,
     makeReservationProcessInfo,
-} from '../../../../store/reservationProcess'
-import { setSelectedTime } from '../../../../store/reservationProcess/reservationProcessSlice'
-import Dropdown from '../../../BuildingBlocks/Dropdown'
-import { useMemoizedSelector } from '../../../../hooks'
-import useReservationButton from '../../../../hooks/useReservationButton'
+} from '../../../../../store/reservationProcess'
+import { setSelectedTime } from '../../../../../store/reservationProcess/reservationProcessSlice'
+import { useMemoizedSelector } from '../../../../../hooks'
+import useReservationButton from '../../../../../hooks/useReservationButton'
 import PropTypes from 'prop-types'
+import { Dropdown } from '../../../../common'
 
 const getReservationProcessInfo = makeReservationProcessInfo()
 

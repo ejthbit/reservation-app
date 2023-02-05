@@ -5,9 +5,9 @@ import {
     clearBooking,
     clearReservation,
     setActiveStep,
-} from '../../../../store/reservationProcess/reservationProcessSlice'
-import { getLastBooking } from '../../../../store/reservationProcess/selectors'
-import { isNilOrEmpty } from '../../../../utils'
+} from '../../../../../store/reservationProcess/reservationProcessSlice'
+import { getLastBooking } from '../../../../../store/reservationProcess/selectors'
+import { isNilOrEmpty } from '../../../../../utils'
 import StepContentWithBtn from './StepContentWithBtn'
 
 const ReservationStatus = () => {

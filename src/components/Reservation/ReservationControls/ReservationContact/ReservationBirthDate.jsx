@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types'
 import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers'
 import { useDispatch, useSelector } from 'react-redux'
-import { getContactInformation } from '../../../store/reservationProcess'
-import { setContactInformation } from '../../../store/reservationProcess/reservationProcessSlice'
-import useReservationButton from '../../../hooks/useReservationButton'
+import { getContactInformation } from '../../../../store/reservationProcess'
+import { setContactInformation } from '../../../../store/reservationProcess/reservationProcessSlice'
+import useReservationButton from '../../../../hooks/useReservationButton'
 import { InputAdornment, TextField } from '@mui/material'
 import { Today } from '@mui/icons-material'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { cs } from 'date-fns/locale'
-import { getISODateStringWithCorrectOffset } from '../../../utils'
+import { getISODateStringWithCorrectOffset } from '../../../../utils'
 
 const ReservationBirthDate = ({ step, isRequired }) => {
     const { birthDate } = useSelector(getContactInformation)

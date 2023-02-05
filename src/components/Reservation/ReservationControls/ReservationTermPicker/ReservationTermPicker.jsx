@@ -1,4 +1,4 @@
-import { Grid, LinearProgress, Typography } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import { equals, find, propEq } from 'ramda'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -6,14 +6,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { cs } from 'date-fns/locale'
-import { useMemoizedSelector } from '../../../hooks'
+import { useMemoizedSelector } from '../../../../hooks'
 import {
-    getAreAvailableTimeSlotsLoading,
     makeAvailableTimeSlotsWithTimeOnly,
     makeDoctorServicesByDoctorId,
     makeReservationProcessInfo,
     useGetDoctorServicesForMonthQuery,
-} from '../../../store/reservationProcess'
+} from '../../../../store/reservationProcess'
 import {
     clearTimeSlots,
     fetchAvailableTimeSlots,
@@ -21,8 +20,8 @@ import {
     setReservationBtnDisabled,
     setSelectedCategory,
     setSelectedTime,
-} from '../../../store/reservationProcess/reservationProcessSlice'
-import { isNilOrEmpty } from '../../../utils'
+} from '../../../../store/reservationProcess/reservationProcessSlice'
+import { isNilOrEmpty } from '../../../../utils'
 import ReservationCategorySelect from '../ReservationCategorySelect'
 import { ReservationTime } from './components'
 import TermPicker from './Components/TermPicker'

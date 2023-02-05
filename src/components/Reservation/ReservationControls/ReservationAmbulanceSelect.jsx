@@ -2,18 +2,18 @@ import { Box, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import useReservationButton from '../../hooks/useReservationButton'
+import useReservationButton from '../../../hooks/useReservationButton'
 import {
     setSelectedAmbulance,
     setPreferredDoctor,
-} from '../../store/reservationProcess/reservationProcessSlice'
-import { makeReservationProcessInfo } from '../../store/reservationProcess/selectors'
+} from '../../../store/reservationProcess/reservationProcessSlice'
+import { makeReservationProcessInfo } from '../../../store/reservationProcess/selectors'
 import {
     useLazyGetAmbulancesQuery,
     useLazyGetDoctorServicesForMonthQuery,
-} from '../../store/reservationProcess/services'
-import { isNilOrEmpty } from '../../utils'
-import Dropdown from '../BuildingBlocks/Dropdown'
+} from '../../../store/reservationProcess/services'
+import { isNilOrEmpty } from '../../../utils'
+import { Dropdown } from '../../common'
 const getReservationProcessInfo = makeReservationProcessInfo()
 const ReservationAmbulanceSelect = ({ showLabel = false, step }) => {
     const [getAmbulances, { data: ambulances, isLoading }] = useLazyGetAmbulancesQuery()

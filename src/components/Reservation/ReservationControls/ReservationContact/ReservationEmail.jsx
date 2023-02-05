@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
-import { getContactInformation } from '../../../store/reservationProcess'
-import { setContactInformation } from '../../../store/reservationProcess/reservationProcessSlice'
+import { getContactInformation } from '../../../../store/reservationProcess'
+import { setContactInformation } from '../../../../store/reservationProcess/reservationProcessSlice'
 import { TextField, InputAdornment } from '@mui/material'
-import useReservationButton from '../../../hooks/useReservationButton'
+import useReservationButton from '../../../../hooks/useReservationButton'
 import { Email } from '@mui/icons-material'
 import { string } from 'yup'
 import { useState } from 'react'
-import { useDebounce } from '../../../hooks'
+import { useDebounce } from '../../../../hooks'
 
 const ReservationEmail = ({ step, isRequired }) => {
     const dispatch = useDispatch()

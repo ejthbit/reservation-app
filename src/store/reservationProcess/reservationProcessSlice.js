@@ -2,10 +2,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { forEach, propEq, sortBy } from 'ramda'
 import axiosGynInstance from '../../api/config'
-import { prepareReservationForCreation } from '../../components/ReservationDialog/helpers'
+import { prepareReservationForCreation } from '../../components'
 import { getISODateStringWithCorrectOffset, isSuccess } from '../../utils'
 import { makeReservationProcessInfo } from './selectors'
-
+export const STATE_KEY = 'reservationProcess'
 /* RTK uses on background Immer library.
 This means you can write code that "mutates" the state inside the reducer,
 and Immer will safely return a correct immutably updated result. */
@@ -85,8 +85,9 @@ const reservationProcessInitialState = {
         data: {},
     },
 }
+
 const reservationProcessSlice = createSlice({
-    name: 'reservationProcess',
+    name: STATE_KEY,
     initialState: reservationProcessInitialState,
     reducers: {
         setActiveStep: (state, action) => {

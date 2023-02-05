@@ -3,8 +3,8 @@ import { Grid, Typography } from '@mui/material'
 import { map, reject, values } from 'ramda'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { getContactInformation, makeAppointmentDate } from '../../../../store/reservationProcess/selectors'
-import { isNilOrEmpty } from '../../../../utils'
+import { getContactInformation, makeAppointmentDate } from '../../../../../store/reservationProcess/selectors'
+import { isNilOrEmpty } from '../../../../../utils'
 
 const getAppointmentDate = makeAppointmentDate()
 

@@ -6,13 +6,13 @@ import { findIndex, includes, propEq } from 'ramda'
 import {
     bookAnAppointment,
     setActiveStep,
-} from '../../../../store/reservationProcess/reservationProcessSlice'
+} from '../../../../../store/reservationProcess/reservationProcessSlice'
 import {
     getActiveStep,
     getDisabledReservationBtn,
     getLastBooking,
-} from '../../../../store/reservationProcess/selectors'
-import { isMobile } from '../../../../utils'
+} from '../../../../../store/reservationProcess/selectors'
+import { isMobile } from '../../../../../utils'
 
 const StyledButton = styled(Button)(({ theme }) => ({
     marginTop: theme.spacing(2),

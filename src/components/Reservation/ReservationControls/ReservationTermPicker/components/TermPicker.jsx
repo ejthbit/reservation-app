@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
     makeReservationProcessInfo,
     useLazyGetDoctorServicesForMonthQuery,
-} from '../../../../store/reservationProcess'
-import { setSelectedDate } from '../../../../store/reservationProcess/reservationProcessSlice'
-import { getISODateStringWithCorrectOffset } from '../../../../utils'
+} from '../../../../../store/reservationProcess'
+import { setSelectedDate } from '../../../../../store/reservationProcess/reservationProcessSlice'
+import { getISODateStringWithCorrectOffset } from '../../../../../utils'
 import TermPickerDay from './TermPickerDay'
 import TermPickerInput from './TermPickerInput'
 
@@ -18,8 +18,7 @@ const TermPicker = ({ doctorServicesBySelectedDoctorIdAndMonth = [] }) => {
 
     const [fetchDoctorServicesForSelectedMonth] = useLazyGetDoctorServicesForMonthQuery()
 
-    const setTermPickerDate = (date) =>
-        dispatch(setSelectedDate(getISODateStringWithCorrectOffset(date)))
+    const setTermPickerDate = (date) => dispatch(setSelectedDate(getISODateStringWithCorrectOffset(date)))
     // Fetches services for selected month
 
     return (
@@ -42,9 +41,7 @@ const TermPicker = ({ doctorServicesBySelectedDoctorIdAndMonth = [] }) => {
                     key={format(day, 'yyyy-MM-dd')}
                     day={day}
                     DayComponentProps={DayComponentProps}
-                    doctorServicesBySelectedDoctorIdAndMonth={
-                        doctorServicesBySelectedDoctorIdAndMonth
-                    }
+                    doctorServicesBySelectedDoctorIdAndMonth={doctorServicesBySelectedDoctorIdAndMonth}
                 />
             )}
             views={['year', 'month', 'day']}
