@@ -1,24 +1,28 @@
 import { createSelector } from '@reduxjs/toolkit'
 import { equals, filter, find, isEmpty, map, path, propEq } from 'ramda'
+import STATE_KEYS from '../../../constants/stateKeys'
 import { isNilOrEmpty } from '../../utils'
-import { STATE_KEY } from './reservationProcessSlice'
 
 export const makeArrayOfLabelValue = (label, value, arr) =>
     map((record) => ({ label: record[label], value: record[value] }), arr)
 
-export const getActiveStep = path([STATE_KEY, 'activeStep'])
-export const getSelectedDate = path([STATE_KEY, 'selectedDate'])
-export const getSelectedAmbulance = path([STATE_KEY, 'selectedAmbulance'])
-export const getSelectedCategory = path([STATE_KEY, 'selectedCategory'])
-export const getAmbulances = path([STATE_KEY, '/', 'ambulances', 'data'])
-export const getAreAvailableTimeSlotsLoading = path([STATE_KEY, 'availableTimeSlots', 'isLoading'])
-export const getAvailableTimeSlots = path([STATE_KEY, 'availableTimeSlots', 'slots'])
-export const getBookingCategories = path([STATE_KEY, '/', 'bookingCategories', 'data'])
-export const getPreferredDoctor = path([STATE_KEY, 'preferredDoctor'])
-export const getSelectedTime = path([STATE_KEY, 'selectedTime'])
-export const getContactInformation = path([STATE_KEY, 'contactInformation'])
-export const getDisabledReservationBtn = path([STATE_KEY, 'isReservationBtnDisabled'])
-export const getLastBooking = path([STATE_KEY, 'lastBooking'])
+export const getActiveStep = path([STATE_KEYS.RESERVATION_PROCESS, 'activeStep'])
+export const getSelectedDate = path([STATE_KEYS.RESERVATION_PROCESS, 'selectedDate'])
+export const getSelectedAmbulance = path([STATE_KEYS.RESERVATION_PROCESS, 'selectedAmbulance'])
+export const getSelectedCategory = path([STATE_KEYS.RESERVATION_PROCESS, 'selectedCategory'])
+export const getAmbulances = path([STATE_KEYS.RESERVATION_PROCESS, '/', 'ambulances', 'data'])
+export const getAreAvailableTimeSlotsLoading = path([
+    STATE_KEYS.RESERVATION_PROCESS,
+    'availableTimeSlots',
+    'isLoading',
+])
+export const getAvailableTimeSlots = path([STATE_KEYS.RESERVATION_PROCESS, 'availableTimeSlots', 'slots'])
+export const getBookingCategories = path([STATE_KEYS.RESERVATION_PROCESS, '/', 'bookingCategories', 'data'])
+export const getPreferredDoctor = path([STATE_KEYS.RESERVATION_PROCESS, 'preferredDoctor'])
+export const getSelectedTime = path([STATE_KEYS.RESERVATION_PROCESS, 'selectedTime'])
+export const getContactInformation = path([STATE_KEYS.RESERVATION_PROCESS, 'contactInformation'])
+export const getDisabledReservationBtn = path([STATE_KEYS.RESERVATION_PROCESS, 'isReservationBtnDisabled'])
+export const getLastBooking = path([STATE_KEYS.RESERVATION_PROCESS, 'lastBooking'])
 
 export const makeReservationProcessInfo = () =>
     createSelector(

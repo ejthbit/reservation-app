@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
+import STATE_KEYS from '../../../constants/stateKeys'
 
-export const STATE_KEY = 'userInfo'
 const userInfoInitialState = {
     userName: null,
     userId: null,
@@ -9,7 +9,7 @@ const userInfoInitialState = {
     isLoggedIn: false,
 }
 const userInfoSlice = createSlice({
-    name: 'userInfo',
+    name: STATE_KEYS.USER_INFO,
     initialState: userInfoInitialState,
     reducers: {
         setUserInfoProperty: (state, { payload }) => {

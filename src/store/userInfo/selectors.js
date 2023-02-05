@@ -1,5 +1,5 @@
 import { path } from 'ramda'
-import { STATE_KEY } from './userInfoSlice'
+import STATE_KEYS from '../../../constants/stateKeys'
 
-export const getAuthInfo = path([STATE_KEY, 'isLoggedIn'])
-export const getUserInfo = path([STATE_KEY])
+export const getAuthInfo = path([STATE_KEYS.USER_INFO, 'isLoggedIn'])
+export const getUserInfo = path([STATE_KEYS.RESERVATION_PROCESS])
