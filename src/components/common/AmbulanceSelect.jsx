@@ -1,0 +1,40 @@
+import { Box, Typography } from '@mui/material'
+import PropTypes from 'prop-types'
+import { useEffect } from 'react'
+import { useLazyGetAmbulancesQuery } from '../../store/reservationProcess'
+import { isNilOrEmpty } from '../../utils'
+import Dropdown from './Dropdown'
+
+const AmbulanceSelect = ({ showLabel, selectedValueId, onAmbulanceSelect, defaultValue }) => {
+    const [getAmbulances, { data: ambulances, isLoading }] = useLazyGetAmbulancesQuery()
+
+    useEffect(() => {
+        if (isNilOrEmpty(ambulances)) getAmbulances()
+    }, [ambulances])
+
+    return (
+        <>
+            {showLabel && (
+                <Box marginRight={2}>
+                    <Typography>Vybrané pracoviště</Typography>
+                </Box>
+            )}
+            <Dropdown
+                defaultValue={defaultValue}
+                isLoading={isLoading}
+                options={ambulances}
+                value={selectedValueId}
+                onChange={onAmbulanceSelect}
+            />
+        </>
+    )
+}
+
+AmbulanceSelect.propTypes = {
+    showLabel: PropTypes.bool,
+    selectedValueId: PropTypes.string.isRequired,
+    onAmbulanceSelect: PropTypes.func.isRequired,
+    defaultValue: PropTypes.oneOfType([PropTypes.number]),
+}
+
+export default AmbulanceSelect

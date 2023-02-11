@@ -15,7 +15,7 @@ const Login = ({ onGetUser, logo, isRegistrationEnabled = false, adminPath = '/a
 
     useEffect(() => {
         isAuthenticated && navigate(adminPath)
-    }, [isAuthenticated])
+    }, [isAuthenticated, adminPath, navigate])
 
     return (
         <Box>
@@ -23,16 +23,21 @@ const Login = ({ onGetUser, logo, isRegistrationEnabled = false, adminPath = '/a
             {showRegistration ? (
                 <RegistrationPage onLoginClick={handleToggleView} />
             ) : (
-                <LoginPage onGetUser={onGetUser} isRegistrationEnabled onRegisterClick={handleToggleView} />
+                <LoginPage
+                    onGetUser={onGetUser}
+                    isRegistrationEnabled={isRegistrationEnabled}
+                    onRegisterClick={handleToggleView}
+                />
             )}
         </Box>
     )
 }
 
-Login.prototype = {
+Login.propTypes = {
     onGetUser: PropTypes.func,
     logo: PropTypes.node,
     isRegistrationEnabled: PropTypes.bool,
+    adminPath: PropTypes.string,
 }
 
 export default Login

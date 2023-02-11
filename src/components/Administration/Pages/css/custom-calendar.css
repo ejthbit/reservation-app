@@ -1,0 +1,81 @@
+.rbc-day-slot .rbc-events-container {
+    margin-right: 0;
+}
+
+.rbc-allday-cell {
+    display: none;
+}
+
+.rbc-header {
+    border-bottom: none;
+    margin-top: 1rem;
+    border-left: 1px solid #ddd;
+    pointer-events: none;
+}
+
+.rbc-time-header.rbc-overflowing {
+    border-right: none;
+}
+
+.rbc-time-header-content {
+    border-bottom: 1px solid #ddd;
+    border-left: none;
+}
+
+.rbc-time-content {
+    border-top: none;
+}
+
+.rbc-today {
+    background-color: rgba(116, 186, 225, 0.05);
+}
+
+.rbc-header.rbc-today {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.rbc-time-view {
+    border-left: none;
+    border-top: none;
+    border: 1px solid #eaeaea;
+    box-shadow: -2px 4px 6px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(199, 199, 199, 0.25);
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 1);
+    padding-right: 0 !important;
+    padding-left: 0.6rem;
+    display: contents;
+}
+
+.rbc-timeslot-group {
+    border-bottom: none;
+}
+
+.rbc-day-slot .rbc-time-slot:hover {
+    background-color: #8f8f8f;
+    opacity: 0.5;
+}
+
+.rbc-day-slot .rbc-time-slot {
+    z-index: 1000;
+}
+.rbc-event.rbc-selected,
+.rbc-day-slot .rbc-selected.rbc-background-event {
+    background-color: #8f8f8f;
+    opacity: 0.5;
+}
+
+.rbc-event {
+    color: black;
+    font-weight: 600;
+}
+.rbc-day-slot .rbc-event {
+    background: #8f8f8f8b;
+    border: none;
+    pointer-events: 'none';
+    cursor: 'pointer';
+    z-index: 1001;
+}
+.rbc-current-time-indicator {
+    background-color: crimson;
+    height: 2px;
+}

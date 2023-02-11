@@ -35,60 +35,68 @@ const LoginPage = ({ onGetUser, onRegisterClick, isRegistrationEnabled }) => {
             sx={{ height: '100vh', margin: 'auto' }}
             spacing={2}
         >
-            <Grid>
-                <Typography variant="h2">Administrace</Typography>
-            </Grid>
-            <Grid>
-                <FormInput
-                    type="email"
-                    name={'email'}
-                    control={control}
-                    placeholder="E-mail"
-                    label="E-mail"
-                    required
-                    fullWidth
-                />
-            </Grid>
-            <Grid>
-                <FormInput
-                    type="password"
-                    name={'password'}
-                    control={control}
-                    placeholder="Heslo"
-                    label="Heslo"
-                    required
-                    fullWidth
-                />
-            </Grid>
-            <Grid>
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSubmit(onSubmit)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSubmit(onSubmit)}
-                    fullWidth
-                    disabled={!formState.isValid || formState.submitCount >= 3 || isLoading}
-                >
-                    {!isLoading ? 'Přihlásit se' : <CircularProgress size={22} />}
-                </Button>
-                {isRegistrationEnabled && (
-                    <Grid sx={{ textAlign: 'center' }}>
-                        <Link
-                            underline="hover"
-                            sx={{
-                                fontSize: 10,
-                                color: 'primary',
-                                cursor: 'pointer',
-                                textTransform: 'uppercase',
-                            }}
-                            onClick={onRegisterClick}
-                        >
-                            Vytvořít nový účet
-                        </Link>
-                    </Grid>
-                )}
-            </Grid>
+            <form>
+                <Grid>
+                    <Typography variant="h2" fontWeight={'bold'}>
+                        Administrace
+                    </Typography>
+                </Grid>
+                <Grid>
+                    <FormInput
+                        type="email"
+                        name={'email'}
+                        control={control}
+                        placeholder="E-mail"
+                        label="E-mail"
+                        required
+                        fullWidth
+                    />
+                </Grid>
+                <Grid>
+                    <FormInput
+                        type="password"
+                        name={'password'}
+                        control={control}
+                        placeholder="Heslo"
+                        label="Heslo"
+                        required
+                        fullWidth
+                    />
+                </Grid>
+                <Grid>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSubmit(onSubmit)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                handleSubmit(onSubmit)
+                            }
+                        }}
+                        fullWidth
+                        disabled={!formState.isValid || formState.submitCount >= 3 || isLoading}
+                    >
+                        {!isLoading ? 'Přihlásit se' : <CircularProgress size={22} />}
+                    </Button>
+                    {isRegistrationEnabled && (
+                        <Grid sx={{ textAlign: 'center' }}>
+                            <Link
+                                underline="hover"
+                                sx={{
+                                    fontSize: 12,
+                                    color: 'primary',
+                                    cursor: 'pointer',
+                                    textTransform: 'uppercase',
+                                }}
+                                onClick={onRegisterClick}
+                            >
+                                Vytvořít nový účet
+                            </Link>
+                        </Grid>
+                    )}
+                </Grid>
+            </form>
             {error && (
                 <Grid>
                     <Typography variant="body1" color="error">

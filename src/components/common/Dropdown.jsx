@@ -11,6 +11,7 @@ const Dropdown = ({
     isLoading = false,
     notSelectedLabel,
     required = false,
+    defaultValue = '',
     ...otherSelectProps
 }) => {
     const isSelectedValuePartOfOptions = find(propEq('value', value), options)
@@ -18,7 +19,7 @@ const Dropdown = ({
     const SelectWithoutLabel = () => (
         <Select
             variant="standard"
-            value={isSelectedValuePartOfOptions ? value : ''}
+            value={isSelectedValuePartOfOptions ? value : defaultValue}
             onChange={onChange}
             displayEmpty
             className={className}
@@ -62,6 +63,7 @@ Dropdown.propTypes = {
     label: PropTypes.string,
     isLoading: PropTypes.bool,
     required: PropTypes.bool,
+    defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     notSelectedLabel: PropTypes.string,
 }
 

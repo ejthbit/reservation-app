@@ -1,5 +1,7 @@
 export * from './checkDeviceType'
+export { default as getDateWithCorrectOffset } from './getDateWithCorrectOffset'
 export { default as getISODateStringWithCorrectOffset } from './getISODateStringWithCorrectOffset'
 export { default as isNilOrEmpty } from './isNilOrEmpty'
 export { default as isSuccess } from './isSuccess'
+export { default as makeCalendarEventsFromBookings } from './makeCalendarEventsFromBookings'
 export { default as validationPatterns } from './validationPatterns'

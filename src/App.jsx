@@ -1,17 +1,17 @@
 import { Route, Routes as RRoutes, useNavigate } from 'react-router-dom'
-import { Login } from './components'
+import { Login, ReservationDialog, AdministrationPage } from './components'
 import ProtectedRoute from './components/common/ProtectedRoute'
 
 function App() {
     const navigate = useNavigate()
     return (
         <RRoutes>
-            <Route path="/" exact element={<>Root</>} />
+            <Route path="/" exact element={<ReservationDialog isOpen />} />
             <Route
-                path={'/admin'}
+                path={'/admin/*'}
                 element={
                     <ProtectedRoute shouldLogin loginPath={'/login'}>
-                        <>Admin content</>
+                        <AdministrationPage />
                     </ProtectedRoute>
                 }
             />

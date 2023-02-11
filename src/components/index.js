@@ -1,4 +1,8 @@
+export { default as AdministrationNavigation } from './Administration/AdministrationNavigation/AdministrationNavigation'
+export * from './Administration/AdministrationNavigation/components'
+export { default as AdministrationPage } from './Administration/AdministrationPage'
 export { default as LoginPage } from './Login/LoginPage/LoginPage'
+export { default as RegistrationPage } from './Login/RegistrationPage/RegistrationPage'
 export * from './Login'
 export { default as ReservationButton } from './Reservation/ReservationButton/ReservationButton'
 export * from './Reservation/ReservationControls/ReservationContact'

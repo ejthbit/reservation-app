@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { combineReducers } from 'redux'
 import reservationProcessReducer from './reservationProcess/reservationProcessSlice'
 import userInfoReducer from './userInfo/userInfoSlice'
+import administrationReducer from './administration/administrationSlice'
 import {
     ambulancesAPI,
     bookingCategoriesAPI,
@@ -11,16 +12,19 @@ import {
 } from './reservationProcess/services'
 import { userAPI } from './userInfo/services'
 import STATE_KEYS from '../../constants/stateKeys'
+import { bookingsAPI } from './administration/services'
 
 const rootReducer = combineReducers({
     [STATE_KEYS.RESERVATION_PROCESS]: reservationProcessReducer,
     [STATE_KEYS.USER_INFO]: userInfoReducer,
+    [STATE_KEYS.ADMINISTRATION]: administrationReducer,
     [ambulancesAPI.reducerPath]: ambulancesAPI.reducer,
     [bookingCategoriesAPI.reducerPath]: bookingCategoriesAPI.reducer,
     [contactMessageAPI.reducerPath]: contactMessageAPI.reducer,
     [doctorsForSelectedAmbulanceAPI.reducerPath]: doctorsForSelectedAmbulanceAPI.reducer,
     [doctorServicesAPI.reducerPath]: doctorServicesAPI.reducer,
     [userAPI.reducerPath]: userAPI.reducer,
+    [bookingsAPI.reducerPath]: bookingsAPI.reducer,
 })
 
 export const store = configureStore({
@@ -33,6 +37,7 @@ export const store = configureStore({
         doctorsForSelectedAmbulanceAPI.middleware,
         doctorServicesAPI.middleware,
         userAPI.middleware,
+        bookingsAPI.middleware,
     ],
     devTools: process.env.NODE_ENV !== 'production',
 })
