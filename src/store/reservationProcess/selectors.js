@@ -74,12 +74,11 @@ export const makeServicesForSelectedMonth = (services = [], month, selectedWorkp
     )
 
 export const makeDoctorServicesByDoctorId = (service, doctorId) => {
-    const getDayDoctorsBySelectedId = (doctors, doctorId) =>
-        find(propEq('doctorId', Number(doctorId)), doctors)
+    const getDayDoctorsBySelectedId = (doctors, doctorId) => find(propEq('doctorId', doctorId), doctors)
 
     return isEmpty(doctorId)
         ? filter((day) => isNilOrEmpty(getDayDoctorsBySelectedId(day.doctors, doctorId)), service?.days ?? [])
         : filter((d) => {
-              return d.doctors.some((c) => [Number(doctorId)].includes(c.doctorId))
+              return d.doctors.some((c) => [doctorId].includes(c.doctorId))
           }, service?.days ?? [])
 }

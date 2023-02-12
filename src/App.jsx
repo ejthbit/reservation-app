@@ -6,7 +6,7 @@ function App() {
     const navigate = useNavigate()
     return (
         <RRoutes>
-            <Route path="/" exact element={<ReservationDialog isOpen />} />
+            <Route path="/" exact element={<ReservationDialog isOpen onClose={() => {}} />} />
             <Route
                 path={'/admin/*'}
                 element={

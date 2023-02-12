@@ -1,3 +1,10 @@
+.loading .rbc-time-view,
+.loading .rbc-month-view,
+.loading .rbc-day-view,
+.loading .rbc-work-week-view,
+.loading .rbc-time-content {
+    opacity: 0.3;
+}
 .rbc-day-slot .rbc-events-container {
     margin-right: 0;
 }

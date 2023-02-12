@@ -1,5 +1,6 @@
 export * from './checkDeviceType'
 export { default as getDateWithCorrectOffset } from './getDateWithCorrectOffset'
+export { default as getDaysUtil } from './getDaysUtil'
 export { default as getISODateStringWithCorrectOffset } from './getISODateStringWithCorrectOffset'
 export { default as isNilOrEmpty } from './isNilOrEmpty'
 export { default as isSuccess } from './isSuccess'

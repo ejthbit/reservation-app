@@ -27,6 +27,7 @@ export const fetchAvailableTimeSlotsDoctors = createAsyncThunk(
         return res.data
     }
 )
+// TODO: Replace with createApi
 export const bookAnAppointment = createAsyncThunk(
     'bookings/bookAnAppointment',
     async (arg, { getState, rejectWithValue }) => {

@@ -6,7 +6,7 @@ const DialogButtons = ({
     onSecondaryClick,
     primaryLabel,
     secondaryLabel,
-    // disabledPrimary = false,
+    disabledPrimary = false,
     additionalActionComponent,
 }) => {
     return (
@@ -15,11 +15,7 @@ const DialogButtons = ({
                 {secondaryLabel}
             </Button>
             {additionalActionComponent && additionalActionComponent}
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={onPrimaryClick} /* disabled={disabledPrimary} */
-            >
+            <Button variant="contained" color="primary" onClick={onPrimaryClick} disabled={disabledPrimary}>
                 {primaryLabel}
             </Button>
         </>
@@ -31,7 +27,7 @@ DialogButtons.propTypes = {
     onSecondaryClick: PropTypes.func,
     primaryLabel: PropTypes.string,
     secondaryLabel: PropTypes.string,
-    // disabledPrimary: PropTypes.bool,
+    disabledPrimary: PropTypes.bool,
     additionalActionComponent: PropTypes.node,
 }
 

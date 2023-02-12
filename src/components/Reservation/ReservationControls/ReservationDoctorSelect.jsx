@@ -20,7 +20,7 @@ const ReservationDoctorSelect = ({ step }) => {
 
     useReservationButton({ step, isRequired: true })
 
-    const [getDoctorsForSelectedAmbulance, { data: doctorsForSelectedAmbulance, isLoading }] =
+    const [getDoctorsForSelectedAmbulance, { data: doctorsForSelectedAmbulance, isFetching }] =
         useLazyGetDoctorsForSelectedAmbulanceQuery()
 
     useEffect(() => {
@@ -30,7 +30,7 @@ const ReservationDoctorSelect = ({ step }) => {
     return (
         <Dropdown
             value={selectedDoctor}
-            isLoading={isLoading}
+            isLoading={isFetching}
             onChange={(e) => {
                 dispatch(setPreferredDoctor(e.target.value))
                 if (!isNilOrEmpty(selectedTime)) dispatch(setSelectedTime(''))

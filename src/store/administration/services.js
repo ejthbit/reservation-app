@@ -31,6 +31,13 @@ export const bookingsAPI = createApi({
                 data: updatedData,
             }),
         }),
+        deleteBooking: builder.mutation({
+            query: (bookingId) => ({
+                url: `bookings/booking/${bookingId}`,
+                method: 'DELETE',
+            }),
+        }),
     }),
 })
-export const { useLazyGetBookingsQuery, useUpdateBookingMutation } = bookingsAPI
+
+export const { useLazyGetBookingsQuery, useUpdateBookingMutation, useDeleteBookingMutation } = bookingsAPI

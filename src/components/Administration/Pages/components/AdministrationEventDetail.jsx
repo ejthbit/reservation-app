@@ -7,36 +7,42 @@ import {
     DialogContent,
     DialogTitle,
     FormControlLabel,
+    LinearProgress,
     TextField,
 } from '@mui/material'
-import { TimePicker } from '@mui/x-date-pickers'
+import { MobileDateTimePicker } from '@mui/x-date-pickers'
 import { addMinutes } from 'date-fns'
-import { equals } from 'ramda'
+import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useDeleteBookingMutation, useUpdateBookingMutation } from '../../../../store/administration/services'
+import { useLazyGetBookingCategoriesQuery } from '../../../../store/reservationProcess'
 import { getISODateStringWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
 import { DialogButtons, Dropdown, FormInput } from '../../../common'
-import PropTypes from 'prop-types'
-import { useUpdateBookingMutation } from '../../../../store/administration/services'
-import { useLazyGetBookingCategoriesQuery } from '../../../../store/reservationProcess'
 
 const AdministrationEventDetail = ({ event, handleClose }) => {
     const [startValue, setStartValue] = useState(null)
     const [completedValue, setCompletedValue] = useState(false)
-    const [precautionaryInspectionValue, setPrecautionaryInspectionValue] = useState(false)
-    const [updateBooking] = useUpdateBookingMutation()
+    const [updateBooking, { isLoading: updatingBooking }] = useUpdateBookingMutation()
+    const [deleteBooking, { isLoading: deletingBooking }] = useDeleteBookingMutation()
 
-    const { control, handleSubmit, reset, formState, setValue } = useForm({
+    const {
+        control,
+        handleSubmit,
+        reset,
+        formState: { isDirty },
+        setValue,
+    } = useForm({
         defaultValues: {
             start: '',
             end: '',
             name: '',
             birthdate: '',
             phone: '',
-            completed: completedValue,
+            note: '',
+            completed: !!completedValue,
         },
     })
-    const { isDirty } = formState
     const handlePatchBooking = async (updatedBooking) => {
         await updateBooking({
             id: event.id,
@@ -44,16 +50,16 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
             ...updatedBooking,
         })
             .unwrap()
-            .then(handleClose())
+            .then((payload) => payload && handleClose())
     }
-    // TODO bookingAPI
-    // const handleDeleteBooking = async () => {
-    //     const confirmDelete = window.confirm('Jste si jisti, že chcete zrušit tuto rezervaci? ')
-    //     if (confirmDelete) {
-    //         const { error } = await dispatch(deleteBooking(event.id))
-    //         if (!error) handleClose()
-    //     }
-    // }
+    const handleDeleteBooking = async () => {
+        const confirmDelete = window.confirm('Jste si jisti, že chcete zrušit tuto rezervaci? ')
+        if (confirmDelete) {
+            await deleteBooking(event.id)
+                .unwrap()
+                .then((payload) => payload && handleClose())
+        }
+    }
 
     const [getReservationCategories, { currentData: categories, isLoading }] =
         useLazyGetBookingCategoriesQuery()
@@ -74,24 +80,27 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                 birthdate: name.split(' - ')[1],
                 phone: isNilOrEmpty(resource?.phone) ? 'Nevyplněno' : resource?.phone,
                 completed: resource?.completed,
+                note: resource?.note,
             })
         }
     }, [event, reset])
-
     return (
         <Dialog maxWidth="sm" open={!isNilOrEmpty(event)} onClose={handleClose} disableScrollLock fullWidth>
             <DialogTitle>Detail</DialogTitle>
             <DialogContent sx={{ display: 'grid', gap: 1 }}>
-                {/* <TimePicker
+                <MobileDateTimePicker
                     id="start"
                     label="Začátek rezervace"
                     variant="dialog"
                     inputFormat="dd-MM-yyyy HH:mm"
-                    views={['hours', 'minutes']}
-                    openTo="hours"
                     mask="__-__-____ __:__"
                     value={startValue}
                     name="start"
+                    sx={{
+                        '& .MuiPickersToolbar-penIconButton': {
+                            display: 'none',
+                        },
+                    }}
                     onChange={(date) => {
                         setStartValue(date)
                         setValue('start', getISODateStringWithCorrectOffset(date), {
@@ -101,7 +110,7 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                     renderInput={(params) => <TextField {...params} variant="standard" required />}
                     ampm={false}
                     minutesStep={15}
-                /> */}
+                />
                 <FormInput label="Jméno" control={control} name="name" fullWidth />
                 <FormInput
                     label="Datum narození"
@@ -109,6 +118,7 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                     control={control}
                     name="birthdate"
                     fullWidth
+                    disabled
                 />
                 <FormInput
                     label="Telefonní číslo"
@@ -118,21 +128,6 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                     fullWidth
                     disabled={true ?? !!control.defaultValuesRef.current.phone}
                 />
-                <FormControlLabel
-                    label="Dokončená objednávka"
-                    control={
-                        <Checkbox
-                            color="primary"
-                            name="completed"
-                            checked={completedValue}
-                            onChange={(e) => {
-                                setCompletedValue((prevState) => !prevState)
-                                setValue('completed', e.target.checked, { shouldDirty: true })
-                            }}
-                        />
-                    }
-                />
-
                 <Dropdown
                     label="Typ vyšetření"
                     isLoading={isLoading}
@@ -140,26 +135,49 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                     options={categories}
                     disabled
                 />
-            </DialogContent>
-            <DialogActions>
-                <DialogButtons
-                    onSecondaryClick={handleClose}
-                    secondaryLabel="Zavřit"
-                    primaryLabel="Odeslat"
-                    onPrimaryClick={handleSubmit(handlePatchBooking)}
-                    // additionalActionComponent={
-                    //     <Button
-                    //         className={classes.btnItem}
-                    //         variant="contained"
-                    //         onClick={handleDeleteBooking}
-                    //         color="primary"
-                    //     >
-                    //         <Delete />
-                    //     </Button>
-                    // }
-                    disabledPrimary={!isDirty}
+                <FormInput
+                    label="Poznámka (pouze interní)"
+                    placeholder="Poznámka"
+                    control={control}
+                    name="note"
+                    multiline
+                    rows={5}
+                    fullWidth
                 />
-            </DialogActions>
+                <FormControlLabel
+                    label="Dokončená objednávka"
+                    control={
+                        <Checkbox
+                            color="primary"
+                            name="completed"
+                            checked={!!completedValue}
+                            onChange={(e) => {
+                                setCompletedValue((prevState) => !prevState)
+                                setValue('completed', e.target.checked, { shouldDirty: true })
+                            }}
+                        />
+                    }
+                />
+            </DialogContent>
+
+            {updatingBooking || deletingBooking ? (
+                <LinearProgress />
+            ) : (
+                <DialogActions>
+                    <DialogButtons
+                        onSecondaryClick={handleClose}
+                        secondaryLabel="Zavřit"
+                        primaryLabel="Odeslat"
+                        onPrimaryClick={handleSubmit(handlePatchBooking)}
+                        additionalActionComponent={
+                            <Button variant="contained" onClick={handleDeleteBooking} color="primary">
+                                <Delete />
+                            </Button>
+                        }
+                        disabledPrimary={!isDirty}
+                    />
+                </DialogActions>
+            )}
         </Dialog>
     )
 }

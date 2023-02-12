@@ -6,7 +6,7 @@ import { isNilOrEmpty } from '../../utils'
 import Dropdown from './Dropdown'
 
 const AmbulanceSelect = ({ showLabel, selectedValueId, onAmbulanceSelect, defaultValue }) => {
-    const [getAmbulances, { data: ambulances, isLoading }] = useLazyGetAmbulancesQuery()
+    const [getAmbulances, { data: ambulances, isFetching }] = useLazyGetAmbulancesQuery()
 
     useEffect(() => {
         if (isNilOrEmpty(ambulances)) getAmbulances()
@@ -21,7 +21,7 @@ const AmbulanceSelect = ({ showLabel, selectedValueId, onAmbulanceSelect, defaul
             )}
             <Dropdown
                 defaultValue={defaultValue}
-                isLoading={isLoading}
+                isLoading={isFetching}
                 options={ambulances}
                 value={selectedValueId}
                 onChange={onAmbulanceSelect}

@@ -1,0 +1,148 @@
+import { yupResolver } from '@hookform/resolvers/yup'
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Typography } from '@mui/material'
+import { format } from 'date-fns'
+import PropTypes from 'prop-types'
+import { map } from 'ramda'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { useDispatch } from 'react-redux'
+import * as yup from 'yup'
+import VALIDATION_MESSAGES from '../../../../constants/validationMessages'
+import { fastBooking } from '../../../../store/administration/administrationSlice'
+import { useLazyGetBookingCategoriesQuery } from '../../../../store/reservationProcess'
+import { getDateWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
+import VALIDATION_PATTERNS from '../../../../utils/validationPatterns'
+import { DialogButtons, FormInput, FormSelectInput } from '../../../common'
+
+const formValidationSchema = yup.object().shape({
+    name: yup.string().required(VALIDATION_MESSAGES.IS_REQUIRED_FIELD),
+    category: yup.number().required(VALIDATION_MESSAGES.IS_REQUIRED_FIELD),
+    contact: yup.object().shape({
+        email: yup.string().email(VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT),
+        phone: yup
+            .string()
+            .matches(VALIDATION_PATTERNS.TEL, VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT)
+            .min(9),
+    }),
+})
+const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) => {
+    const { start, end } = data
+    const dispatch = useDispatch()
+    const [getReservationCategories, { currentData: categories }] = useLazyGetBookingCategoriesQuery()
+
+    const {
+        handleSubmit,
+        control,
+        reset,
+        formState: { isDirty, isValid },
+    } = useForm({
+        mode: 'onChange',
+        reValidateMode: 'onChange',
+        resolver: yupResolver(formValidationSchema),
+        defaultValues: {
+            name: '',
+            contact: {
+                email: '',
+                phone: '',
+            },
+            category: '',
+            note: '',
+        },
+    })
+    const onCreate = async (bookingValues) => {
+        const { error } = await dispatch(fastBooking({ ...bookingValues, ...data }))
+        if (!error) {
+            reset()
+            handleClose()
+        }
+    }
+    const onClose = () => {
+        reset()
+        handleClose()
+    }
+
+    useEffect(() => {
+        if (isNilOrEmpty(categories)) getReservationCategories()
+    }, [categories])
+
+    return (
+        open && (
+            <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+                <DialogTitle id="form-dialog-title">Rychlá objednávka</DialogTitle>
+                <DialogContent>
+                    <Box marginBottom={1}>
+                        <Typography>{`Vybraný termín: ${format(
+                            getDateWithCorrectOffset(start),
+                            'dd/MM/yyyy HH:mm:ss'
+                        )} - ${format(getDateWithCorrectOffset(end), 'dd/MM/yyyy HH:mm:ss')}`}</Typography>
+                    </Box>
+                    <FormInput
+                        name="name"
+                        label="Jméno"
+                        placeholder="Zadejte prosím jméno pacienta"
+                        control={control}
+                        fullWidth
+                        required
+                    />
+                    <FormSelectInput
+                        sx={{ marginTop: 0.5 }}
+                        label="Typ vyšetření"
+                        name="category"
+                        control={control}
+                        fullWidth
+                        required
+                    >
+                        {map(
+                            ({ label, value }) => (
+                                <MenuItem key={label} value={value}>
+                                    {label}
+                                </MenuItem>
+                            ),
+                            categories
+                        )}
+                    </FormSelectInput>
+                    <FormInput
+                        name="contact.email"
+                        label="E-mail"
+                        placeholder="Zadejte prosím e-mail pacienta"
+                        control={control}
+                        fullWidth
+                    />
+                    <FormInput
+                        name="contact.phone"
+                        label="Phone"
+                        placeholder="Zadejte prosím telefon pacienta"
+                        control={control}
+                        fullWidth
+                    />
+                    <FormInput
+                        label="Poznámka (pouze interní)"
+                        placeholder="Poznámka"
+                        control={control}
+                        name="note"
+                        multiline
+                        rows={5}
+                        fullWidth
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <DialogButtons
+                        onSecondaryClick={onClose}
+                        secondaryLabel="Zavřit"
+                        primaryLabel="Vytvořit novou objednávku"
+                        onPrimaryClick={handleSubmit(onCreate)}
+                        disabledPrimary={!isDirty || !isValid}
+                    />
+                </DialogActions>
+            </Dialog>
+        )
+    )
+}
+
+AdministrationCreateCalendarEvent.propTypes = {
+    open: PropTypes.bool,
+    handleClose: PropTypes.func,
+    data: PropTypes.object,
+}
+
+export default AdministrationCreateCalendarEvent

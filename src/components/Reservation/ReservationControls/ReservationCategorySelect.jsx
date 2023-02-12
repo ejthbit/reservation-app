@@ -9,7 +9,7 @@ import { Dropdown } from '../../common'
 
 const ReservationCategorySelect = ({ step, isRequired = false }) => {
     const dispatch = useDispatch()
-    const [getReservationCategories, { data: categories, isLoading }] = useLazyGetBookingCategoriesQuery()
+    const [getReservationCategories, { data: categories, isFetching }] = useLazyGetBookingCategoriesQuery()
     const selectedCategory = useSelector(getSelectedCategory)
     useReservationButton({ dependency: [selectedCategory], step, isRequired })
 
@@ -21,7 +21,7 @@ const ReservationCategorySelect = ({ step, isRequired = false }) => {
         <Dropdown
             label="Typ vyšetření"
             value={selectedCategory}
-            isLoading={isLoading}
+            isLoading={isFetching}
             onChange={(e) => dispatch(setSelectedCategory(e.target.value))}
             options={categories}
         />

@@ -7,11 +7,12 @@ import cs from 'date-fns/locale/cs'
 import './css/custom-calendar.css'
 
 import useCalendar from '../../../hooks/useCalendar'
-import { Box, Fade, useTheme } from '@mui/material'
+import { Box, CircularProgress, Fade, useTheme } from '@mui/material'
 import {
     AdministrationCalendarToolbar,
     AdministrationCalendarEvent,
     AdministrationEventDetail,
+    AdministrationCreateCalendarEvent,
 } from './components'
 import { isNilOrEmpty } from '../../../utils'
 
@@ -61,6 +62,7 @@ const AdministrationCalendar = () => {
     const {
         newAppointmentDate,
         openEventDialogEvent,
+        isLoadingEventsForSelectedView,
         events,
         draggedEvent,
         moveEvent,
@@ -73,9 +75,10 @@ const AdministrationCalendar = () => {
         handleToggleCreationModal,
     } = useCalendar()
     const theme = useTheme()
+
     return (
         <Fade in timeout={{ enter: 1000 }}>
-            <Box>
+            <Box className={isLoadingEventsForSelectedView ? 'loading' : null} sx={{ zIndex: '1000' }}>
                 <DragAndDropCalendar
                     formats={calendarFormats}
                     onEventDrop={moveEvent}
@@ -111,8 +114,9 @@ const AdministrationCalendar = () => {
                         }
                     }}
                     startAccessor="start"
-                    selectable={false}
+                    selectable
                     resizable={false}
+                    onSelecting={() => false}
                     onSelectEvent={onSelectEvent}
                     onSelectSlot={onSelectSlot}
                     components={{
@@ -124,11 +128,19 @@ const AdministrationCalendar = () => {
                     style={{ height: '100vh', margin: 8 }}
                     longPressThreshold={10}
                 />
-                {/* <CalendarViewCreateEventDialog
+                {isLoadingEventsForSelectedView && (
+                    <Fade in timeout={{ enter: 1000 }}>
+                        <CircularProgress
+                            size={100}
+                            sx={{ zIndex: '1200', position: 'fixed', top: '50vh', left: '50vw' }}
+                        />
+                    </Fade>
+                )}
+                <AdministrationCreateCalendarEvent
                     open={!isNilOrEmpty(newAppointmentDate)}
                     handleClose={handleToggleCreationModal}
                     data={newAppointmentDate}
-                /> */}
+                />
                 <AdministrationEventDetail
                     event={openEventDialogEvent}
                     handleClose={() => handleOpenEventDialog(null)}

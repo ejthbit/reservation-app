@@ -10,8 +10,7 @@ export const ambulancesAPI = createApi({
     endpoints: (builder) => ({
         getAmbulances: builder.query({
             query: () => `${ID}/getAmbulances`,
-            transformResponse: (response) =>
-                makeArrayOfLabelValue('name', 'workplace_id', response.data),
+            transformResponse: (response) => makeArrayOfLabelValue('name', 'workplace_id', response.data),
         }),
     }),
 })
@@ -22,8 +21,7 @@ export const bookingCategoriesAPI = createApi({
     endpoints: (builder) => ({
         getBookingCategories: builder.query({
             query: () => `${ID}/getBookingCategories`,
-            transformResponse: (response) =>
-                makeArrayOfLabelValue('name', 'category_id', response.data),
+            transformResponse: (response) => makeArrayOfLabelValue('name', 'category_id', response.data),
         }),
     }),
 })
@@ -34,8 +32,7 @@ export const doctorsForSelectedAmbulanceAPI = createApi({
     endpoints: (builder) => ({
         getDoctorsForSelectedAmbulance: builder.query({
             query: (ambulanceId) => `${ID}/getDoctors/${ambulanceId}`,
-            transformResponse: (response) =>
-                makeArrayOfLabelValue('name', 'doctor_id', response.data),
+            transformResponse: (response) => makeArrayOfLabelValue('name', 'doctor_id', response.data),
         }),
     }),
 })
@@ -63,15 +60,31 @@ export const doctorServicesAPI = createApi({
                 method: 'GET',
             }),
         }),
+        createServiceForMonth: builder.mutation({
+            query: (data) => ({
+                url: `/administration/doctorService`,
+                method: 'POST',
+                data,
+            }),
+        }),
+        updateServiceForMonth: builder.mutation({
+            query: ({ month, workplace, days }) => ({
+                url: `/administration/doctorService/${month}/${workplace}`,
+                method: 'PUT',
+                data: { days },
+            }),
+        }),
     }),
 })
 
 export const { useGetAmbulancesQuery, useLazyGetAmbulancesQuery } = ambulancesAPI
 export const { useGetBookingCategories, useLazyGetBookingCategoriesQuery } = bookingCategoriesAPI
-export const {
-    useGetDoctorsForSelectedAmbulanceQuery,
-    useLazyGetDoctorsForSelectedAmbulanceQuery,
-} = doctorsForSelectedAmbulanceAPI
+export const { useGetDoctorsForSelectedAmbulanceQuery, useLazyGetDoctorsForSelectedAmbulanceQuery } =
+    doctorsForSelectedAmbulanceAPI
 export const { usePostContactMessage } = contactMessageAPI
-export const { useGetDoctorServicesForMonthQuery, useLazyGetDoctorServicesForMonthQuery } =
-    doctorServicesAPI
+export const {
+    useGetDoctorServicesForMonthQuery,
+    useLazyGetDoctorServicesForMonthQuery,
+    useCreateServiceForMonthMutation,
+    useUpdateServiceForMonthMutation,
+} = doctorServicesAPI

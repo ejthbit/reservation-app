@@ -3,7 +3,7 @@ import getDateWithCorrectOffset from './getDateWithCorrectOffset'
 import isNilOrEmpty from './isNilOrEmpty'
 
 const makeCalendarEventsFromBookings = (bookings) =>
-    map(({ id, name, start, end, birthdate, contact, category, completed }) => {
+    map(({ id, name, start, end, birthdate, contact, category, completed, note = '' }) => {
         return {
             id,
             start: getDateWithCorrectOffset(start),
@@ -14,6 +14,7 @@ const makeCalendarEventsFromBookings = (bookings) =>
                 phone: contact?.phone,
                 category,
                 completed,
+                note,
             },
         }
     }, bookings)

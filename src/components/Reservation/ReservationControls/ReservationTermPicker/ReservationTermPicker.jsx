@@ -59,8 +59,9 @@ const ReservationTermPicker = ({ step }) => {
                 return equals(date, selectedDate)
             }
         }, doctorServicesBySelectedDoctorIdAndMonth)
+        console.log(doctorsServicesForSelectedAmbulance)
         const servingDoctor = !isNilOrEmpty(selectedDoctor)
-            ? servesItem?.doctors.find(propEq('doctorId', Number(selectedDoctor)))
+            ? servesItem?.doctors.find(propEq('doctorId', selectedDoctor))
             : servesItem?.doctors
         if (!isNilOrEmpty(servingDoctor)) {
             dispatch(clearTimeSlots())

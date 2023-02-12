@@ -96,11 +96,11 @@ const useCalendar = () => {
     const selectedAmbulanceId = useSelector(getUserConfigurationSelectedAmbulance)
 
     const [updateBooking] = useUpdateBookingMutation()
-    const [getBookings, { data: bookings = [] }] = useLazyGetBookingsQuery()
+    const [getBookings, { data: bookings = [], isFetching: isLoadingEventsForSelectedView }] =
+        useLazyGetBookingsQuery()
 
     //TODO: Replace mockBookings => bookings REAL DATA
-    const events = useMemo(() => makeCalendarEventsFromBookings(mockBookings), [bookingsViewDate])
-
+    const events = useMemo(() => makeCalendarEventsFromBookings(bookings), [bookingsViewDate, bookings])
     const handleOpenEventDialog = (existingEvent) => setOpenEventDialogEvent(existingEvent)
     const handleToggleCreationModal = () => setNewAppointmentDate({})
 
@@ -108,18 +108,13 @@ const useCalendar = () => {
 
     const onSelectSlot = ({ action, slots }) => {
         const timeSlotStart = slots[0] // start date/time of the event
-        const timeSlotEnd = slots[slots.length - 1]
-        return equals(action, 'click')
-            ? setNewAppointmentDate({
-                  start: getISODateStringWithCorrectOffset(timeSlotStart),
-                  end: getISODateStringWithCorrectOffset(
-                      addMinutes(timeSlotStart, import.meta.env.VITE_APPOINTMENT_DURATION)
-                  ),
-              })
-            : setNewAppointmentDate({
-                  start: getISODateStringWithCorrectOffset(timeSlotStart),
-                  end: getISODateStringWithCorrectOffset(timeSlotEnd),
-              })
+        if (equals(action, 'click'))
+            setNewAppointmentDate({
+                start: getISODateStringWithCorrectOffset(timeSlotStart),
+                end: getISODateStringWithCorrectOffset(
+                    addMinutes(timeSlotStart, import.meta.env.VITE_APPOINTMENT_DURATION)
+                ),
+            })
     }
     const handleDragStart = (event) => setDraggedEvent(event)
 
@@ -149,6 +144,7 @@ const useCalendar = () => {
     return {
         openEventDialogEvent,
         newAppointmentDate,
+        isLoadingEventsForSelectedView,
         events,
         draggedEvent,
         moveEvent,

@@ -1,3 +1,6 @@
 export { default as AdministrationCalendarEvent } from './AdministrationCalendarEvent'
 export { default as AdministrationCalendarToolbar } from './AdministrationCalendarToolbar'
+export { default as AdministrationCreateCalendarEvent } from './AdministrationCreateCalendarEvent'
 export { default as AdministrationEventDetail } from './AdministrationEventDetail'
+export { default as AdministrationServicesEntryMenu } from './AdministrationServicesEntryMenu'
+export { default as AdministrationServicesTable } from './AdministrationServicesTable'

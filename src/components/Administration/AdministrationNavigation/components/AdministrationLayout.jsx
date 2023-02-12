@@ -10,7 +10,6 @@ const AdministrationLayout = ({ isDrawerOpen }) => {
             sx={(theme) => ({
                 height: `calc(100vh - 64px)`,
                 display: 'flex',
-                justifyContent: 'center',
                 ml: isDrawerOpen ? `${drawerWidth}px` : 7,
                 mt: 8,
                 flexGrow: 1,
