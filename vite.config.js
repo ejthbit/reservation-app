@@ -7,14 +7,22 @@ export default defineConfig({
         react(),
         eslint(),
         federation({
-            name: 'home',
-            filename: 'homepage.js',
+            name: 'reservation-app',
+            filename: 'remoteEntry.js',
             exposes: {
                 './Button': './src/components/Reservation/ReservationButton/ReservationButton.jsx',
-                './Home': './src/components/Home.jsx',
                 './ReservationDialog': './src/components/Reservation/ReservationDialog/ReservationDialog.jsx',
             },
-            shared: ['react'],
+            remotes: {
+                app: {
+                    external: `http://127.0.0.1:5001/assets/app.js`,
+                    from: 'vite',
+                    externalType: 'url',
+                },
+            },
+            shared: {
+                react: { singleton: true, requiredVersion: '*' },
+            },
         }),
     ],
     preview: {

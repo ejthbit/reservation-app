@@ -1,5 +1,5 @@
 import { ArrowBack } from '@mui/icons-material'
-import { Box, Button, Fade, Grid, styled, TextField, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, Fade, Grid, styled, TextField, Typography } from '@mui/material'
 import { MobileDatePicker } from '@mui/x-date-pickers'
 import { format, getMonth, getYear } from 'date-fns'
 import { useSnackbar } from 'notistack'
@@ -26,7 +26,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
 }))
 const AdministrationServices = () => {
     const selectedAmbulanceId = useSelector(getUserConfigurationSelectedAmbulance)
-    const [fetchDoctorServicesForSelectedMonth] = useLazyGetDoctorServicesForMonthQuery()
+    const [fetchDoctorServicesForSelectedMonth, { isFetching }] = useLazyGetDoctorServicesForMonthQuery()
 
     const d = new Date()
     const [selectedAction, setSelectedAction] = useState(0)
@@ -148,6 +148,14 @@ const AdministrationServices = () => {
                             selectedWorkplaceId={selectedAmbulanceId}
                         />
                     </Grid>
+                )}
+                {isFetching && (
+                    <Fade in timeout={{ enter: 1000 }}>
+                        <CircularProgress
+                            size={100}
+                            sx={{ zIndex: '1200', position: 'fixed', top: '50vh', left: '50vw' }}
+                        />
+                    </Fade>
                 )}
             </Box>
         </Fade>

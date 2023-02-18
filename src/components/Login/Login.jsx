@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { withTheme } from '../../hoc'
 import { getAuthInfo } from '../../store/userInfo'
 import { LoginPage, RegistrationPage } from './index'
 
@@ -40,4 +41,4 @@ Login.propTypes = {
     adminPath: PropTypes.string,
 }
 
-export default Login
+export default withTheme(Login)

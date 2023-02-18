@@ -1,4 +1,4 @@
-import { TextField } from '@mui/material'
+import { CircularProgress, MenuItem, TextField } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import clsx from 'clsx'
 import PropTypes from 'prop-types'
@@ -27,6 +27,7 @@ const FormSelectInput = ({
     disabled,
     className,
     displayEmpty,
+    isLoading = false,
     ...otherTextFieldProps
 }) => {
     const {
@@ -36,8 +37,8 @@ const FormSelectInput = ({
         name,
         control,
         defaultValue: '',
+        rules: { validate: (value) => console.log(value) },
     })
-
     return (
         <StyledTextField
             select
@@ -56,6 +57,11 @@ const FormSelectInput = ({
             {...inputProps}
             {...otherTextFieldProps}
         >
+            {isLoading && (
+                <MenuItem key="loading" value="loading" disabled>
+                    <CircularProgress size={20} />
+                </MenuItem>
+            )}
             {children}
         </StyledTextField>
     )

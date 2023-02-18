@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
 import * as React from 'react'
 import { IconButton, MenuItem, Menu } from '@mui/material'
-import { Delete, MoreVert } from '@mui/icons-material'
+import { Add, Delete, MoreVert } from '@mui/icons-material'
 const ITEM_HEIGHT = 48
-const AdministrationServicesEntryMenu = ({ onDelete, disabled }) => {
+const AdministrationServicesEntryMenu = ({ onDelete, onAssign, disabled, disabledAdd }) => {
     const [anchorEl, setAnchorEl] = React.useState(null)
     const open = Boolean(anchorEl)
 
@@ -41,6 +41,10 @@ const AdministrationServicesEntryMenu = ({ onDelete, disabled }) => {
                 <MenuItem onClick={onDelete} disableRipple disabled={disabled}>
                     <Delete />
                     Smazat
+                </MenuItem>
+                <MenuItem onClick={onAssign} disableRipple disabled={disabledAdd}>
+                    <Add />
+                    Přidat doktora
                 </MenuItem>
             </Menu>
         </div>

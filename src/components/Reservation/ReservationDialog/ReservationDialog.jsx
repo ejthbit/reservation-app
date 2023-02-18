@@ -8,6 +8,7 @@ import {
     ReservationDialogActions,
     ReservationStepper,
 } from './components'
+import { withTheme } from '../../../hoc'
 const ReservationDialog = ({ isOpen, onClose }) => {
     return (
         <Provider store={store}>
@@ -32,4 +33,4 @@ ReservationDialog.propTypes = {
     onClose: PropTypes.func.isRequired,
 }
 
-export default ReservationDialog
+export default withTheme(ReservationDialog)

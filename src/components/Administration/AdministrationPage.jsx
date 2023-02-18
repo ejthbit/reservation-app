@@ -14,7 +14,7 @@ const AdministrationPage = () => {
             adapterLocale={cs}
             localeText={{ okButtonLabel: 'Potvrdit', cancelButtonLabel: 'Zavřít' }}
         >
-            <SnackbarProvider maxSnack={3}>
+            <SnackbarProvider maxSnack={3} autoHideDuration={3000}>
                 <Routes>
                     <Route path="/" element={<AdministrationNavigation />}>
                         <Route path="/" element={<AdministrationWelcome />} />
