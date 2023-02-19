@@ -3,6 +3,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import cs from 'date-fns/locale/cs'
 import { SnackbarProvider } from 'notistack'
 import { Route, Routes } from 'react-router-dom'
+import { withTheme } from '../../hoc'
 import { NotMatch } from '../common'
 import AdministrationNavigation from './AdministrationNavigation/AdministrationNavigation'
 import { AdministrationWelcome, AdministrationCalendar, AdministrationServices } from './Pages'
@@ -28,4 +29,4 @@ const AdministrationPage = () => {
     )
 }
 
-export default AdministrationPage
+export default withTheme(AdministrationPage)

@@ -60,6 +60,12 @@ export const doctorServicesAPI = createApi({
                 method: 'GET',
             }),
         }),
+        getDoctorServicesByRange: builder.query({
+            query: ({ start, end, workplace }) => ({
+                url: `/bookings/getDoctorServicesByRange/${start}/${end}/${workplace}`,
+                method: 'GET',
+            }),
+        }),
         createServiceForMonth: builder.mutation({
             query: (data) => ({
                 url: `/administration/doctorService`,
@@ -87,4 +93,5 @@ export const {
     useLazyGetDoctorServicesForMonthQuery,
     useCreateServiceForMonthMutation,
     useUpdateServiceForMonthMutation,
+    useLazyGetDoctorServicesByRangeQuery,
 } = doctorServicesAPI

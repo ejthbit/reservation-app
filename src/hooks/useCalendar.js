@@ -4,7 +4,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { getBookingsSelectedDate, getUserConfigurationSelectedAmbulance } from '../store/administration'
 import { useLazyGetBookingsQuery, useUpdateBookingMutation } from '../store/administration/services'
-import { getISODateStringWithCorrectOffset, isNilOrEmpty, makeCalendarEventsFromBookings } from '../utils'
+import { useLazyGetDoctorServicesByRangeQuery } from '../store/reservationProcess'
+import {
+    getISODateStringWithCorrectOffset,
+    isNilOrEmpty,
+    makeCalendarEventsFromBookings,
+    getDateWithCorrectOffset,
+} from '../utils'
 const mockBookings = [
     {
         id: 1,
@@ -85,6 +91,70 @@ const mockBookings = [
         completed: false,
     },
 ]
+const hourlyIntervals = (arr) =>
+    arr.map((obj) => {
+        const start = getDateWithCorrectOffset(obj.start)
+        const end = getDateWithCorrectOffset(obj.end)
+
+        const diffInMs = end - start
+        const diffInHrs = diffInMs / (1000 * 60 * 60)
+
+        const intervals = []
+        for (let i = 0; i < diffInHrs; i++) {
+            const intervalStart = getISODateStringWithCorrectOffset(
+                new Date(start.getTime() + i * 60 * 60 * 1000)
+            )
+            const intervalEnd = getISODateStringWithCorrectOffset(
+                new Date(start.getTime() + (i + 1) * 60 * 60 * 1000)
+            )
+            intervals.push({ start: intervalStart, end: intervalEnd })
+        }
+
+        return intervals
+    })
+
+//   // Flatten the array of arrays into a single array
+const flattenedIntervals = (arr) => [].concat(...hourlyIntervals(arr))
+
+const removeContainedEntries = (array1, array2) => {
+    return array1.filter((entry1) => {
+        return !array2.some((entry2) => {
+            return entry1.start >= entry2.start && entry1.end <= entry2.end
+        })
+    })
+}
+function generateHourlyIntervals(startDate, endDate) {
+    const startDateTime = new Date(startDate + 'T07:00:00')
+    const endDateTime = new Date(endDate + 'T19:00:00')
+
+    const intervals = []
+    let currentDateTime = startDateTime
+
+    while (currentDateTime < endDateTime) {
+        if (currentDateTime.getHours() < 7) {
+            currentDateTime.setHours(7)
+            currentDateTime.setMinutes(0)
+            currentDateTime.setSeconds(0)
+            currentDateTime.setMilliseconds(0)
+        }
+        if (currentDateTime.getHours() >= 19) {
+            currentDateTime.setDate(currentDateTime.getDate() + 1)
+            currentDateTime.setHours(7)
+            currentDateTime.setMinutes(0)
+            currentDateTime.setSeconds(0)
+            currentDateTime.setMilliseconds(0)
+        }
+
+        intervals.push({
+            start: getISODateStringWithCorrectOffset(new Date(currentDateTime)),
+            end: getISODateStringWithCorrectOffset(new Date(currentDateTime.getTime() + 60 * 60 * 1000)),
+        })
+
+        currentDateTime = new Date(currentDateTime.getTime() + 60 * 60 * 1000)
+    }
+
+    return intervals
+}
 
 const useCalendar = () => {
     const [draggedEvent, setDraggedEvent] = useState(null)
@@ -98,10 +168,22 @@ const useCalendar = () => {
     const [updateBooking] = useUpdateBookingMutation()
     const [getBookings, { data: bookings = [], isFetching: isLoadingEventsForSelectedView }] =
         useLazyGetBookingsQuery()
+    const [fetchDoctorServicesByRange, { currentData: servicesDays = [] }] =
+        useLazyGetDoctorServicesByRangeQuery()
 
     //TODO: Replace mockBookings => bookings REAL DATA
     const events = useMemo(() => makeCalendarEventsFromBookings(bookings), [bookingsViewDate, bookings])
-    const handleOpenEventDialog = (existingEvent) => setOpenEventDialogEvent(existingEvent)
+
+    const blockedEvents = useMemo(() => {
+        const timesToBlock = removeContainedEntries(
+            generateHourlyIntervals(from?.slice(0, 10), to?.slice(0, 10)),
+            flattenedIntervals(servicesDays)
+        )
+        return makeCalendarEventsFromBookings(timesToBlock, true)
+    }, [bookingsViewDate, servicesDays])
+
+    const handleOpenEventDialog = (existingEvent) =>
+        !existingEvent?.resource?.blocked && setOpenEventDialogEvent(existingEvent)
     const handleToggleCreationModal = () => setNewAppointmentDate({})
 
     const onSelectEvent = (event) => handleOpenEventDialog(event)
@@ -137,15 +219,17 @@ const useCalendar = () => {
     }
 
     useEffect(() => {
-        if (!isNilOrEmpty(from) && !isNilOrEmpty(to))
+        if (!isNilOrEmpty(from) && !isNilOrEmpty(to)) {
             getBookings({ from, to, workplace: selectedAmbulanceId })
+            fetchDoctorServicesByRange({ start: from, end: to, workplace: selectedAmbulanceId })
+        }
     }, [bookingsViewDate, selectedAmbulanceId])
 
     return {
         openEventDialogEvent,
         newAppointmentDate,
         isLoadingEventsForSelectedView,
-        events,
+        events: [...events, ...blockedEvents],
         draggedEvent,
         moveEvent,
         handleDragStart,

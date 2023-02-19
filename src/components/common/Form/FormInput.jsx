@@ -18,7 +18,6 @@ const FormInput = ({ control, name, disabled, className, ...otherTextFieldProps 
         control,
         defaultValue: '',
     })
-
     return (
         <TextField
             variant="standard"

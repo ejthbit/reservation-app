@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 const NotMatch = () => (
     <Fade in timeout={{ enter: 600 }}>
-        <Box display="flex" flexDirection="column" alignItems="center">
+        <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="100%">
             <Typography variant="h1">404</Typography>
             <Typography>Stránka, kterou jste hledali, zřejmě neexistuje.</Typography>
             <Button component={Link} to="/">

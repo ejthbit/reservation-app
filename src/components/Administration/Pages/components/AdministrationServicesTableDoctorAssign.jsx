@@ -17,7 +17,7 @@ const openingHours = Array(24)
 const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date, register, trigger }) => {
     const selectedAmbulanceId = useSelector(getUserConfigurationSelectedAmbulance)
 
-    const { data: doctorsForSelectedAmbulance, isFetching } =
+    const { currentData: doctorsForSelectedAmbulance, isFetching } =
         useGetDoctorsForSelectedAmbulanceQuery(selectedAmbulanceId)
     const { fields, append, remove, update } = useFieldArray({
         control,
@@ -76,7 +76,6 @@ const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date,
                         <FormSelectInput
                             name={`data.${idx}.doctors.${index}.start`}
                             control={control}
-                            register={register}
                             fullWidth
                             required
                         >

@@ -99,6 +99,11 @@ const AdministrationCalendar = () => {
                         return {
                             className: 'slot',
                             style: {
+                                ...(event?.resource?.blocked && {
+                                    backgroundColor: 'grey',
+                                    color: 'linen',
+                                    opacity: 1,
+                                }),
                                 ...(event?.resource?.completed && {
                                     backgroundColor: 'dimgrey',
                                     color: 'linen',
@@ -107,9 +112,7 @@ const AdministrationCalendar = () => {
                                 }),
                                 color: '#fff',
                                 borderRadius: 0,
-                                background: event?.resource?.completed
-                                    ? theme.palette.success.light
-                                    : theme.palette.primary.main,
+                                background: event?.resource?.blocked ? 'grey' : theme.palette.primary.main,
                             },
                         }
                     }}

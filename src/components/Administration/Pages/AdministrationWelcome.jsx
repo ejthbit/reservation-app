@@ -7,7 +7,11 @@ const AdministrationWelcome = () => {
 
     return (
         <Fade in timeout={{ enter: 600 }}>
-            <Typography variant="h4" align="center" sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Typography
+                variant="h4"
+                align="center"
+                sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}
+            >
                 <span>Vítejte</span>
                 {name}
             </Typography>

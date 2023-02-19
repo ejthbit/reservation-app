@@ -5,30 +5,45 @@ import PropTypes from 'prop-types'
 import { map } from 'ramda'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import * as yup from 'yup'
 import VALIDATION_MESSAGES from '../../../../constants/validationMessages'
-import { fastBooking } from '../../../../store/administration/administrationSlice'
+import { getUserConfigurationSelectedAmbulance } from '../../../../store/administration'
+import { useFastBookingMutation } from '../../../../store/administration/services'
 import { useLazyGetBookingCategoriesQuery } from '../../../../store/reservationProcess'
+import { getUserInfo } from '../../../../store/userInfo'
 import { getDateWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
 import VALIDATION_PATTERNS from '../../../../utils/validationPatterns'
 import { DialogButtons, FormInput, FormSelectInput } from '../../../common'
 
-const formValidationSchema = yup.object().shape({
+const formValidationSchema = yup.object({
     name: yup.string().required(VALIDATION_MESSAGES.IS_REQUIRED_FIELD),
     category: yup.number().required(VALIDATION_MESSAGES.IS_REQUIRED_FIELD),
-    contact: yup.object().shape({
-        email: yup.string().email(VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT),
-        phone: yup
-            .string()
-            .matches(VALIDATION_PATTERNS.TEL, VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT)
-            .min(9),
-    }),
+    contact: yup
+        .object({
+            email: yup.string().email(VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT).notRequired().nullable(),
+            phone: yup.string().when('$exists', {
+                is: (exists) => exists,
+                then: yup
+                    .string()
+                    .matches(
+                        VALIDATION_PATTERNS.TEL,
+                        { message: VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT, excludeEmptyString: true },
+                        VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT
+                    )
+                    .min(9, 'Hodnota musí mít minimálně 9 číslic.'),
+                otherwise: yup.string().nullable().notRequired(),
+            }),
+        })
+        .notRequired(),
 })
 const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) => {
     const { start, end } = data
-    const dispatch = useDispatch()
     const [getReservationCategories, { currentData: categories }] = useLazyGetBookingCategoriesQuery()
+    const [createFastBooking, { data: fastBookingData }] = useFastBookingMutation()
+    const selectedAmbulanceId = useSelector(
+        (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace
+    )
 
     const {
         handleSubmit,
@@ -36,7 +51,7 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
         reset,
         formState: { isDirty, isValid },
     } = useForm({
-        mode: 'onChange',
+        mode: 'onSubmit',
         reValidateMode: 'onChange',
         resolver: yupResolver(formValidationSchema),
         defaultValues: {
@@ -49,8 +64,13 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
             note: '',
         },
     })
+
     const onCreate = async (bookingValues) => {
-        const { error } = await dispatch(fastBooking({ ...bookingValues, ...data }))
+        const { error } = await createFastBooking({
+            ...bookingValues,
+            ...data,
+            workplace: selectedAmbulanceId,
+        }).unwrap()
         if (!error) {
             reset()
             handleClose()

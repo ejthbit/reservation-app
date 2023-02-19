@@ -14,6 +14,9 @@ export const bookingsAPI = createApi({
                     method: 'GET',
                 }
             },
+            // providesTags: ['Booking'],
+            providesTags: (result, error, arg) =>
+                result ? [...result.map(({ id }) => ({ type: 'Booking', id })), 'Booking'] : ['Booking'],
             // async onQueryStarted(_, { dispatch, queryFulfilled }) {
             //     try {
             //         const { data } = await queryFulfilled
@@ -23,6 +26,23 @@ export const bookingsAPI = createApi({
             //         return console.error('There was an error while logIn as current user.')
             //     }
             // },
+        }),
+        fastBooking: builder.mutation({
+            query: ({ name, start, end, category, contact = null, note = null, workplace }) => ({
+                url: `bookings/booking`,
+                method: 'POST',
+                data: {
+                    name,
+                    birthDate: new Date().toISOString().slice(0, 10),
+                    start,
+                    end,
+                    workplace,
+                    contact,
+                    category,
+                    ...(note && { note }),
+                },
+            }),
+            invalidatesTags: ['Booking'],
         }),
         updateBooking: builder.mutation({
             query: (updatedData) => ({
@@ -36,8 +56,14 @@ export const bookingsAPI = createApi({
                 url: `bookings/booking/${bookingId}`,
                 method: 'DELETE',
             }),
+            invalidatesTags: (result, error, arg) => [{ type: 'Booking', id: arg.originalArgs }],
         }),
     }),
 })
 
-export const { useLazyGetBookingsQuery, useUpdateBookingMutation, useDeleteBookingMutation } = bookingsAPI
+export const {
+    useLazyGetBookingsQuery,
+    useUpdateBookingMutation,
+    useDeleteBookingMutation,
+    useFastBookingMutation,
+} = bookingsAPI

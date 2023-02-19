@@ -65,7 +65,9 @@ const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }) => {
                 <Grid container item xs={12} justifyContent="space-between" spacing={2}>
                     <Grid item xs={12} md={6}>
                         <Typography variant="body1" align="left">
-                            {`Počet objednaných pacientek na tento ${VIEW_TRANSLATIONS[viewState]}: ${events.length} `}
+                            {`Počet objednaných pacientek na tento ${VIEW_TRANSLATIONS[viewState]}: ${
+                                events.filter(({ resource }) => !resource?.blocked).length
+                            } `}
                         </Typography>
                     </Grid>
                     <Grid item xs={12} md={6}>

@@ -29,7 +29,6 @@ export const StyledCell = styled(TableCell)(() => ({
     borderBottom: 'none',
 }))
 
-// TODO: Do not filter out currentValue if exists
 export const getTimeValuesToFilterOut = (rowArray, originalArray = [], currentValue) => {
     const deepCopy = [...rowArray]
     const newArray = deepCopy.reduce((acc, { start, end }) => {
@@ -54,7 +53,7 @@ export const getTimeValuesToFilterOut = (rowArray, originalArray = [], currentVa
             let hour = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             hours.push(hour)
         }
-        return [start, ...hours, end]
+        return [start, ...hours]
     })
     const result = updatedTimeArray
 
