@@ -97,7 +97,7 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
     const [createService] = useCreateServiceForMonthMutation()
     const [updateService] = useUpdateServiceForMonthMutation()
 
-    const { handleSubmit, control, setValue, reset, register, trigger } = useForm({
+    const { handleSubmit, control, setValue, reset, trigger } = useForm({
         mode: 'onChange',
         resolver: yupResolver(validationSchema),
 
@@ -145,14 +145,19 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
         <Fade in timeout={{ enter: 500 }}>
             <TableContainer
                 component={Paper}
-                sx={{ boxShadow: 'none', width: '100%', marginTop: 2, marginBottom: 2 }}
+                sx={{
+                    width: '100%',
+                    marginTop: 2,
+                    marginBottom: 2,
+                    borderRadius: 2,
+                    boxShadow: 0,
+                    bgcolor: '#F9F9FB',
+                }}
             >
                 <Table size="medium">
                     <TableHead
                         sx={(theme) => ({
-                            borderBottom: '1px solid #e0e0e0',
-                            borderTop: '1px solid #e0e0e0',
-                            padding: theme.spacing(1),
+                            padding: theme.spacing(2),
                             fontWeight: 600,
                         })}
                     >
@@ -200,7 +205,6 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
                                                 date={date}
                                                 setValue={setValue}
                                                 idx={idx}
-                                                register={register}
                                                 trigger={trigger}
                                             />
                                         </TableBody>

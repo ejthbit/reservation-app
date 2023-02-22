@@ -1,5 +1,14 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Typography } from '@mui/material'
+import {
+    Box,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    LinearProgress,
+    MenuItem,
+    Typography,
+} from '@mui/material'
 import { format } from 'date-fns'
 import PropTypes from 'prop-types'
 import { map } from 'ramda'
@@ -40,7 +49,7 @@ const formValidationSchema = yup.object({
 const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) => {
     const { start, end } = data
     const [getReservationCategories, { currentData: categories }] = useLazyGetBookingCategoriesQuery()
-    const [createFastBooking, { data: fastBookingData }] = useFastBookingMutation()
+    const [createFastBooking, { isLoading: isCreatingBooking }] = useFastBookingMutation()
     const selectedAmbulanceId = useSelector(
         (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace
     )
@@ -65,20 +74,19 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
         },
     })
 
-    const onCreate = async (bookingValues) => {
-        const { error } = await createFastBooking({
-            ...bookingValues,
-            ...data,
-            workplace: selectedAmbulanceId,
-        }).unwrap()
-        if (!error) {
-            reset()
-            handleClose()
-        }
-    }
     const onClose = () => {
         reset()
         handleClose()
+    }
+
+    const onCreate = async (bookingValues) => {
+        await createFastBooking({
+            ...bookingValues,
+            ...data,
+            workplace: selectedAmbulanceId,
+        })
+            .unwrap()
+            .then((payload) => payload && onClose())
     }
 
     useEffect(() => {
@@ -145,15 +153,19 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
                         fullWidth
                     />
                 </DialogContent>
-                <DialogActions>
-                    <DialogButtons
-                        onSecondaryClick={onClose}
-                        secondaryLabel="Zavřit"
-                        primaryLabel="Vytvořit novou objednávku"
-                        onPrimaryClick={handleSubmit(onCreate)}
-                        disabledPrimary={!isDirty || !isValid}
-                    />
-                </DialogActions>
+                {isCreatingBooking ? (
+                    <LinearProgress />
+                ) : (
+                    <DialogActions>
+                        <DialogButtons
+                            onSecondaryClick={onClose}
+                            secondaryLabel="Zavřit"
+                            primaryLabel="Vytvořit novou objednávku"
+                            onPrimaryClick={handleSubmit(onCreate)}
+                            disabledPrimary={!isDirty || !isValid}
+                        />
+                    </DialogActions>
+                )}
             </Dialog>
         )
     )

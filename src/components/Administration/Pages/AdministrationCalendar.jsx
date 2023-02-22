@@ -7,7 +7,7 @@ import cs from 'date-fns/locale/cs'
 import './css/custom-calendar.css'
 
 import useCalendar from '../../../hooks/useCalendar'
-import { Box, CircularProgress, Fade, useTheme } from '@mui/material'
+import { Box, CircularProgress, Fade, Typography, useTheme } from '@mui/material'
 import {
     AdministrationCalendarToolbar,
     AdministrationCalendarEvent,
@@ -78,7 +78,13 @@ const AdministrationCalendar = () => {
 
     return (
         <Fade in timeout={{ enter: 1000 }}>
-            <Box className={isLoadingEventsForSelectedView ? 'loading' : null} sx={{ zIndex: '1000' }}>
+            <Box
+                className={isLoadingEventsForSelectedView ? 'loading' : null}
+                sx={{ zIndex: '1000', width: '100%' }}
+            >
+                <Typography variant="h2" fontWeight={600} sx={{ marginBottom: 1 }}>
+                    Kalendář
+                </Typography>
                 <DragAndDropCalendar
                     formats={calendarFormats}
                     onEventDrop={moveEvent}
@@ -128,7 +134,7 @@ const AdministrationCalendar = () => {
                     }}
                     step={import.meta.env.VITE_APPOINTMENT_DURATION}
                     endAccessor="end"
-                    style={{ height: '100vh', margin: 8 }}
+                    style={{ margin: 8 }}
                     longPressThreshold={10}
                 />
                 {isLoadingEventsForSelectedView && (

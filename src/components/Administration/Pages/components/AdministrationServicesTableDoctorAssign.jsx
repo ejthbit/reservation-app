@@ -1,6 +1,5 @@
 import { MenuItem, TableRow } from '@mui/material'
 import { map, values } from 'ramda'
-import React from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { getUserConfigurationSelectedAmbulance } from '../../../../store/administration'
@@ -14,7 +13,7 @@ const openingHours = Array(24)
     .map((_, i) => {
         return ('0' + i + ':0' + 60 * (i % 1)).replace(/\d(\d\d)/g, '$1')
     })
-const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date, register, trigger }) => {
+const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date, trigger }) => {
     const selectedAmbulanceId = useSelector(getUserConfigurationSelectedAmbulance)
 
     const { currentData: doctorsForSelectedAmbulance, isFetching } =

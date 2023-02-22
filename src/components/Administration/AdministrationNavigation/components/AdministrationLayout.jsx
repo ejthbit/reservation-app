@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types'
-import { Box } from '@mui/material'
+import { Box, Hidden, Typography } from '@mui/material'
 import { drawerWidth } from './AdministrationDrawer'
 import { Outlet } from 'react-router-dom'
+import AdministrationPathBreadcrumbs from './AdministrationPathBreadcrumbs'
+import { format } from 'date-fns'
+import { cs } from 'date-fns/locale'
 
 const AdministrationLayout = ({ isDrawerOpen }) => {
     return (
@@ -10,10 +13,12 @@ const AdministrationLayout = ({ isDrawerOpen }) => {
             sx={(theme) => ({
                 height: `calc(100vh - 64px)`,
                 display: 'flex',
+                flexDirection: 'column',
+                backgroundColor: '#FFF',
                 ml: isDrawerOpen ? `${drawerWidth}px` : 7,
-                mt: 8,
                 flexGrow: 1,
-                p: 3,
+                p: 6,
+                pt: 3,
                 transition: !isDrawerOpen
                     ? theme.transitions.create('margin', {
                           easing: theme.transitions.easing.sharp,
@@ -25,6 +30,14 @@ const AdministrationLayout = ({ isDrawerOpen }) => {
                       }),
             })}
         >
+            <Box display="flex" mb={4}>
+                <AdministrationPathBreadcrumbs />
+                <Hidden smDown>
+                    <Typography sx={{ color: '#000' }}>
+                        {format(new Date(), 'PPPP HH:mm', { locale: cs })}
+                    </Typography>
+                </Hidden>
+            </Box>
             <Outlet />
         </Box>
     )

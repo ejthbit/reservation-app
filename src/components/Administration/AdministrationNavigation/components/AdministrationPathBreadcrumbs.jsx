@@ -1,0 +1,40 @@
+import { Box, Breadcrumbs, Typography } from '@mui/material'
+import { Link, useLocation } from 'react-router-dom'
+
+const breadcrumbNameMap = {
+    '/orders': 'Objednávky',
+    '/services': 'Měsíční plány',
+    '/calendar': 'Kalendář',
+    '/admin': 'Přehled',
+}
+
+const LinkRouter = (props) => {
+    return <Typography sx={{ textDecoration: 'none' }} {...props} component={Link} />
+}
+
+const AdministrationPathBreadcrumbs = () => {
+    const location = useLocation()
+    const pathnames = location.pathname.split('/admin/').filter((x) => x)
+    return (
+        <Box
+            sx={{
+                flexGrow: 1,
+                '& .MuiTypography-root': {
+                    fontSize: '1.5rem',
+                },
+            }}
+        >
+            <Breadcrumbs aria-label="breadcrumb" sx={{ color: 'black' }} separator={''}>
+                {pathnames.map((value) => {
+                    return (
+                        <Typography color="black" key={value} fontWeight="600">
+                            {breadcrumbNameMap[value === '/admin' ? value : `/${value}`]}
+                        </Typography>
+                    )
+                })}
+            </Breadcrumbs>
+        </Box>
+    )
+}
+
+export default AdministrationPathBreadcrumbs

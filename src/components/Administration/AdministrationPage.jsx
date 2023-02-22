@@ -5,7 +5,7 @@ import { SnackbarProvider } from 'notistack'
 import { Route, Routes } from 'react-router-dom'
 import { withTheme } from '../../hoc'
 import { NotMatch } from '../common'
-import AdministrationNavigation from './AdministrationNavigation/AdministrationNavigation'
+import { AdministrationTopbar } from './AdministrationNavigation/components'
 import { AdministrationWelcome, AdministrationCalendar, AdministrationServices } from './Pages'
 
 const AdministrationPage = () => {
@@ -17,7 +17,7 @@ const AdministrationPage = () => {
         >
             <SnackbarProvider maxSnack={3} autoHideDuration={3000}>
                 <Routes>
-                    <Route path="/" element={<AdministrationNavigation />}>
+                    <Route path="/" element={<AdministrationTopbar />}>
                         <Route path="/" element={<AdministrationWelcome />} />
                         <Route path="/services" element={<AdministrationServices />} />
                         <Route path="/calendar" element={<AdministrationCalendar />} />

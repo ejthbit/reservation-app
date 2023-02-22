@@ -1,5 +1,15 @@
-import { ArrowBack } from '@mui/icons-material'
-import { Box, Button, CircularProgress, Fade, Grid, styled, TextField, Typography } from '@mui/material'
+import { AddBox, ArrowBack, Edit } from '@mui/icons-material'
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Fade,
+    Grid,
+    styled,
+    TextField,
+    Typography,
+    useTheme,
+} from '@mui/material'
 import { MobileDatePicker } from '@mui/x-date-pickers'
 import { format, getMonth, getYear } from 'date-fns'
 import { useSnackbar } from 'notistack'
@@ -10,21 +20,14 @@ import { getUserConfigurationSelectedAmbulance } from '../../../store/administra
 import { useLazyGetDoctorServicesForMonthQuery } from '../../../store/reservationProcess'
 import { isNilOrEmpty } from '../../../utils'
 import { getWorkDaysInMonth } from '../../../utils/getDaysUtil'
-import { AdministrationServicesTable } from './components'
-// import ServicesTable from './ServicesTable'
+import { AdministrationServiceCardButton, AdministrationServicesTable } from './components'
 
-const StyledButton = styled(Button)(({ theme }) => ({
-    width: '30vw',
-    height: '30vh',
-    fontSize: '2rem',
-    [theme.breakpoints.down('sm')]: {
-        width: '100%',
-        height: '100%',
-        flexDirection: 'column',
-        fontSize: '1.5rem',
-    },
-}))
+const actionLabel = {
+    1: 'Vytvořit nový měsíční plán',
+    2: 'Upravit měsíční plán',
+}
 const AdministrationServices = () => {
+    const theme = useTheme()
     const selectedAmbulanceId = useSelector(getUserConfigurationSelectedAmbulance)
     const [fetchDoctorServicesForSelectedMonth, { isFetching }] = useLazyGetDoctorServicesForMonthQuery()
 
@@ -85,61 +88,87 @@ const AdministrationServices = () => {
 
     return (
         <Fade in timeout={{ enter: 500 }}>
-            <Box>
+            <Box
+                sx={{
+                    width: '100%',
+                }}
+            >
                 {includes(selectedAction, [1, 2]) ? (
-                    <Grid container gap={2}>
-                        <Grid item>
-                            <Button variant="contained" color="primary" onClick={handleClearActionsWorkflow}>
-                                <ArrowBack />
-                            </Button>
+                    <Grid container>
+                        <Grid container sx={{ marginBottom: 2 }}>
+                            <Grid item>
+                                <Typography variant="h5">{actionLabel[selectedAction]}</Typography>
+                            </Grid>
                         </Grid>
-                        <Grid item>
-                            <MobileDatePicker
-                                label="Výběr měsíce: "
-                                orientation="landscape"
-                                inputFormat="MMMM, yyyy"
-                                mask="____, ____"
-                                margin="none"
-                                value={selectedMonth}
-                                onChange={(date) => handleGenerateDataForTable(date)}
-                                views={['month', 'year']}
-                                openTo="month"
-                                renderInput={(props) => <TextField {...props} variant="standard" />}
-                            />
+                        <Grid container gap={2}>
+                            <Grid item>
+                                <Button
+                                    sx={{ height: 48, textTransform: 'initial' }}
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={handleClearActionsWorkflow}
+                                    startIcon={<ArrowBack />}
+                                >
+                                    Vrátit se zpět
+                                </Button>
+                            </Grid>
+                            <Grid item>
+                                <MobileDatePicker
+                                    label="Výběr měsíce: "
+                                    orientation="landscape"
+                                    inputFormat="MMMM, yyyy"
+                                    mask="____, ____"
+                                    margin="none"
+                                    value={selectedMonth}
+                                    onChange={(date) => handleGenerateDataForTable(date)}
+                                    views={['month', 'year']}
+                                    openTo="month"
+                                    renderInput={(props) => <TextField {...props} variant="standard" />}
+                                />
+                            </Grid>
                         </Grid>
                     </Grid>
                 ) : (
-                    <Box
-                        sx={(theme) => ({
-                            display: 'flex',
-                            gap: 2,
-                            flexDirection: 'row',
-                            [theme.breakpoints.down('sm')]: {
-                                flexDirection: 'column',
-                            },
-                        })}
-                    >
-                        <Grid item>
-                            <StyledButton
-                                variant="contained"
-                                color="primary"
-                                onClick={() => handleSetActionWorkflow(1)}
-                            >
-                                Vytvořit nový rozpis
-                            </StyledButton>
-                        </Grid>
-                        <Grid item>
-                            <StyledButton
-                                variant="outlined"
-                                color="primary"
-                                onClick={() => handleSetActionWorkflow(2)}
-                            >
-                                Upravit existující rozpis
-                            </StyledButton>
-                        </Grid>
-                    </Box>
+                    <>
+                        <Typography variant="h2" fontWeight={600} sx={{ marginBottom: 1 }}>
+                            Měsíční plány
+                        </Typography>
+                        <Box
+                            sx={(theme) => ({
+                                display: 'flex',
+                                gap: 2,
+                                flexDirection: 'row',
+                                [theme.breakpoints.down('sm')]: {
+                                    flexDirection: 'column',
+                                },
+                            })}
+                        >
+                            <Grid item>
+                                <AdministrationServiceCardButton
+                                    color={theme.palette.primary.main}
+                                    icon={AddBox}
+                                    title={'Vytvořit nový měsíční plán'}
+                                    description={
+                                        'Zjednodušuje proces vytváření a správy měsíčního plánu pro vybranou ambulanci. Zjednodušuje úkol přiřazení lékařů ke každému dni a umožňuje snadnou úpravu plánu podle potřeby. Tato funkce šetří čas a zvyšuje efektivitu procesu plánování, což zajišťuje, že poskytované služby fungují hladce a efektivně.'
+                                    }
+                                    onClick={() => handleSetActionWorkflow(1)}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <AdministrationServiceCardButton
+                                    color={theme.palette.primary.main}
+                                    icon={Edit}
+                                    title={'Upravit měsíční plán'}
+                                    description={
+                                        'Zjednodušuje proces úprav měsíčního plánu pro vybranou ambulanci. Zjednodušuje úkol úpravy pracovního plánu lékařů a umožňuje snadné upravování plánu podle potřeby. Tato funkce šetří čas a zvyšuje efektivitu procesu plánování, což zajišťuje, že poskytované služby fungují hladce a efektivně.'
+                                    }
+                                    onClick={() => handleSetActionWorkflow(2)}
+                                />
+                            </Grid>
+                        </Box>
+                    </>
                 )}
-                {!isNilOrEmpty(dates) && (
+                {!isNilOrEmpty(dates) ? (
                     <Grid item xs={12}>
                         <AdministrationServicesTable
                             data={dates}
@@ -148,6 +177,21 @@ const AdministrationServices = () => {
                             selectedWorkplaceId={selectedAmbulanceId}
                         />
                     </Grid>
+                ) : (
+                    includes(selectedAction, [1, 2]) && (
+                        <Box
+                            display="flex"
+                            flexDirection="column"
+                            alignItems="center"
+                            justifyContent="center"
+                            width="100%"
+                            height="100%"
+                        >
+                            <Typography>{`Prosím vyberte měsíc, pro který ${
+                                selectedAction == 1 ? 'neexistuje' : 'existuje'
+                            } měsíční plán`}</Typography>
+                        </Box>
+                    )
                 )}
                 {isFetching && (
                     <Fade in timeout={{ enter: 1000 }}>

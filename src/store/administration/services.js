@@ -50,6 +50,7 @@ export const bookingsAPI = createApi({
                 method: 'PUT',
                 data: updatedData,
             }),
+            invalidatesTags: (result, error, arg) => [{ type: 'Booking', id: arg.originalArgs }],
         }),
         deleteBooking: builder.mutation({
             query: (bookingId) => ({
@@ -62,6 +63,7 @@ export const bookingsAPI = createApi({
 })
 
 export const {
+    useGetBookingsQuery,
     useLazyGetBookingsQuery,
     useUpdateBookingMutation,
     useDeleteBookingMutation,

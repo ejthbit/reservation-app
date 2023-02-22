@@ -1,27 +1,50 @@
-import { DateRange, Event, Home, People, Schedule } from '@mui/icons-material'
 import {
-    Box,
-    Fade,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    styled,
-    Toolbar,
-} from '@mui/material'
+    DateRange,
+    Event,
+    Home,
+    KeyboardArrowLeft,
+    KeyboardArrowRight,
+    Logout,
+    Newspaper,
+    People,
+    Schedule,
+    Settings,
+} from '@mui/icons-material'
+import { Box, Divider, Fade, styled, Toolbar, Typography } from '@mui/material'
 import MuiDrawer from '@mui/material/Drawer'
-import { equals, map } from 'ramda'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { logOut } from '../../../../store/userInfo/userInfoSlice'
+import AdministrationDrawerListItems from './AdministrationDrawerListItems'
 import AdministrationLayout from './AdministrationLayout'
 
-const adminToolbarContent = [
-    { id: 0, icon: <Home />, text: 'Home', link: '/admin' },
-    { id: 1, icon: <Event />, text: 'Objednávky', link: '/admin/orders' },
+const adminToolbarLinks = [
+    { id: 0, icon: <Home />, text: 'Přehled', link: '/admin' },
+    { id: 1, icon: <Event />, text: 'Objednávky', link: '/admin/orders', disabled: true },
     { id: 2, icon: <Schedule />, text: 'Rozpis směn', link: '/admin/services' },
     { id: 3, icon: <DateRange />, text: 'Kalendař', link: '/admin/calendar' },
-    { id: 4, icon: <People />, text: 'Zaměstnanci', link: '/admin/employees', disabled: true },
+    { id: 4, icon: <Newspaper />, text: 'Aktuality', link: '/admin/news', disabled: true },
+    { id: 5, icon: <People />, text: 'Zaměstnanci', link: '/admin/employees', disabled: true },
+]
+const getAdminToolbarToolset = (isOpen, onClose) => [
+    { id: 6, icon: <Settings />, text: 'Nastavení', link: '/admin/settings', disabled: true },
+    {
+        id: 7,
+        icon: isOpen ? <KeyboardArrowLeft /> : <KeyboardArrowRight />,
+        text: 'Skrýt panel',
+        link: '',
+        onClick: onClose,
+    },
+    {
+        id: 8,
+        icon: <Logout />,
+        text: 'Odhlásit se',
+        link: '',
+        onClick: async (dispatch, navigate) => {
+            localStorage.clear()
+            await dispatch(logOut())
+            navigate('/login')
+        },
+    },
 ]
 
 export const drawerWidth = 240
@@ -32,6 +55,8 @@ const openedMixin = (theme) => ({
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
     }),
+    backgroundColor: '#F9F9FB',
+    border: 'none',
     overflowX: 'hidden',
 })
 
@@ -40,6 +65,8 @@ const closedMixin = (theme) => ({
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
+    backgroundColor: '#F9F9FB',
+    border: 'none',
     overflowX: 'hidden',
     width: `calc(${theme.spacing(7)} + 1px)`,
     [theme.breakpoints.up('sm')]: {
@@ -61,50 +88,40 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 }))
 
-const AdministrationDrawer = ({ isOpen }) => {
-    const [selectedItem, setSelectedItem] = useState('Administrace')
+const AdministrationDrawer = () => {
+    const [isDrawerOpen, toggleDrawer] = useState(false)
+    const [selectedItem, setSelectedItem] = useState(0)
+
     return (
         <>
-            <Fade in timeout={{ enter: 1000 }}>
-                <Drawer variant="permanent" open={isOpen} anchor="left">
-                    <Toolbar />
-                    <Box sx={{ overflow: 'auto' }}>
-                        <List disablePadding>
-                            {map(
-                                ({ id, icon, text, link, disabled }) => (
-                                    <ListItem key={text} disablePadding title={text}>
-                                        <ListItemButton
-                                            sx={{
-                                                minHeight: 48,
-                                                justifyContent: isOpen ? 'initial' : 'center',
-                                                px: 2.5,
-                                            }}
-                                            disabled={disabled}
-                                            selected={equals(id, selectedItem)}
-                                            component={Link}
-                                            to={link}
-                                            onClick={() => setSelectedItem(id)}
-                                        >
-                                            <ListItemIcon
-                                                sx={{
-                                                    minWidth: 0,
-                                                    mr: isOpen ? 3 : 'auto',
-                                                    justifyContent: 'center',
-                                                }}
-                                            >
-                                                {icon}
-                                            </ListItemIcon>
-                                            <ListItemText sx={{ opacity: isOpen ? 1 : 0 }} primary={text} />
-                                        </ListItemButton>
-                                    </ListItem>
-                                ),
-                                adminToolbarContent
+            <Fade in timeout={{ enter: 400 }}>
+                <Drawer variant="permanent" open={isDrawerOpen} anchor="left">
+                    <Box
+                        sx={{
+                            height: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                        }}
+                    >
+                        <AdministrationDrawerListItems
+                            arrayOfItems={adminToolbarLinks}
+                            isOpen={isDrawerOpen}
+                            selectedItem={selectedItem}
+                            setSelectedItem={setSelectedItem}
+                        />
+                        <AdministrationDrawerListItems
+                            arrayOfItems={getAdminToolbarToolset(isDrawerOpen, () =>
+                                toggleDrawer((prevState) => !prevState)
                             )}
-                        </List>
+                            isOpen={isDrawerOpen}
+                            selectedItem={selectedItem}
+                            setSelectedItem={setSelectedItem}
+                        />
                     </Box>
                 </Drawer>
             </Fade>
-            <AdministrationLayout isDrawerOpen={isOpen} />
+            <AdministrationLayout isDrawerOpen={isDrawerOpen} />
         </>
     )
 }

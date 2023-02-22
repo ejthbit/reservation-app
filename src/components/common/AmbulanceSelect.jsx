@@ -5,7 +5,7 @@ import { useLazyGetAmbulancesQuery } from '../../store/reservationProcess'
 import { isNilOrEmpty } from '../../utils'
 import Dropdown from './Dropdown'
 
-const AmbulanceSelect = ({ showLabel, selectedValueId, onAmbulanceSelect, defaultValue }) => {
+const AmbulanceSelect = ({ showLabel, selectedValueId = '', onAmbulanceSelect, defaultValue }) => {
     const [getAmbulances, { data: ambulances, isFetching }] = useLazyGetAmbulancesQuery()
 
     useEffect(() => {
@@ -32,7 +32,7 @@ const AmbulanceSelect = ({ showLabel, selectedValueId, onAmbulanceSelect, defaul
 
 AmbulanceSelect.propTypes = {
     showLabel: PropTypes.bool,
-    selectedValueId: PropTypes.string.isRequired,
+    selectedValueId: PropTypes.string,
     onAmbulanceSelect: PropTypes.func.isRequired,
     defaultValue: PropTypes.oneOfType([PropTypes.number]),
 }
