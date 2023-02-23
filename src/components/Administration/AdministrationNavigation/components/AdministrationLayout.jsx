@@ -30,7 +30,7 @@ const AdministrationLayout = ({ isDrawerOpen }) => {
                       }),
             })}
         >
-            <Box display="flex" mb={4}>
+            <Box display="flex" mb={3}>
                 <AdministrationPathBreadcrumbs />
                 <Hidden smDown>
                     <Typography sx={{ color: '#000' }}>

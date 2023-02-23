@@ -4,12 +4,15 @@ import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { getBookingsSelectedDate, getUserConfigurationSelectedAmbulance } from '../store/administration'
 import { useLazyGetBookingsQuery, useUpdateBookingMutation } from '../store/administration/services'
-import { useLazyGetDoctorServicesByRangeQuery } from '../store/reservationProcess'
 import {
+    useGetDoctorsForSelectedAmbulanceQuery,
+    useLazyGetDoctorServicesByRangeQuery,
+} from '../store/reservationProcess'
+import {
+    getDateWithCorrectOffset,
     getISODateStringWithCorrectOffset,
     isNilOrEmpty,
     makeCalendarEventsFromBookings,
-    getDateWithCorrectOffset,
 } from '../utils'
 
 const hourlyIntervals = (arr) =>
@@ -92,6 +95,20 @@ const useCalendar = () => {
     const [fetchDoctorServicesByRange, { currentData: servicesDays = [] }] =
         useLazyGetDoctorServicesByRangeQuery()
 
+    const { data: doctorsForSelectedAmbulance = [] } =
+        useGetDoctorsForSelectedAmbulanceQuery(selectedAmbulanceId)
+
+    const doctors = doctorsForSelectedAmbulance.reduce(
+        (obj, item) => ((obj[item.value] = item.label), obj),
+        {}
+    )
+    const doctorServicesEvents = useMemo(
+        () =>
+            makeCalendarEventsFromBookings(
+                servicesDays.map((item) => ({ ...item, doctorService: true, name: doctors[item.doctorId] }))
+            ),
+        [bookingsViewDate, servicesDays]
+    )
     const events = useMemo(() => makeCalendarEventsFromBookings(bookings), [bookingsViewDate, bookings])
 
     const blockedEvents = useMemo(() => {
@@ -149,7 +166,7 @@ const useCalendar = () => {
         openEventDialogEvent,
         newAppointmentDate,
         isLoadingEventsForSelectedView,
-        events: [...events, ...blockedEvents],
+        events: [...events, ...blockedEvents, ...doctorServicesEvents],
         draggedEvent,
         moveEvent,
         handleDragStart,

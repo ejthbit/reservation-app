@@ -129,44 +129,39 @@ const AdministrationServices = () => {
                         </Grid>
                     </Grid>
                 ) : (
-                    <>
-                        <Typography variant="h2" fontWeight={600} sx={{ marginBottom: 1 }}>
-                            Měsíční plány
-                        </Typography>
-                        <Box
-                            sx={(theme) => ({
-                                display: 'flex',
-                                gap: 2,
-                                flexDirection: 'row',
-                                [theme.breakpoints.down('sm')]: {
-                                    flexDirection: 'column',
-                                },
-                            })}
-                        >
-                            <Grid item>
-                                <AdministrationServiceCardButton
-                                    color={theme.palette.primary.main}
-                                    icon={AddBox}
-                                    title={'Vytvořit nový měsíční plán'}
-                                    description={
-                                        'Zjednodušuje proces vytváření a správy měsíčního plánu pro vybranou ambulanci. Zjednodušuje úkol přiřazení lékařů ke každému dni a umožňuje snadnou úpravu plánu podle potřeby. Tato funkce šetří čas a zvyšuje efektivitu procesu plánování, což zajišťuje, že poskytované služby fungují hladce a efektivně.'
-                                    }
-                                    onClick={() => handleSetActionWorkflow(1)}
-                                />
-                            </Grid>
-                            <Grid item>
-                                <AdministrationServiceCardButton
-                                    color={theme.palette.primary.main}
-                                    icon={Edit}
-                                    title={'Upravit měsíční plán'}
-                                    description={
-                                        'Zjednodušuje proces úprav měsíčního plánu pro vybranou ambulanci. Zjednodušuje úkol úpravy pracovního plánu lékařů a umožňuje snadné upravování plánu podle potřeby. Tato funkce šetří čas a zvyšuje efektivitu procesu plánování, což zajišťuje, že poskytované služby fungují hladce a efektivně.'
-                                    }
-                                    onClick={() => handleSetActionWorkflow(2)}
-                                />
-                            </Grid>
-                        </Box>
-                    </>
+                    <Box
+                        sx={(theme) => ({
+                            display: 'flex',
+                            gap: 2,
+                            flexDirection: 'row',
+                            [theme.breakpoints.down('sm')]: {
+                                flexDirection: 'column',
+                            },
+                        })}
+                    >
+                        <Grid item>
+                            <AdministrationServiceCardButton
+                                color={theme.palette.primary.main}
+                                icon={AddBox}
+                                title={'Vytvořit nový měsíční plán'}
+                                description={
+                                    'Zjednodušuje proces vytváření a správy měsíčního plánu pro vybranou ambulanci. Zjednodušuje úkol přiřazení lékařů ke každému dni a umožňuje snadnou úpravu plánu podle potřeby. Tato funkce šetří čas a zvyšuje efektivitu procesu plánování, což zajišťuje, že poskytované služby fungují hladce a efektivně.'
+                                }
+                                onClick={() => handleSetActionWorkflow(1)}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <AdministrationServiceCardButton
+                                color={theme.palette.primary.main}
+                                icon={Edit}
+                                title={'Upravit měsíční plán'}
+                                description={
+                                    'Zjednodušuje proces úprav měsíčního plánu pro vybranou ambulanci. Zjednodušuje úkol úpravy pracovního plánu lékařů a umožňuje snadné upravování plánu podle potřeby. Tato funkce šetří čas a zvyšuje efektivitu procesu plánování, což zajišťuje, že poskytované služby fungují hladce a efektivně.'
+                                }
+                                onClick={() => handleSetActionWorkflow(2)}
+                            />
+                        </Grid>
+                    </Box>
                 )}
                 {!isNilOrEmpty(dates) ? (
                     <Grid item xs={12}>

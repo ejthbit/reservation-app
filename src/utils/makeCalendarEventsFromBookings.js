@@ -14,16 +14,19 @@ const makeCalendarEventsFromBookings = (bookings, blocked = false) =>
             category = '',
             completed = false,
             note = '',
+            doctorService = false,
         }) => {
             return {
                 id,
                 start: getDateWithCorrectOffset(start),
                 end: getDateWithCorrectOffset(end),
-                title: `${blocked ? 'Zavřeno' : name} ${!isNilOrEmpty(birthdate) ? `- ${birthdate}` : ''}`,
+                title: `${blocked ? 'Zavřeno' : name}${!isNilOrEmpty(birthdate) ? ` - ${birthdate}` : ''}`,
                 resource: {
                     booked: true,
                     blocked,
+                    doctorService,
                     phone: contact?.phone,
+                    email: contact?.email,
                     category,
                     completed,
                     note,

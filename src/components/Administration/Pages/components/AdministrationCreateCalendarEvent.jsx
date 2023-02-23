@@ -7,12 +7,14 @@ import {
     DialogTitle,
     LinearProgress,
     MenuItem,
+    TextField,
     Typography,
 } from '@mui/material'
+import { DatePicker } from '@mui/x-date-pickers'
 import { format } from 'date-fns'
 import PropTypes from 'prop-types'
 import { map } from 'ramda'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import * as yup from 'yup'
@@ -21,7 +23,7 @@ import { getUserConfigurationSelectedAmbulance } from '../../../../store/adminis
 import { useFastBookingMutation } from '../../../../store/administration/services'
 import { useLazyGetBookingCategoriesQuery } from '../../../../store/reservationProcess'
 import { getUserInfo } from '../../../../store/userInfo'
-import { getDateWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
+import { getDateWithCorrectOffset, getISODateStringWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
 import VALIDATION_PATTERNS from '../../../../utils/validationPatterns'
 import { DialogButtons, FormInput, FormSelectInput } from '../../../common'
 
@@ -48,6 +50,8 @@ const formValidationSchema = yup.object({
 })
 const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) => {
     const { start, end } = data
+    const [birthDate, setBirthDate] = useState(null)
+
     const [getReservationCategories, { currentData: categories }] = useLazyGetBookingCategoriesQuery()
     const [createFastBooking, { isLoading: isCreatingBooking }] = useFastBookingMutation()
     const selectedAmbulanceId = useSelector(
@@ -58,6 +62,7 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
         handleSubmit,
         control,
         reset,
+        setValue,
         formState: { isDirty, isValid },
     } = useForm({
         mode: 'onSubmit',
@@ -69,6 +74,7 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
                 email: '',
                 phone: '',
             },
+            birthDate: '',
             category: '',
             note: '',
         },
@@ -76,6 +82,7 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
 
     const onClose = () => {
         reset()
+        setBirthDate(null)
         handleClose()
     }
 
@@ -97,7 +104,7 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
         open && (
             <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
                 <DialogTitle id="form-dialog-title">Rychlá objednávka</DialogTitle>
-                <DialogContent>
+                <DialogContent sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
                     <Box marginBottom={1}>
                         <Typography>{`Vybraný termín: ${format(
                             getDateWithCorrectOffset(start),
@@ -129,20 +136,46 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
                             categories
                         )}
                     </FormSelectInput>
-                    <FormInput
-                        name="contact.email"
-                        label="E-mail"
-                        placeholder="Zadejte prosím e-mail pacienta"
+                    <DatePicker
+                        disableFuture
+                        label="Datum narození"
+                        openTo="year"
+                        views={['year', 'month', 'day']}
+                        inputFormat="dd-MM-yyyy"
+                        mask="__-__-____"
+                        name="birthDate"
+                        value={birthDate}
+                        placeholder="Zadejte prosím datum narození pacienta"
                         control={control}
-                        fullWidth
+                        onChange={(date) => {
+                            if (new Date(date).getTime()) {
+                                setBirthDate(date)
+                                console.log(getISODateStringWithCorrectOffset(date))
+                                setValue('birthDate', getISODateStringWithCorrectOffset(date), {
+                                    shouldDirty: true,
+                                })
+                            }
+                        }}
+                        renderInput={(params) => <TextField {...params} variant="standard" />}
                     />
-                    <FormInput
-                        name="contact.phone"
-                        label="Phone"
-                        placeholder="Zadejte prosím telefon pacienta"
-                        control={control}
-                        fullWidth
-                    />
+                    <Box sx={{ display: 'flex', direction: 'row', gap: 1 }}>
+                        <FormInput
+                            name="contact.email"
+                            label="E-mail"
+                            placeholder="Zadejte prosím e-mail pacienta"
+                            control={control}
+                            sx={{ width: '50%' }}
+                            fullWidth
+                        />
+                        <FormInput
+                            name="contact.phone"
+                            label="Telefonní číslo"
+                            placeholder="Zadejte prosím telefon pacienta"
+                            control={control}
+                            sx={{ width: '50%' }}
+                            fullWidth
+                        />
+                    </Box>
                     <FormInput
                         label="Poznámka (pouze interní)"
                         placeholder="Poznámka"

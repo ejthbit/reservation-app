@@ -4,6 +4,7 @@ import { equals, map } from 'ramda'
 import { Link, useNavigate } from 'react-router-dom'
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import { useDispatch } from 'react-redux'
+import { isNilOrEmpty } from '../../../../utils'
 
 const AdministrationDrawerListItems = ({ arrayOfItems, selectedItem, isOpen, setSelectedItem }) => {
     const navigate = useNavigate()
@@ -21,12 +22,11 @@ const AdministrationDrawerListItems = ({ arrayOfItems, selectedItem, isOpen, set
                             }}
                             disabled={disabled}
                             selected={equals(id, selectedItem)}
-                            component={Link}
-                            to={link}
                             onClick={() => {
                                 setSelectedItem(id)
                                 onClick && onClick(dispatch, navigate)
                             }}
+                            {...(!isNilOrEmpty(link) && { to: link, component: Link })}
                         >
                             <ListItemIcon
                                 sx={(theme) => ({

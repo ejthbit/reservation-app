@@ -7,7 +7,7 @@ import cs from 'date-fns/locale/cs'
 import './css/custom-calendar.css'
 
 import useCalendar from '../../../hooks/useCalendar'
-import { Box, CircularProgress, Fade, Typography, useTheme } from '@mui/material'
+import { Box, CircularProgress, Fade, useTheme } from '@mui/material'
 import {
     AdministrationCalendarToolbar,
     AdministrationCalendarEvent,
@@ -82,9 +82,6 @@ const AdministrationCalendar = () => {
                 className={isLoadingEventsForSelectedView ? 'loading' : null}
                 sx={{ zIndex: '1000', width: '100%' }}
             >
-                <Typography variant="h2" fontWeight={600} sx={{ marginBottom: 1 }}>
-                    Kalendář
-                </Typography>
                 <DragAndDropCalendar
                     formats={calendarFormats}
                     onEventDrop={moveEvent}
@@ -105,20 +102,28 @@ const AdministrationCalendar = () => {
                         return {
                             className: 'slot',
                             style: {
+                                backgroundColor: theme.palette.primary.main,
+                                position: 'sticky',
+                                color: '#fff',
                                 ...(event?.resource?.blocked && {
                                     backgroundColor: 'grey',
                                     color: 'linen',
                                     opacity: 1,
                                 }),
                                 ...(event?.resource?.completed && {
-                                    backgroundColor: 'dimgrey',
+                                    backgroundColor: 'green',
                                     color: 'linen',
                                     opacity: 0.7,
                                     pointerEvents: 'none',
                                 }),
-                                color: '#fff',
+                                ...(event?.resource?.doctorService && {
+                                    backgroundColor: 'lightgrey',
+                                    color: 'black',
+                                    opacity: 0.7,
+                                    pointerEvents: 'none',
+                                    position: 'absolute',
+                                }),
                                 borderRadius: 0,
-                                background: event?.resource?.blocked ? 'grey' : theme.palette.primary.main,
                             },
                         }
                     }}
@@ -134,7 +139,6 @@ const AdministrationCalendar = () => {
                     }}
                     step={import.meta.env.VITE_APPOINTMENT_DURATION}
                     endAccessor="end"
-                    style={{ margin: 8 }}
                     longPressThreshold={10}
                 />
                 {isLoadingEventsForSelectedView && (

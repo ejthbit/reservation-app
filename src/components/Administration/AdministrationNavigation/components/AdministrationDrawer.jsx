@@ -31,14 +31,12 @@ const getAdminToolbarToolset = (isOpen, onClose) => [
         id: 7,
         icon: isOpen ? <KeyboardArrowLeft /> : <KeyboardArrowRight />,
         text: 'Skrýt panel',
-        link: '',
         onClick: onClose,
     },
     {
         id: 8,
         icon: <Logout />,
         text: 'Odhlásit se',
-        link: '',
         onClick: async (dispatch, navigate) => {
             localStorage.clear()
             await dispatch(logOut())

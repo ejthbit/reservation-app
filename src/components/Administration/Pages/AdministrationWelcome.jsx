@@ -19,9 +19,9 @@ const AdministrationWelcome = () => {
                     justifyContent="center"
                     alignItems="center"
                     gap={8}
-                    ml={8}
                     mb={5}
                     height={'20vh'}
+                    sx={(theme) => ({ bgcolor: '#F9F9FB', borderRadius: 2 })}
                 >
                     <Box display="flex" gap={0.5} flexDirection="column">
                         <Typography
@@ -44,7 +44,7 @@ const AdministrationWelcome = () => {
                     </Box>
                     <img src={imgLogo} alt="Welcome logo" height={175} />
                 </Box>
-                <Box display="flex" gap={'3vw'}>
+                <Box display="flex" gap={'3vw'} mb={3}>
                     <AdministrationDashboardTodayPatients />
                     <Box
                         width={{

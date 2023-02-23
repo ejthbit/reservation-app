@@ -39,6 +39,7 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
             name: '',
             birthdate: '',
             phone: '',
+            email: '',
             note: '',
             completed: !!completedValue,
         },
@@ -46,7 +47,10 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
     const handlePatchBooking = async (updatedBooking) => {
         await updateBooking({
             id: event.id,
-            end: addMinutes(new Date(updatedBooking.start), 15).toISOString(),
+            end: addMinutes(
+                new Date(updatedBooking.start),
+                import.meta.env.VITE_APPOINTMENT_DURATION
+            ).toISOString(),
             ...updatedBooking,
         })
             .unwrap()
@@ -79,11 +83,13 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                 name: name.split(' - ')[0],
                 birthdate: name.split(' - ')[1],
                 phone: isNilOrEmpty(resource?.phone) ? 'Nevyplněno' : resource?.phone,
+                email: isNilOrEmpty(resource?.email) ? 'Nevyplněno' : resource?.email,
                 completed: resource?.completed,
                 note: resource?.note,
             })
         }
     }, [event, reset])
+
     return (
         <Dialog maxWidth="sm" open={!isNilOrEmpty(event)} onClose={handleClose} disableScrollLock fullWidth>
             <DialogTitle>Detail</DialogTitle>
@@ -109,7 +115,7 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                     }}
                     renderInput={(params) => <TextField {...params} variant="standard" required />}
                     ampm={false}
-                    minutesStep={15}
+                    minutesStep={Number(import.meta.env.VITE_APPOINTMENT_DURATION)}
                 />
                 <FormInput label="Jméno" control={control} name="name" fullWidth />
                 <FormInput
@@ -127,6 +133,14 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                     name="phone"
                     fullWidth
                     disabled={true ?? !!control.defaultValuesRef.current.phone}
+                />
+                <FormInput
+                    label="E-mail"
+                    placeholder="E-mail"
+                    control={control}
+                    name="email"
+                    fullWidth
+                    disabled={true ?? !!control.defaultValuesRef.current.email}
                 />
                 <Dropdown
                     label="Typ vyšetření"

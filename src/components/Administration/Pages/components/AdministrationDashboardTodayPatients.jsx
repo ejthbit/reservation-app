@@ -10,11 +10,11 @@ import {
     Typography,
 } from '@mui/material'
 import { addMinutes, format, subMinutes } from 'date-fns'
-import { map, prop, sortBy } from 'ramda'
-import { useEffect, useState } from 'react'
+import { equals, map, prop, sortBy } from 'ramda'
+import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { getUserConfigurationSelectedAmbulance } from '../../../../store/administration'
-import { useGetBookingsQuery, useLazyGetBookingsQuery } from '../../../../store/administration/services'
+import { useLazyGetBookingsQuery } from '../../../../store/administration/services'
 import { getUserInfo } from '../../../../store/userInfo'
 import { getDateWithCorrectOffset, getISODateStringWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
 
@@ -25,13 +25,13 @@ const from = getISODateStringWithCorrectOffset(
 const to = getISODateStringWithCorrectOffset(
     addMinutes(fromDate, import.meta.env.VITE_APPOINTMENT_DURATION * 4)
 )
-
 const AdministrationDashboardTodayPatients = () => {
     const workplace = useSelector(
         (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace
     )
 
     const [getBookings, { data: todayBookings, isFetching }] = useLazyGetBookingsQuery()
+    // FIXME: Call with actual time
     useEffect(() => {
         if (!todayBookings) getBookings({ from, to, workplace })
         const interval = setInterval(() => {
@@ -50,15 +50,15 @@ const AdministrationDashboardTodayPatients = () => {
     return (
         <Box width={{ md: '33.3vw', sm: '100%' }}>
             <List
-                sx={(theme) => ({
+                sx={{
                     width: '100%',
                     bgcolor: '#F9F9FB',
                     borderRadius: 2,
                     height: '65vh',
-                })}
+                }}
             >
                 <Typography sx={{ mb: 1, ml: 3, mt: 1 }} variant="h6" fontWeight="600">
-                    Dnešní objednávky
+                    Následující objednávky
                 </Typography>
                 {isNilOrEmpty(todayBookings) && (
                     <Box display="flex" alignItems="center" justifyContent="center" height="80%">
@@ -74,7 +74,13 @@ const AdministrationDashboardTodayPatients = () => {
                                           <Avatar />
                                       </Avatar>
                                   </ListItemAvatar>
-                                  <ListItemText sx={{ width: '30%' }} primary={name} secondary={birthdate} />
+                                  <ListItemText
+                                      sx={{ width: '30%' }}
+                                      primary={name}
+                                      secondary={
+                                          equals(format(new Date(), 'yyyy-MM-dd'), birthdate) ? '' : birthdate
+                                      }
+                                  />
                                   <Typography sx={{ fontWeight: 600, fontSize: '2rem' }} color="primary">
                                       {format(getDateWithCorrectOffset(start), 'HH:mm')}
                                   </Typography>

@@ -9,7 +9,16 @@ const withTheme = (WrappedComponent) => {
     return (props) => {
         return (
             <Suspense fallback={<div>Loading...</div>}>
-                <ThemeProvider theme={createTheme(theme.themeOptions)}>
+                <ThemeProvider
+                    theme={createTheme({
+                        ...theme.themeOptions,
+                        ...{
+                            typography: {
+                                fontFamily: ['Poppins', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
+                            },
+                        },
+                    })}
+                >
                     <WrappedComponent {...props} />
                 </ThemeProvider>
             </Suspense>

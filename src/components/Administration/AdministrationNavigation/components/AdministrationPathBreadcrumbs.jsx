@@ -1,15 +1,11 @@
 import { Box, Breadcrumbs, Typography } from '@mui/material'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 const breadcrumbNameMap = {
     '/orders': 'Objednávky',
     '/services': 'Měsíční plány',
     '/calendar': 'Kalendář',
-    '/admin': 'Přehled',
-}
-
-const LinkRouter = (props) => {
-    return <Typography sx={{ textDecoration: 'none' }} {...props} component={Link} />
+    '/admin': 'Dashboard',
 }
 
 const AdministrationPathBreadcrumbs = () => {

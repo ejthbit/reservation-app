@@ -11,7 +11,7 @@ const AdministrationServiceCardButton = ({ color = '#FFF', icon, title, descript
                 color: theme.palette.getContrastText(color),
                 width: 300,
                 textAlign: 'center',
-                height: description ? 300 : 150,
+                height: description ? 350 : 150,
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
