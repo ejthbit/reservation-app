@@ -27,9 +27,13 @@ const userInfoSlice = createSlice({
             const { property, value } = payload
             return { ...state, [property]: value }
         },
-        setUser: (state, { payload }) => (state = { ...payload.user, isLoggedIn: true }),
+        setUser: (state, { payload }) =>
+            (state = { ...payload.user, isLoggedIn: true, automaticallyLoggedOut: false }),
         logOut: () => notLoggedInUser,
+        logOutAutomatically: (state) => {
+            state.automaticallyLoggedOut = true
+        },
     },
 })
-export const { setUserInfoProperty, setUser, logOut } = userInfoSlice.actions
+export const { setUserInfoProperty, setUser, logOut, logOutAutomatically } = userInfoSlice.actions
 export default userInfoSlice.reducer

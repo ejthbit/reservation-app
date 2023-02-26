@@ -45,8 +45,6 @@ const AdministrationDashboardTodayPatients = () => {
         return () => clearInterval(interval)
     }, [])
 
-    // TODO: next 60/INTERVAL e.g.: 15 min interval = 4 appointments to fetch or 6 if interval is 10.
-    // TODO: Sort by start
     return (
         <Box width={{ md: '33.3vw', sm: '100%' }}>
             <List
@@ -57,12 +55,12 @@ const AdministrationDashboardTodayPatients = () => {
                     height: '65vh',
                 }}
             >
-                <Typography sx={{ mb: 1, ml: 3, mt: 1 }} variant="h6" fontWeight="600">
+                <Typography align="center" sx={{ mb: 1, ml: 3, mt: 1, fontSize: '1rem' }} fontWeight="600">
                     Následující objednávky
                 </Typography>
                 {isNilOrEmpty(todayBookings) && (
                     <Box display="flex" alignItems="center" justifyContent="center" height="80%">
-                        <Typography>Nemáta žádné následující objednávky.</Typography>
+                        <Typography align="center">Nemáta žádné následující objednávky.</Typography>
                     </Box>
                 )}
                 {todayBookings

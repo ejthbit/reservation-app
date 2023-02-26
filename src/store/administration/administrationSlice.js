@@ -22,6 +22,7 @@ const administrationSlice = createSlice({
         },
         setUserConfigurationProperty: (state, { payload }) => {
             const { property, value } = payload
+            console.log(payload)
             return {
                 ...state,
                 userConfiguration: {

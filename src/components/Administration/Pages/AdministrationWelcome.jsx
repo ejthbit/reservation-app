@@ -1,4 +1,4 @@
-import { Box, Fade, List, Typography } from '@mui/material'
+import { Box, Fade, Hidden, List, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { getUserInfo } from '../../../store/userInfo'
 import AdministrationDashboardTodayPatients from './components/AdministrationDashboardTodayPatients'
@@ -21,7 +21,12 @@ const AdministrationWelcome = () => {
                     gap={8}
                     mb={5}
                     height={'20vh'}
-                    sx={(theme) => ({ bgcolor: '#F9F9FB', borderRadius: 2 })}
+                    sx={(theme) => ({
+                        [theme.breakpoints.down('md')]: {
+                            mt: 10,
+                            mb: 14,
+                        },
+                    })}
                 >
                     <Box display="flex" gap={0.5} flexDirection="column">
                         <Typography
@@ -37,14 +42,25 @@ const AdministrationWelcome = () => {
                             </span>
                         </Typography>
                         <Typography>
-                            Na dnešní den je objednáno 8 pacientů!
+                            Na dnešní den je objednáno mnoho pacientů!
                             <br />
                             Před vývoláním zkontrolujte kartu pacienta.
                         </Typography>
                     </Box>
-                    <img src={imgLogo} alt="Welcome logo" height={175} />
+                    <Hidden smDown>
+                        <img src={imgLogo} alt="Welcome logo" height={175} />
+                    </Hidden>
                 </Box>
-                <Box display="flex" gap={'3vw'} mb={3}>
+                <Box
+                    display="flex"
+                    gap={'3vw'}
+                    mb={3}
+                    sx={(theme) => ({
+                        [theme.breakpoints.down('sm')]: {
+                            flexDirection: 'column',
+                        },
+                    })}
+                >
                     <AdministrationDashboardTodayPatients />
                     <Box
                         width={{
@@ -63,11 +79,17 @@ const AdministrationWelcome = () => {
                                 height: '30vh',
                             })}
                         >
-                            <Typography sx={{ mb: 1, ml: 3, mt: 1 }} variant="h6" fontWeight="600">
+                            <Typography
+                                align="center"
+                                sx={{ mb: 1, ml: 3, mt: 1, fontSize: '1rem' }}
+                                fontWeight="600"
+                            >
                                 Počet pacientu dle kategorie za posledních 30 dnů
                             </Typography>
                             <Box display="flex" alignItems="center" justifyContent="center" height="80%">
-                                <Typography>Omlouváme se ale nemáte dostatek dat pro zobrazení.</Typography>
+                                <Typography align="center">
+                                    Omlouváme se ale nemáte dostatek dat pro zobrazení.
+                                </Typography>
                             </Box>
                         </List>
                         <List
@@ -76,13 +98,20 @@ const AdministrationWelcome = () => {
                                 bgcolor: '#F9F9FB',
                                 borderRadius: 2,
                                 height: '30vh',
+                                [theme.breakpoints.down('sm')]: {},
                             })}
                         >
-                            <Typography sx={{ mb: 1, ml: 3, mt: 1 }} variant="h6" fontWeight="600">
+                            <Typography
+                                align="center"
+                                sx={{ mb: 1, ml: 3, mt: 1, fontSize: '1rem' }}
+                                fontWeight="600"
+                            >
                                 Průměrný počet pacientu dle dnů za posledních 30 dnů
                             </Typography>
                             <Box display="flex" alignItems="center" justifyContent="center" height="80%">
-                                <Typography>Omlouváme se ale nemáte dostatek dat pro zobrazení.</Typography>
+                                <Typography align="center">
+                                    Omlouváme se ale nemáte dostatek dat pro zobrazení.
+                                </Typography>
                             </Box>
                         </List>
                     </Box>

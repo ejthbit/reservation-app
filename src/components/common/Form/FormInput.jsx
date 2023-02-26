@@ -9,7 +9,7 @@ const disabledStyling = {
     cursor: 'default',
 }
 
-const FormInput = ({ control, name, disabled, className, ...otherTextFieldProps }) => {
+const FormInput = ({ variant = 'standard', control, name, disabled, className, ...otherTextFieldProps }) => {
     const {
         field: { ref, ...inputProps },
         fieldState: { error },
@@ -20,9 +20,8 @@ const FormInput = ({ control, name, disabled, className, ...otherTextFieldProps 
     })
     return (
         <TextField
-            variant="standard"
-            className={className}
-            sx={disabled ? { ...disabledStyling } : {}}
+            variant={variant}
+            sx={disabled ? { ...disabledStyling, ...className } : { ...className }}
             error={!!error}
             helperText={error?.message}
             readOnly={disabled}
@@ -34,10 +33,11 @@ const FormInput = ({ control, name, disabled, className, ...otherTextFieldProps 
 }
 
 FormInput.propTypes = {
+    variant: PropTypes.string,
     control: PropTypes.object,
     name: PropTypes.string,
     disabled: PropTypes.bool,
-    className: PropTypes.string,
+    className: PropTypes.object,
 }
 
 export default FormInput

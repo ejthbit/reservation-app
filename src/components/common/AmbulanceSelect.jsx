@@ -13,7 +13,7 @@ const AmbulanceSelect = ({ showLabel, selectedValueId = '', onAmbulanceSelect, d
     }, [ambulances])
 
     return (
-        <>
+        <Box>
             {showLabel && (
                 <Box marginRight={2}>
                     <Typography>Vybrané pracoviště</Typography>
@@ -26,13 +26,13 @@ const AmbulanceSelect = ({ showLabel, selectedValueId = '', onAmbulanceSelect, d
                 value={selectedValueId}
                 onChange={onAmbulanceSelect}
             />
-        </>
+        </Box>
     )
 }
 
 AmbulanceSelect.propTypes = {
     showLabel: PropTypes.bool,
-    selectedValueId: PropTypes.string,
+    selectedValueId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     onAmbulanceSelect: PropTypes.func.isRequired,
     defaultValue: PropTypes.oneOfType([PropTypes.number]),
 }

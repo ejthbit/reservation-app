@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux'
 import useCalendar from '../../../../hooks/useCalendar'
 import { setBookingsViewDate } from '../../../../store/administration/administrationSlice'
 import { isMobile, isNilOrEmpty } from '../../../../utils'
-const StyledButton = styled(Button)(({ theme }) => ({
+const StyledButton = styled(Button)(() => ({
     height: '40px',
 }))
 const VIEW_TRANSLATIONS = {

@@ -1,6 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import STATE_KEYS from '../../../constants/stateKeys'
 import axiosGynInstance from '../../api/config'
+import { isNilOrEmpty } from '../../utils'
 
 export const bookingsAPI = createApi({
     reducerPath: `${STATE_KEYS.ADMINISTRATION}/bookings`,
@@ -62,6 +63,61 @@ export const bookingsAPI = createApi({
     }),
 })
 
+export const announcementAPI = createApi({
+    reducerPath: `${STATE_KEYS.ADMINISTRATION}/announcements`,
+    baseQuery: axiosGynInstance,
+    endpoints: (builder) => ({
+        getAnnouncements: builder.query({
+            query: () => {
+                const URL = `configuration/getAnnouncements`
+                return {
+                    url: URL,
+                    method: 'GET',
+                }
+            },
+            // providesTags: ['Booking'],
+            transformResponse: (response) => response.data,
+
+            providesTags: (result, error, arg) =>
+                !isNilOrEmpty(result)
+                    ? [...result.map(({ id }) => ({ type: 'Announcement', id })), 'Announcement']
+                    : ['Announcement'],
+            // async onQueryStarted(_, { dispatch, queryFulfilled }) {
+            //     try {
+            //         const { data } = await queryFulfilled
+            //         localStorage.setItem('user', JSON.stringify(data))
+            //         dispatch(setUser(data))
+            //     } catch (err) {
+            //         return console.error('There was an error while logIn as current user.')
+            //     }
+            // },
+        }),
+        createAnnouncement: builder.mutation({
+            query: (announcement) => ({
+                url: `administration/announcements/announcement`,
+                method: 'POST',
+                data: announcement,
+            }),
+            invalidatesTags: ['Announcement'],
+        }),
+        updateAnnouncement: builder.mutation({
+            query: (updatedData) => ({
+                url: `administration/announcements/announcement`,
+                method: 'PUT',
+                data: updatedData,
+            }),
+            invalidatesTags: (result, error, arg) => [{ type: 'Announcement', id: arg.originalArgs }],
+        }),
+        deleteAnnouncement: builder.mutation({
+            query: (announcementId) => ({
+                url: `administration/announcements/announcement/${announcementId}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: (result, error, arg) => [{ type: 'Announcement', id: arg.originalArgs }],
+        }),
+    }),
+})
+
 export const {
     useGetBookingsQuery,
     useLazyGetBookingsQuery,
@@ -69,3 +125,11 @@ export const {
     useDeleteBookingMutation,
     useFastBookingMutation,
 } = bookingsAPI
+
+export const {
+    useCreateAnnouncementMutation,
+    useDeleteAnnouncementMutation,
+    useUpdateAnnouncementMutation,
+    useGetAnnouncementsQuery,
+    useLazyGetAnnouncementsQuery,
+} = announcementAPI

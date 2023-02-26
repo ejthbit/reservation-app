@@ -1,12 +1,20 @@
+import { Box } from '@mui/material'
 import PropTypes from 'prop-types'
-import { Box, Hidden, Typography } from '@mui/material'
-import { drawerWidth } from './AdministrationDrawer'
+import { useDispatch, useSelector } from 'react-redux'
 import { Outlet } from 'react-router-dom'
+import { getUserConfigurationSelectedAmbulance } from '../../../../store/administration'
+import { setUserConfigurationProperty } from '../../../../store/administration/administrationSlice'
+import { getUserInfo } from '../../../../store/userInfo'
+import { AmbulanceSelect } from '../../../common'
+import AutomaticLogoutDialog from '../../../common/AutomaticLogOutDialog'
+import { drawerWidth } from './AdministrationDrawer'
 import AdministrationPathBreadcrumbs from './AdministrationPathBreadcrumbs'
-import { format } from 'date-fns'
-import { cs } from 'date-fns/locale'
 
 const AdministrationLayout = ({ isDrawerOpen }) => {
+    const selectedAmbulanceId = useSelector(
+        (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace
+    )
+    const dispatch = useDispatch()
     return (
         <Box
             component="main"
@@ -30,13 +38,21 @@ const AdministrationLayout = ({ isDrawerOpen }) => {
                       }),
             })}
         >
-            <Box display="flex" mb={3}>
+            <Box display="flex" mb={3} alignItems="center">
                 <AdministrationPathBreadcrumbs />
-                <Hidden smDown>
-                    <Typography sx={{ color: '#000' }}>
-                        {format(new Date(), 'PPPP HH:mm', { locale: cs })}
-                    </Typography>
-                </Hidden>
+                <AmbulanceSelect
+                    sx={{ width: '40%' }}
+                    selectedValueId={selectedAmbulanceId}
+                    onAmbulanceSelect={(e) =>
+                        dispatch(
+                            setUserConfigurationProperty({
+                                property: 'selectedAmbulance',
+                                value: e.target.value,
+                            })
+                        )
+                    }
+                />
+                <AutomaticLogoutDialog />
             </Box>
             <Outlet />
         </Box>

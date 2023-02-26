@@ -14,7 +14,7 @@ import {
     AdministrationEventDetail,
     AdministrationCreateCalendarEvent,
 } from './components'
-import { isNilOrEmpty } from '../../../utils'
+import { isMobile, isNilOrEmpty } from '../../../utils'
 
 const DragAndDropCalendar = withDragAndDrop(Calendar)
 const calendarFormats = {
@@ -33,8 +33,6 @@ const localizer = dateFnsLocalizer({
         cs,
     },
 })
-
-const isMobile = false
 
 const customStyleDayPropGetter = () => {
     return {
@@ -57,7 +55,6 @@ const customSlotPropGetter = () => {
         },
     }
 }
-
 const AdministrationCalendar = () => {
     const {
         newAppointmentDate,
@@ -114,7 +111,6 @@ const AdministrationCalendar = () => {
                                     backgroundColor: 'green',
                                     color: 'linen',
                                     opacity: 0.7,
-                                    pointerEvents: 'none',
                                 }),
                                 ...(event?.resource?.doctorService && {
                                     backgroundColor: 'lightgrey',

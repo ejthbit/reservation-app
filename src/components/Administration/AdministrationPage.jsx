@@ -6,7 +6,12 @@ import { Route, Routes } from 'react-router-dom'
 import { withTheme } from '../../hoc'
 import { NotMatch } from '../common'
 import { AdministrationTopbar } from './AdministrationNavigation/components'
-import { AdministrationWelcome, AdministrationCalendar, AdministrationServices } from './Pages'
+import {
+    AdministrationWelcome,
+    AdministrationCalendar,
+    AdministrationServices,
+    AdministrationNews,
+} from './Pages'
 
 const AdministrationPage = () => {
     return (
@@ -21,6 +26,7 @@ const AdministrationPage = () => {
                         <Route path="/" element={<AdministrationWelcome />} />
                         <Route path="/services" element={<AdministrationServices />} />
                         <Route path="/calendar" element={<AdministrationCalendar />} />
+                        <Route path="/announcements" element={<AdministrationNews />} />
                         <Route path="*" element={<NotMatch />} />
                     </Route>
                 </Routes>

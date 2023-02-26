@@ -12,7 +12,8 @@ import {
 } from './reservationProcess/services'
 import { userAPI } from './userInfo/services'
 import STATE_KEYS from '../../constants/stateKeys'
-import { bookingsAPI } from './administration/services'
+import { bookingsAPI, announcementAPI } from './administration/services'
+import checkTokenExpirationMiddleware from '../middlewares/logOutAutomatically'
 
 const rootReducer = combineReducers({
     [STATE_KEYS.RESERVATION_PROCESS]: reservationProcessReducer,
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
     [doctorServicesAPI.reducerPath]: doctorServicesAPI.reducer,
     [userAPI.reducerPath]: userAPI.reducer,
     [bookingsAPI.reducerPath]: bookingsAPI.reducer,
+    [announcementAPI.reducerPath]: announcementAPI.reducer,
 })
 
 export const store = configureStore({
@@ -38,6 +40,8 @@ export const store = configureStore({
         doctorServicesAPI.middleware,
         userAPI.middleware,
         bookingsAPI.middleware,
+        announcementAPI.middleware,
+        checkTokenExpirationMiddleware,
     ],
     devTools: process.env.NODE_ENV !== 'production',
 })

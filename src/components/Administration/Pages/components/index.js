@@ -3,6 +3,8 @@ export { default as AdministrationCalendarToolbar } from './AdministrationCalend
 export { default as AdministrationCreateCalendarEvent } from './AdministrationCreateCalendarEvent'
 export { default as AdministrationDashboardTodayPatients } from './AdministrationDashboardTodayPatients'
 export { default as AdministrationEventDetail } from './AdministrationEventDetail'
+export { default as AdministrationNewsListItem } from './AdministrationNewsListItem'
+export { default as AdministrationNewsNewAnnouncementDialog } from './AdministrationNewsNewAnnouncementDialog'
 export { default as AdministrationServiceCardButton } from './AdministrationServiceCardButton'
 export { default as AdministrationServicesEntryMenu } from './AdministrationServicesEntryMenu'
 export { default as AdministrationServicesTable } from './AdministrationServicesTable'
