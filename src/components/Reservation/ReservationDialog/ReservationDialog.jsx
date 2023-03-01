@@ -9,7 +9,7 @@ import {
     ReservationStepper,
 } from './components'
 import { withTheme } from '../../../hoc'
-const ReservationDialog = ({ isOpen, onClose }) => {
+const ReservationDialog = ({ isOpen, onClose, stepsConfiguration }) => {
     return (
         <Provider store={store}>
             {isOpen && (
@@ -18,7 +18,7 @@ const ReservationDialog = ({ isOpen, onClose }) => {
                     <Dialog maxWidth="md" open={isOpen} onClose={onClose} fullWidth>
                         <ReservationDialogTitle onClose={onClose} />
                         <DialogContent>
-                            <ReservationStepper />
+                            <ReservationStepper stepsConfiguration={stepsConfiguration} />
                         </DialogContent>
                         <ReservationDialogActions onClose={onClose} />
                     </Dialog>
@@ -29,6 +29,7 @@ const ReservationDialog = ({ isOpen, onClose }) => {
 }
 
 ReservationDialog.propTypes = {
+    stepsConfiguration: PropTypes.array.isRequired,
     isOpen: PropTypes.bool,
     onClose: PropTypes.func.isRequired,
 }

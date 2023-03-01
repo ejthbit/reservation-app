@@ -31,7 +31,7 @@ const ReservationEmail = ({ step, isRequired }) => {
     return (
         <TextField
             id="email"
-            label="Email"
+            label="E-mail"
             variant="standard"
             required={isRequired}
             value={nonDebounceValue}

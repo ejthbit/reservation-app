@@ -1,55 +1,14 @@
-import { Grid, Step, StepContent, StepLabel, Stepper } from '@mui/material'
+import { Step, StepContent, StepLabel, Stepper } from '@mui/material'
 import { Box } from '@mui/system'
-import DEFAULT_STEPS from '../constants/defaultSteps'
-import getReservationContentByStep from '../helpers/getReservationContentByStep'
 import PropTypes from 'prop-types'
 import { findIndex, propEq, reject } from 'ramda'
 import { useMemo } from 'react'
-import isNilOrEmpty from '../../../../utils/isNilOrEmpty'
-import { ReservationStepperControls } from './stepsContent'
 import { useSelector } from 'react-redux'
 import { getActiveStep, getLastBooking } from '../../../../store/reservationProcess/selectors'
-import { ReservationAmbulanceSelect, ReservationDoctorSelect } from '../../ReservationControls/'
-import ReservationTermPicker from '../../ReservationControls/ReservationTermPicker/ReservationTermPicker'
-import {
-    ReservationBirthDate,
-    ReservationName,
-    ReservationEmail,
-    ReservationPhone,
-} from '../../ReservationControls/ReservationContact'
-const mockStepsConfiguration = [
-    {
-        label: 'Výběr ambulance',
-        component: <ReservationAmbulanceSelect step={'FIRST'} />,
-        step: 'FIRST',
-    },
-    {
-        label: 'Preference lékaře',
-        component: <ReservationDoctorSelect step={'SECOND'} />,
-        step: 'SECOND',
-    },
-    {
-        label: 'Vyberte termín své navštevy',
-        component: <ReservationTermPicker step={'THIRD'} />,
-        step: 'THIRD',
-    },
-    {
-        label: 'Prosím vyplňte své kontaktni údaje',
-        component: (
-            <Grid container>
-                <Grid item>
-                    {/* <ReservationButtonProvider dependencies={['name, birthDate, phone']}> */}
-                    <ReservationName step={'FORTH'} />
-                    <ReservationBirthDate step={'FORTH'} />
-                    <ReservationEmail step={'FORTH'} />
-                    <ReservationPhone step={'FORTH'} />
-                    {/* </ReservationButtonProvider> */}
-                </Grid>
-            </Grid>
-        ),
-        step: 'FORTH',
-    },
-]
+import isNilOrEmpty from '../../../../utils/isNilOrEmpty'
+import DEFAULT_STEPS from '../constants/defaultSteps'
+import getReservationContentByStep from '../helpers/getReservationContentByStep'
+import { ReservationStepperControls } from './stepsContent'
 
 const getNumberStepByName = (name, steps) => {
     const numberOfSteps = steps.length
@@ -70,7 +29,7 @@ const getStepsConfiguration = (stepsConfiguration, loading, error, completedOk =
     { ...(error && DEFAULT_STEPS.error) },
 ]
 
-export const ReservationStepper = ({ stepsConfiguration = mockStepsConfiguration }) => {
+export const ReservationStepper = ({ stepsConfiguration }) => {
     const activeStep = useSelector(getActiveStep)
     const { errors, completed, isLoading } = useSelector(getLastBooking)
 
@@ -108,6 +67,6 @@ export const ReservationStepper = ({ stepsConfiguration = mockStepsConfiguration
 }
 
 ReservationStepper.propTypes = {
-    stepsConfiguration: PropTypes.object,
+    stepsConfiguration: PropTypes.array,
 }
 export default ReservationStepper
