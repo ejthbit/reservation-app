@@ -23,7 +23,6 @@ function App() {
                     <Login
                         onGetUser={() => {
                             navigate('/admin')
-                            return console.log('route changed to /admin')
                         }}
                         isRegistrationEnabled
                     />

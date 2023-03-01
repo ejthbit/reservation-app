@@ -1,5 +1,5 @@
-import { Announcement, Check, Close, Delete, Edit } from '@mui/icons-material'
-import { Box, Fade, Hidden, IconButton, ListItem, ListItemIcon, ListItemText, Switch } from '@mui/material'
+import { Check, Close, Delete, Edit } from '@mui/icons-material'
+import { Box, Fade, IconButton, ListItem, ListItemText, Switch } from '@mui/material'
 import { format } from 'date-fns'
 import PropTypes from 'prop-types'
 import { useState } from 'react'
@@ -49,20 +49,16 @@ const AdministrationNewsListItem = ({
         <Fade in timeout={{ enter: 200 * index }}>
             <ListItem
                 sx={(theme) => ({
+                    p: 3,
                     [theme.breakpoints.down('sm')]: {
                         flexDirection: 'column',
                         alignItems: 'center',
                     },
                 })}
             >
-                <Hidden mdDown>
-                    <ListItemIcon sx={{ width: '5%' }}>
-                        <Announcement />
-                    </ListItemIcon>
-                </Hidden>
                 <ListItemText
                     sx={(theme) => ({
-                        width: '17%',
+                        width: '22%',
                         '& .MuiTypography-root': {
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',

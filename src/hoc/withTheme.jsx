@@ -13,6 +13,18 @@ const withTheme = (WrappedComponent) => {
                     theme={createTheme({
                         ...theme.themeOptions,
                         ...{
+                            components: {
+                                MuiInputBase: {
+                                    styleOverrides: {
+                                        input: {
+                                            '&:-webkit-autofill': {
+                                                WebkitBoxShadow: '0 0 0 1000px white inset',
+                                                WebkitTextFillColor: '#000',
+                                            },
+                                        },
+                                    },
+                                },
+                            },
                             typography: {
                                 fontFamily: ['Poppins', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
                             },

@@ -87,7 +87,7 @@ const AdministrationServices = () => {
                     <Grid container>
                         <Grid container sx={{ marginBottom: 2 }}>
                             <Grid item>
-                                <Typography variant="h5">{actionLabel[selectedAction]}</Typography>
+                                <Typography variant="subtitle1">{actionLabel[selectedAction]}</Typography>
                             </Grid>
                         </Grid>
                         <Grid container gap={2}>

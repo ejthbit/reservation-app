@@ -29,7 +29,7 @@ export const StyledCell = styled(TableCell)(() => ({
     borderBottom: 'none',
 }))
 
-export const getTimeValuesToFilterOut = (rowArray, originalArray = [], currentValue) => {
+export const getTimeValuesToFilterOut = (rowArray, originalArray = []) => {
     const deepCopy = [...rowArray]
     const newArray = deepCopy.reduce((acc, { start, end }) => {
         if (!isNilOrEmpty(start) && !isNilOrEmpty(end)) acc.push([start, end])
@@ -49,7 +49,7 @@ export const getTimeValuesToFilterOut = (rowArray, originalArray = [], currentVa
         let startTime = new Date('1970-01-01 ' + start + ':00')
         let endTime = new Date('1970-01-01 ' + end + ':00')
         let hours = []
-        for (let time = startTime; time < endTime; time.setHours(time.getHours() + 1)) {
+        for (let time = startTime; time < endTime; time.setMinutes(time.getMinutes() + 30)) {
             let hour = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             hours.push(hour)
         }
@@ -60,7 +60,6 @@ export const getTimeValuesToFilterOut = (rowArray, originalArray = [], currentVa
     let flattenedArray = result.reduce(function (accumulator, currentArray) {
         return accumulator.concat(currentArray)
     }, [])
-
     return originalArray.filter((time) => !flattenedArray.includes(time))
 }
 const validationSchema = yup.object().shape({
@@ -146,6 +145,7 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
             <TableContainer
                 component={Paper}
                 sx={{
+                    px: 3,
                     width: '100%',
                     marginTop: 2,
                     marginBottom: 2,

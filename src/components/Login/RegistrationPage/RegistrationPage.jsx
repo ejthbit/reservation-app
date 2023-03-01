@@ -51,7 +51,7 @@ const RegistrationPage = ({ onLoginClick }) => {
         >
             <form>
                 <Grid>
-                    <Typography variant="h2" fontWeight={'bold'}>
+                    <Typography variant="h3" fontWeight={'bold'}>
                         Registrace
                     </Typography>
                 </Grid>

@@ -1,5 +1,5 @@
 import { Box, CircularProgress, List, ListItem, ListItemText, ListSubheader, Typography } from '@mui/material'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { useGetAnnouncementsQuery } from '../../store/administration/services'
 import { isNilOrEmpty } from '../../utils'
 
@@ -21,11 +21,7 @@ const AnnouncementsList = () => {
                 >
                     {enabledAnnouncements.map(({ id, name, description }) => (
                         <ListItem key={id}>
-                            <ListItemText
-                                id="switch-list-label-wifi"
-                                primary={name}
-                                secondary={description}
-                            />
+                            <ListItemText primary={name} secondary={description} />
                         </ListItem>
                     ))}
                 </List>

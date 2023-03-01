@@ -2,7 +2,7 @@ import { Grid, Typography } from '@mui/material'
 import { equals, find, propEq } from 'ramda'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
+import PropTypes from 'prop-types'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { cs } from 'date-fns/locale'
@@ -59,7 +59,6 @@ const ReservationTermPicker = ({ step }) => {
                 return equals(date, selectedDate)
             }
         }, doctorServicesBySelectedDoctorIdAndMonth)
-        console.log(doctorsServicesForSelectedAmbulance)
         const servingDoctor = !isNilOrEmpty(selectedDoctor)
             ? servesItem?.doctors.find(propEq('doctorId', selectedDoctor))
             : servesItem?.doctors
@@ -123,4 +122,7 @@ const ReservationTermPicker = ({ step }) => {
     )
 }
 
+ReservationTermPicker.propTypes = {
+    step: PropTypes.string,
+}
 export default ReservationTermPicker

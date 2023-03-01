@@ -12,94 +12,11 @@ import { getUserInfo } from '../../../store/userInfo'
 import { isNilOrEmpty } from '../../../utils'
 import { AdministrationNewsListItem, AdministrationNewsNewAnnouncementDialog } from './components'
 
-const mockData = [
-    {
-        created_at: '2023-02-26 12:00:00:000',
-        id: 1,
-        author: 123,
-        enabled: true,
-        name: 'Object 1',
-        description: 'This is the first object',
-    },
-    {
-        created_at: '2023-02-26 12:05:00:000',
-        id: 2,
-        author: 456,
-        enabled: false,
-        name: 'Object 2',
-        description: 'This is the second object',
-    },
-    {
-        created_at: '2023-02-26 12:10:00:000',
-        id: 3,
-        author: 789,
-        enabled: true,
-        name: 'Object 3',
-        description: 'This is the third object',
-    },
-    {
-        created_at: '2023-02-26 12:15:00:000',
-        id: 4,
-        author: 123,
-        enabled: true,
-        name: 'Object 4',
-        description: 'This is the fourth object',
-    },
-    {
-        created_at: '2023-02-26 12:20:00:000',
-        id: 5,
-        author: 456,
-        enabled: false,
-        name: 'Object 5',
-        description: 'This is the fifth object',
-    },
-    {
-        created_at: '2023-02-26 12:25:00:000',
-        id: 6,
-        author: 789,
-        enabled: false,
-        name: 'Object 6',
-        description: 'This is the sixth object',
-    },
-    {
-        created_at: '2023-02-26 12:30:00:000',
-        id: 7,
-        author: 123,
-        enabled: false,
-        name: 'Object 7',
-        description: 'This is the seventh object',
-    },
-    {
-        created_at: '2023-02-26 12:35:00:000',
-        id: 8,
-        author: 456,
-        enabled: false,
-        name: 'Object 8',
-        description: 'This is the eighth object',
-    },
-    {
-        created_at: '2023-02-26 12:40:00:000',
-        id: 9,
-        author: 789,
-        enabled: false,
-        name: 'Object 9',
-        description: 'This is the ninth object',
-    },
-    {
-        created_at: '2023-02-26 12:45:00:000',
-        id: 10,
-        author: 123,
-        enabled: false,
-        name: 'Object 10',
-        description: 'This is the tenth object',
-    },
-]
-
 const AdministrationNews = () => {
     const { enqueueSnackbar } = useSnackbar()
     const { data: announcements, isFetching: isFetchingAnnouncements } = useGetAnnouncementsQuery()
-    const [deleteAnnouncement, { isFetching: isDeleting }] = useDeleteAnnouncementMutation()
-    const [updateAnnouncement, { isFetching: isUpdating }] = useUpdateAnnouncementMutation()
+    const [deleteAnnouncement] = useDeleteAnnouncementMutation()
+    const [updateAnnouncement] = useUpdateAnnouncementMutation()
     const { email } = useSelector(getUserInfo)
     const [isCreationDialogOpen, setCreationDialogOpen] = useState(false)
 

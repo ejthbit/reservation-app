@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
-import React from 'react'
 
 const AdministrationServiceCardButton = ({ color = '#FFF', icon, title, description, onClick }) => {
     const Icon = icon

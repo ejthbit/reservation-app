@@ -53,6 +53,7 @@ const TermPicker = ({ doctorServicesBySelectedDoctorIdAndMonth = [] }) => {
 }
 
 TermPicker.propTypes = {
+    inputRef: PropTypes.object,
     doctorServicesBySelectedDoctorIdAndMonth: PropTypes.array,
 }
 

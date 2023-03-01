@@ -1,5 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Button, CircularProgress, Typography, Link } from '@mui/material'
+import { Mail, Password } from '@mui/icons-material'
+import { Button, CircularProgress, Typography, Link, InputAdornment, Box } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2/Grid2'
 import PropTypes from 'prop-types'
 import { useForm } from 'react-hook-form'
@@ -32,12 +33,15 @@ const LoginPage = ({ onGetUser, onRegisterClick, isRegistrationEnabled }) => {
             justifyContent="center"
             alignContent="center"
             direction="column"
-            sx={{ height: '100vh', margin: 'auto' }}
+            sx={{
+                height: '100vh',
+                margin: 'auto',
+            }}
             spacing={2}
         >
-            <form>
+            <Box component="form">
                 <Grid>
-                    <Typography variant="h2" fontWeight={'bold'}>
+                    <Typography variant="h3" fontWeight={'bold'}>
                         Administrace
                     </Typography>
                 </Grid>
@@ -48,6 +52,13 @@ const LoginPage = ({ onGetUser, onRegisterClick, isRegistrationEnabled }) => {
                         control={control}
                         placeholder="E-mail"
                         label="E-mail"
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <Mail />
+                                </InputAdornment>
+                            ),
+                        }}
                         required
                         fullWidth
                     />
@@ -59,6 +70,13 @@ const LoginPage = ({ onGetUser, onRegisterClick, isRegistrationEnabled }) => {
                         control={control}
                         placeholder="Heslo"
                         label="Heslo"
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <Password />
+                                </InputAdornment>
+                            ),
+                        }}
                         required
                         fullWidth
                     />
@@ -96,7 +114,7 @@ const LoginPage = ({ onGetUser, onRegisterClick, isRegistrationEnabled }) => {
                         </Grid>
                     )}
                 </Grid>
-            </form>
+            </Box>
             {error && (
                 <Grid>
                     <Typography variant="body1" color="error">

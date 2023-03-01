@@ -4,15 +4,12 @@ import { useFieldArray } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { getUserConfigurationSelectedAmbulance } from '../../../../store/administration'
 import { useGetDoctorsForSelectedAmbulanceQuery } from '../../../../store/reservationProcess'
+import { getHalfHourTimeIncrements } from '../../../../utils'
 import { FormInput, FormSelectInput } from '../../../common'
 import AdministrationServicesEntryMenu from './AdministrationServicesEntryMenu'
 import { getTimeValuesToFilterOut, StyledCell } from './AdministrationServicesTable'
 
-const openingHours = Array(24)
-    .fill(0)
-    .map((_, i) => {
-        return ('0' + i + ':0' + 60 * (i % 1)).replace(/\d(\d\d)/g, '$1')
-    })
+const openingHours = getHalfHourTimeIncrements('07:00', '19:00') // TODO: use env variable
 const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date, trigger }) => {
     const selectedAmbulanceId = useSelector(getUserConfigurationSelectedAmbulance)
 
