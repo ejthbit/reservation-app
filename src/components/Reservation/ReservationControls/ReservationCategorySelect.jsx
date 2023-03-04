@@ -12,7 +12,7 @@ import { Dropdown } from '../../common'
 const ReservationCategorySelect = ({ step, isRequired = false }) => {
     const dispatch = useDispatch()
     const selectedDoctorId = useSelector(getPreferredDoctor)
-    const { data: categories, isFetching } = useGetBookingCategoriesQuery({ selectedDoctorId })
+    const { data: categories, isFetching } = useGetBookingCategoriesQuery(selectedDoctorId)
     const selectedCategory = useSelector(getSelectedCategory)
     useReservationButton({ dependency: [selectedCategory], step, isRequired })
 

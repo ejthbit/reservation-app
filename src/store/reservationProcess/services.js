@@ -20,7 +20,7 @@ export const bookingCategoriesAPI = createApi({
     baseQuery: axiosGynInstance,
     endpoints: (builder) => ({
         getBookingCategories: builder.query({
-            query: ({ selectedDoctorId }) =>
+            query: (selectedDoctorId = '') =>
                 !isNilOrEmpty(selectedDoctorId)
                     ? `${ID}/getBookingCategories/${selectedDoctorId}`
                     : `${ID}/getBookingCategories`,

@@ -15,7 +15,7 @@ const AutomaticLogoutDialog = () => {
                 <DialogContent>
                     <DialogContentText>
                         Vypršela platnost Vaší přihlašovací relace, z toho důvodu jsme byli nuceni vás
-                        automaticky odhlásit. Odhlášení proběhne v průběhů jedné minuty. Pro pokračování se
+                        automaticky odhlásit. Odhlášení proběhne v průběhů 30 sekund. Pro pokračování se
                         prosím znovu přihlašte.
                     </DialogContentText>
                 </DialogContent>

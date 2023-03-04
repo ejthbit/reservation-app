@@ -1,25 +1,13 @@
 import { CircularProgress, MenuItem, TextField } from '@mui/material'
-import { styled } from '@mui/material/styles'
-import clsx from 'clsx'
 import PropTypes from 'prop-types'
-import React from 'react'
 import { useController } from 'react-hook-form'
 
-const PREFIX = 'FormSelectInput'
-
-const classes = {
-    disabled: `${PREFIX}-disabled`,
+const disabledStyling = {
+    opacity: 0.5,
+    pointerEvents: 'none',
+    color: 'rgba(0, 0, 0, 0.38)',
+    cursor: 'default',
 }
-
-const StyledTextField = styled(TextField)(() => ({
-    [`& .${classes.disabled}`]: {
-        opacity: 0.5,
-        pointerEvents: 'none',
-        color: 'rgba(0, 0, 0, 0.38)',
-        cursor: 'default',
-    },
-}))
-
 const FormSelectInput = ({
     control,
     name,
@@ -37,13 +25,13 @@ const FormSelectInput = ({
         name,
         control,
         defaultValue: '',
-        rules: { validate: (value) => console.log(value) },
     })
+
     return (
-        <StyledTextField
+        <TextField
             select
             variant="standard"
-            className={disabled ? clsx(className, classes.disabled) : className}
+            sx={disabled ? { ...disabledStyling, ...className } : { ...className }}
             error={!!error}
             helperText={error?.message}
             readOnly={disabled}
@@ -63,7 +51,7 @@ const FormSelectInput = ({
                 </MenuItem>
             )}
             {children}
-        </StyledTextField>
+        </TextField>
     )
 }
 
@@ -73,7 +61,8 @@ FormSelectInput.propTypes = {
     children: PropTypes.node,
     name: PropTypes.string,
     disabled: PropTypes.bool,
-    className: PropTypes.string,
+    className: PropTypes.object,
+    isLoading: PropTypes.bool,
     displayEmpty: PropTypes.bool,
 }
 

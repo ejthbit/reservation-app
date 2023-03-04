@@ -21,15 +21,15 @@ const hourlyIntervals = (arr) =>
         const end = getDateWithCorrectOffset(obj.end)
 
         const diffInMs = end - start
-        const diffInHrs = diffInMs / (1000 * 60 * 60)
+        const diffInHrs = diffInMs / (1000 * 30 * 60)
 
         const intervals = []
         for (let i = 0; i < diffInHrs; i++) {
             const intervalStart = getISODateStringWithCorrectOffset(
-                new Date(start.getTime() + i * 60 * 60 * 1000)
+                new Date(start.getTime() + i * 30 * 60 * 1000)
             )
             const intervalEnd = getISODateStringWithCorrectOffset(
-                new Date(start.getTime() + (i + 1) * 60 * 60 * 1000)
+                new Date(start.getTime() + (i + 1) * 30 * 60 * 1000)
             )
             intervals.push({ start: intervalStart, end: intervalEnd })
         }
@@ -71,10 +71,10 @@ const generateHourlyIntervals = (startDate, endDate) => {
 
         intervals.push({
             start: getISODateStringWithCorrectOffset(new Date(currentDateTime)),
-            end: getISODateStringWithCorrectOffset(new Date(currentDateTime.getTime() + 60 * 60 * 1000)),
+            end: getISODateStringWithCorrectOffset(new Date(currentDateTime.getTime() + 30 * 60 * 1000)),
         })
 
-        currentDateTime = new Date(currentDateTime.getTime() + 60 * 60 * 1000)
+        currentDateTime = new Date(currentDateTime.getTime() + 30 * 60 * 1000)
     }
 
     return intervals

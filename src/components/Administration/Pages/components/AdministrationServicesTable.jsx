@@ -23,63 +23,49 @@ import {
     useUpdateServiceForMonthMutation,
 } from '../../../../store/reservationProcess'
 import { isNilOrEmpty, isSuccess } from '../../../../utils'
+import { checkArrayStartEndValues } from '../utils/Services/validations'
 import AdministrationServicesTableDoctorAssign from './AdministrationServicesTableDoctorAssign'
 
 export const StyledCell = styled(TableCell)(() => ({
     borderBottom: 'none',
 }))
 
-export const getTimeValuesToFilterOut = (rowArray, originalArray = []) => {
-    const deepCopy = [...rowArray]
-    const newArray = deepCopy.reduce((acc, { start, end }) => {
-        if (!isNilOrEmpty(start) && !isNilOrEmpty(end)) acc.push([start, end])
-        return acc
-    }, [])
-
-    const timeArray = newArray.map(([start, end]) => {
-        const startDate = new Date(start)
-        const endDate = new Date(end)
-        const startHours = (startDate.getHours() - 1).toString().padStart(2, '0')
-        const startMinutes = startDate.getMinutes().toString().padStart(2, '0')
-        const endHours = (endDate.getHours() - 1).toString().padStart(2, '0')
-        const endMinutes = endDate.getMinutes().toString().padStart(2, '0')
-        return [`${startHours}:${startMinutes}`, `${endHours}:${endMinutes}`]
-    })
-    const updatedTimeArray = timeArray.map(([start, end]) => {
-        let startTime = new Date('1970-01-01 ' + start + ':00')
-        let endTime = new Date('1970-01-01 ' + end + ':00')
-        let hours = []
-        for (let time = startTime; time < endTime; time.setMinutes(time.getMinutes() + 30)) {
-            let hour = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            hours.push(hour)
-        }
-        return [start, ...hours]
-    })
-    const result = updatedTimeArray
-
-    let flattenedArray = result.reduce(function (accumulator, currentArray) {
-        return accumulator.concat(currentArray)
-    }, [])
-    return originalArray.filter((time) => !flattenedArray.includes(time))
-}
 const validationSchema = yup.object().shape({
     data: yup.array(
         yup.object().shape({
             doctors: yup.array(
                 yup.lazy(() =>
                     yup.object().shape({
-                        doctorId: yup.string(),
                         start: yup
                             .string()
-                            .test('start', 'Začátek musí být menší než konec!', function (value) {
-                                const endDate = new Date(this.parent.end)
-                                const startDate = new Date(value)
-                                if (isNilOrEmpty(value)) return true
-                                return !isNilOrEmpty(this.parent.end) ? startDate < endDate : true
-                            }),
+                            .test('start-required', 'Zadaná hodnota musí být vyplněna!', function (value) {
+                                return !isNilOrEmpty(this.parent.end)
+                                    ? !isNilOrEmpty(this.parent.end) && value
+                                    : true
+                            })
+                            .test(
+                                'start',
+                                'Zadaná hodnota musí být menší než hodnota `Do`!',
+                                function (value) {
+                                    const endDate = new Date(this.parent.end)
+                                    const startDate = new Date(value)
+                                    if (isNilOrEmpty(value)) return true
+                                    return !isNilOrEmpty(this.parent.end) ? startDate < endDate : true
+                                }
+                            )
+                            .test(
+                                'isGreater',
+                                'Hodnota musí být vetší než hodnota `Do` předchozího záznamu.',
+                                checkArrayStartEndValues
+                            ),
                         end: yup
                             .string()
-                            .test('dateTest', 'Konec musí být vetší než začátek!', function (value) {
+                            .test('end-required', 'Zadaná hodnota musí být vyplněna!', function (value) {
+                                return !isNilOrEmpty(this.parent.start)
+                                    ? !isNilOrEmpty(this.parent.start) && value
+                                    : true
+                            })
+                            .test('end', 'Zadaná hodnota musí být vetší než hodnota`Od`!', function (value) {
                                 const endDate = new Date(value)
                                 const startDate = new Date(this.parent.start)
                                 if (isNilOrEmpty(value)) return true
@@ -96,29 +82,25 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
     const [createService] = useCreateServiceForMonthMutation()
     const [updateService] = useUpdateServiceForMonthMutation()
 
-    const { handleSubmit, control, setValue, reset, trigger } = useForm({
+    const {
+        handleSubmit,
+        control,
+        setValue,
+        reset,
+        trigger,
+        formState: { isValid },
+    } = useForm({
         mode: 'onChange',
         resolver: yupResolver(validationSchema),
-
         reValidateMode: 'onChange',
         defaultValues: { data },
     })
-    const { fields } = useFieldArray({ name: 'data', control, shouldUnregister: true })
+    const { fields } = useFieldArray({
+        name: 'data',
+        control,
+    })
     const { enqueueSnackbar } = useSnackbar()
-
     const onSubmit = async ({ data }) => {
-        // const withoutClosingItems = data.map((item) => {
-        //     if (isNilOrEmpty(item.doctors))
-        //         item.doctors = [
-        //             {
-        //                 doctorId: '',
-        //                 start: '',
-        //                 end: '',
-        //                 note: '',
-        //             },
-        //         ]
-        //     return item
-        // })
         const apiData = {
             month: selectedMonth,
             days: data,
@@ -138,6 +120,7 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
 
     useEffect(() => {
         reset({ data })
+        trigger()
     }, [data])
 
     return (
@@ -162,8 +145,12 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
                         })}
                     >
                         <TableRow>
-                            <TableCell rowSpan="2">Den</TableCell>
-                            <TableCell rowSpan="2">Datum</TableCell>
+                            <TableCell rowSpan="2" width="8%">
+                                Den
+                            </TableCell>
+                            <TableCell rowSpan="2" width="12%">
+                                Datum
+                            </TableCell>
                             <TableCell
                                 align="center"
                                 rowSpan="1"
@@ -174,13 +161,17 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell>Doktor</TableCell>
-                            <TableCell>Od</TableCell>
-                            <TableCell>Do</TableCell>
-                            <TableCell align="center" sx={{ width: 250, maxWidth: 250 }}>
+                            <TableCell width="25%">Doktor</TableCell>
+                            <TableCell width="10%" align="center">
+                                Od
+                            </TableCell>
+                            <TableCell width="10%" align="center">
+                                Do
+                            </TableCell>
+                            <TableCell align="center" width="30%">
                                 Poznámka
                             </TableCell>
-                            <TableCell align="center" sx={{ width: 50, maxWidth: 50 }}>
+                            <TableCell align="center" width="5%">
                                 Akce
                             </TableCell>
                         </TableRow>
@@ -188,16 +179,16 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
                     <TableBody>
                         {fields.map(({ date, doctors, id }, idx) => (
                             <TableRow key={id}>
-                                <TableCell width="10%">
+                                <TableCell width="8%">
                                     {new Date(date).toLocaleString('cs-CZ', { weekday: 'long' })}
                                 </TableCell>
-                                <TableCell width="10%">{format(new Date(date), 'dd-MM-yyyy')}</TableCell>
-                                <TableCell colSpan={8} sx={{ padding: 0 }}>
-                                    <Table>
+                                <TableCell width="12%">{format(new Date(date), 'dd-MM-yyyy')}</TableCell>
+                                <TableCell width="80%" colSpan={8} sx={{ padding: 0 }}>
+                                    <Table padding="checkbox">
                                         <TableBody>
                                             {doctors.length === 0 && (
                                                 <TableRow>
-                                                    <StyledCell>Zavřeno</StyledCell>
+                                                    <StyledCell width="80%">Zavřeno</StyledCell>
                                                 </TableRow>
                                             )}
                                             <AdministrationServicesTableDoctorAssign
@@ -215,7 +206,12 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
                     </TableBody>
                 </Table>
                 <Box margin={1}>
-                    <Button color="primary" variant="contained" onClick={handleSubmit(onSubmit)}>
+                    <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={handleSubmit(onSubmit)}
+                        disabled={!isValid}
+                    >
                         Uložit
                     </Button>
                 </Box>

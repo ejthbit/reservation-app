@@ -18,7 +18,7 @@ const checkTokenExpirationMiddleware =
             setTimeout(() => {
                 localStorage.clear()
                 dispatch(logOut())
-            }, 60000)
+            }, 30000)
         }
         return next(action)
     }

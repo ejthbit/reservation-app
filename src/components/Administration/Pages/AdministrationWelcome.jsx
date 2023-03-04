@@ -3,9 +3,19 @@ import { useSelector } from 'react-redux'
 import { getUserInfo } from '../../../store/userInfo'
 import AdministrationDashboardTodayPatients from './components/AdministrationDashboardTodayPatients'
 import imgLogo from '../../../assets/stetoscope.svg'
+import { useGetBookingsQuery } from '../../../store/administration/services'
+import { getUserConfigurationSelectedAmbulance } from '../../../store/administration'
+import { endOfToday, startOfToday } from 'date-fns'
+import { getISODateStringWithCorrectOffset } from '../../../utils'
 
 const AdministrationWelcome = () => {
     const { name } = useSelector(getUserInfo)
+    const selectedAmbulanceId = useSelector(getUserConfigurationSelectedAmbulance)
+    const { data: todayBookings } = useGetBookingsQuery({
+        from: getISODateStringWithCorrectOffset(startOfToday()),
+        to: getISODateStringWithCorrectOffset(endOfToday()),
+        workplace: selectedAmbulanceId,
+    })
 
     return (
         <Fade in timeout={{ enter: 600 }}>
@@ -42,7 +52,7 @@ const AdministrationWelcome = () => {
                             </span>
                         </Typography>
                         <Typography>
-                            Na dnešní den je objednáno mnoho pacientů!
+                            Na dnešní den je objednáno {todayBookings?.length} pacientů!
                             <br />
                             Před vývoláním zkontrolujte kartu pacienta.
                         </Typography>

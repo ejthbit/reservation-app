@@ -14,16 +14,16 @@ import { DatePicker } from '@mui/x-date-pickers'
 import { format } from 'date-fns'
 import PropTypes from 'prop-types'
 import { map } from 'ramda'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import * as yup from 'yup'
 import VALIDATION_MESSAGES from '../../../../constants/validationMessages'
 import { getUserConfigurationSelectedAmbulance } from '../../../../store/administration'
 import { useFastBookingMutation } from '../../../../store/administration/services'
-import { useLazyGetBookingCategoriesQuery } from '../../../../store/reservationProcess'
+import { useGetBookingCategoriesQuery } from '../../../../store/reservationProcess'
 import { getUserInfo } from '../../../../store/userInfo'
-import { getDateWithCorrectOffset, getISODateStringWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
+import { getDateWithCorrectOffset, getISODateStringWithCorrectOffset } from '../../../../utils'
 import VALIDATION_PATTERNS from '../../../../utils/validationPatterns'
 import { DialogButtons, FormInput, FormSelectInput } from '../../../common'
 
@@ -52,7 +52,8 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
     const { start, end } = data
     const [birthDate, setBirthDate] = useState(null)
 
-    const [getReservationCategories, { currentData: categories }] = useLazyGetBookingCategoriesQuery()
+    const { currentData: categories } = useGetBookingCategoriesQuery()
+    console.log(categories)
     const [createFastBooking, { isLoading: isCreatingBooking }] = useFastBookingMutation()
     const selectedAmbulanceId = useSelector(
         (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace
@@ -95,10 +96,6 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
             .unwrap()
             .then((payload) => payload && onClose())
     }
-
-    useEffect(() => {
-        if (isNilOrEmpty(categories)) getReservationCategories()
-    }, [categories])
 
     return (
         open && (

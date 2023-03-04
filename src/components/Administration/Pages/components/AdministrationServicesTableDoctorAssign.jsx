@@ -1,4 +1,4 @@
-import { MenuItem, TableRow } from '@mui/material'
+import { MenuItem, TableRow, useTheme } from '@mui/material'
 import { map, values } from 'ramda'
 import { useFieldArray } from 'react-hook-form'
 import { useSelector } from 'react-redux'
@@ -6,11 +6,13 @@ import { getUserConfigurationSelectedAmbulance } from '../../../../store/adminis
 import { useGetDoctorsForSelectedAmbulanceQuery } from '../../../../store/reservationProcess'
 import { getHalfHourTimeIncrements } from '../../../../utils'
 import { FormInput, FormSelectInput } from '../../../common'
+import { getTimeValuesToFilterOut } from '../utils/Services/utils'
 import AdministrationServicesEntryMenu from './AdministrationServicesEntryMenu'
-import { getTimeValuesToFilterOut, StyledCell } from './AdministrationServicesTable'
+import { StyledCell } from './AdministrationServicesTable'
 
 const openingHours = getHalfHourTimeIncrements('07:00', '19:00') // TODO: use env variable
 const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date, trigger }) => {
+    const theme = useTheme()
     const selectedAmbulanceId = useSelector(getUserConfigurationSelectedAmbulance)
 
     const { currentData: doctorsForSelectedAmbulance, isFetching } =
@@ -21,26 +23,33 @@ const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date,
     })
     const handleRemoveDoctorFromDay = (doctorIndex) => remove(doctorIndex)
 
-    const handleAssignDoctorToDay = () =>
+    const handleAssignDoctorToDay = () => {
         append({
             doctorId: '',
             start: '',
             end: '',
             note: '',
         })
+        trigger(`data.${idx}.doctors`)
+    }
 
     const handleUpdateFieldValue = (doctorIndex, property, value) =>
         update(doctorIndex, { ...fields[doctorIndex], [`fields[${doctorIndex}][${property}]`]: value })
 
-    return fields.map(({ doctorId, id, start }, index) => (
+    return fields.map(({ id, start }, index) => (
         <TableRow key={id}>
-            <StyledCell>
+            <StyledCell sx={{ width: fields.some(({ doctorId }) => doctorId !== '') ? '25%' : '75%' }}>
                 <FormSelectInput
                     name={`data.${idx}.doctors.${index}.doctorId`}
                     control={control}
                     fullWidth
                     required
                     displayEmpty
+                    className={{
+                        [theme.breakpoints.up('md')]: {
+                            width: '270px',
+                        },
+                    }}
                     isLoading={isFetching}
                 >
                     <MenuItem
@@ -66,9 +75,9 @@ const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date,
                     )}
                 </FormSelectInput>
             </StyledCell>
-            {doctorId !== '' && (
+            {fields.some(({ doctorId }) => doctorId !== '') && (
                 <>
-                    <StyledCell>
+                    <StyledCell sx={{ width: '10%' }}>
                         <FormSelectInput
                             name={`data.${idx}.doctors.${index}.start`}
                             control={control}
@@ -94,7 +103,7 @@ const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date,
                             )}
                         </FormSelectInput>
                     </StyledCell>
-                    <StyledCell>
+                    <StyledCell sx={{ width: '10%' }}>
                         <FormSelectInput
                             name={`data.${idx}.doctors.${index}.end`}
                             control={control}
@@ -118,22 +127,12 @@ const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date,
                             )}
                         </FormSelectInput>
                     </StyledCell>
-                    <StyledCell
-                        sx={{
-                            width: 250,
-                            maxWidth: 250,
-                        }}
-                    >
+                    <StyledCell sx={{ width: '30%' }}>
                         <FormInput name={`data.${idx}.doctors.${index}.note`} control={control} fullWidth />
                     </StyledCell>
                 </>
             )}
-            <StyledCell
-                sx={{
-                    width: 50,
-                    maxWidth: 50,
-                }}
-            >
+            <StyledCell sx={{ width: '5%' }}>
                 <AdministrationServicesEntryMenu
                     onAssign={() => handleAssignDoctorToDay()}
                     onDelete={() => handleRemoveDoctorFromDay(index)}
