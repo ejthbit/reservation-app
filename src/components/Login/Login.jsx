@@ -20,11 +20,11 @@ const Login = ({ onGetUser, logo, isRegistrationEnabled = false, adminPath = '/a
 
     return (
         <Box>
-            {logo && logo}
             {showRegistration ? (
-                <RegistrationPage onLoginClick={handleToggleView} />
+                <RegistrationPage logo={logo} onLoginClick={handleToggleView} />
             ) : (
                 <LoginPage
+                    logo={logo}
                     onGetUser={onGetUser}
                     isRegistrationEnabled={isRegistrationEnabled}
                     onRegisterClick={handleToggleView}

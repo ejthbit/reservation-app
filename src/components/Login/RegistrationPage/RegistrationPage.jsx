@@ -9,7 +9,7 @@ import { useSignUpMutation } from '../../../store/userInfo/services'
 import { isSuccess as isSuccessUtil } from '../../../utils'
 import FormInput from '../../common/Form/FormInput'
 import { validationMessages } from '../../../constants/'
-const RegistrationPage = ({ onLoginClick }) => {
+const RegistrationPage = ({ logo, onLoginClick }) => {
     const [signUp, { isLoading, error, isSuccess }] = useSignUpMutation()
 
     const [recaptcha, setRecaptcha] = useState(false)
@@ -49,6 +49,7 @@ const RegistrationPage = ({ onLoginClick }) => {
             sx={{ height: '100vh', margin: 'auto' }}
             spacing={2}
         >
+            {logo && logo}
             <form>
                 <Grid>
                     <Typography variant="h3" fontWeight={'bold'}>

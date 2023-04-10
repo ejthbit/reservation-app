@@ -1,9 +1,9 @@
-import { Box, CircularProgress, List, ListItem, ListItemText, ListSubheader, Typography } from '@mui/material'
+import { Box, CircularProgress, List, ListItem, ListItemText, ListSubheader } from '@mui/material'
 import { useMemo } from 'react'
 import { useGetAnnouncementsQuery } from '../../store/administration/services'
 import { isNilOrEmpty } from '../../utils'
 
-const AnnouncementsList = () => {
+const AnnouncementsList = ({ width = '100%' }) => {
     const { data: announcements, isFetching: isFetchingAnnouncements } = useGetAnnouncementsQuery()
 
     const enabledAnnouncements = useMemo(
@@ -12,12 +12,16 @@ const AnnouncementsList = () => {
     )
 
     return (
-        <Box sx={{ bgcolor: '#F9F9FB', m: 2, borderRadius: 4 }}>
+        <Box sx={{ bgcolor: 'rgba(255,192,203, 0.5)', m: 'auto', borderRadius: 4, width }}>
             {isFetchingAnnouncements && <CircularProgress />}
             {!isNilOrEmpty(enabledAnnouncements) && (
                 <List
                     sx={{ width: '100%' }}
-                    subheader={<ListSubheader sx={{ bgcolor: '#F9F9FB' }}>Aktuality</ListSubheader>}
+                    subheader={
+                        <ListSubheader sx={{ bgcolor: 'transparent', borderRadius: 4 }}>
+                            Aktuality
+                        </ListSubheader>
+                    }
                 >
                     {enabledAnnouncements.map(({ id, name, description }) => (
                         <ListItem key={id}>

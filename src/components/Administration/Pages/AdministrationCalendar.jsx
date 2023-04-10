@@ -15,6 +15,7 @@ import {
     AdministrationCreateCalendarEvent,
 } from './components'
 import { isMobile, isNilOrEmpty } from '../../../utils'
+import { withTheme } from '../../../hoc'
 
 const DragAndDropCalendar = withDragAndDrop(Calendar)
 const calendarFormats = {

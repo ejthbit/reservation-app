@@ -9,7 +9,7 @@ import { useLazySignInQuery } from '../../../store/userInfo/services'
 import { isSuccess } from '../../../utils'
 import FormInput from '../../common/Form/FormInput'
 
-const LoginPage = ({ onGetUser, onRegisterClick, isRegistrationEnabled }) => {
+const LoginPage = ({ logo, onGetUser, onRegisterClick, isRegistrationEnabled }) => {
     const [signIn, { isLoading, error }] = useLazySignInQuery()
     const { handleSubmit, control, formState } = useForm({
         mode: 'onSubmit',
@@ -39,6 +39,7 @@ const LoginPage = ({ onGetUser, onRegisterClick, isRegistrationEnabled }) => {
             }}
             spacing={2}
         >
+            {logo && logo}
             <Box component="form">
                 <Grid>
                     <Typography variant="h3" fontWeight={'bold'}>

@@ -12,6 +12,11 @@ export default defineConfig({
             exposes: {
                 './Button': './src/components/Reservation/ReservationButton/ReservationButton.jsx',
                 './ReservationDialog': './src/components/Reservation/ReservationDialog/ReservationDialog.jsx',
+                './ProtectedRoute': './src/components/common/ProtectedRoute.jsx',
+                './AdministrationPage': './src/components/Administration/AdministrationPage.jsx',
+                './Login': './src/components/Login/Login.jsx',
+                './ReservationProvider': './src/store/ReservationProvider.jsx',
+                './AnnouncementsList': './src/components/common/AnnouncementsList.jsx',
             },
             remotes: {
                 app: {
@@ -20,9 +25,7 @@ export default defineConfig({
                     externalType: 'url',
                 },
             },
-            shared: {
-                react: { singleton: true, requiredVersion: '*' },
-            },
+            shared: ['react', 'react-dom', 'react-router-dom'],
         }),
     ],
     preview: {

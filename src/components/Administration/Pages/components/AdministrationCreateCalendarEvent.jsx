@@ -53,7 +53,6 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
     const [birthDate, setBirthDate] = useState(null)
 
     const { currentData: categories } = useGetBookingCategoriesQuery()
-    console.log(categories)
     const [createFastBooking, { isLoading: isCreatingBooking }] = useFastBookingMutation()
     const selectedAmbulanceId = useSelector(
         (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace
@@ -147,7 +146,6 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
                         onChange={(date) => {
                             if (new Date(date).getTime()) {
                                 setBirthDate(date)
-                                console.log(getISODateStringWithCorrectOffset(date))
                                 setValue('birthDate', getISODateStringWithCorrectOffset(date), {
                                     shouldDirty: true,
                                 })

@@ -9,7 +9,8 @@ import {
     ReservationStepper,
 } from './components'
 import { withTheme } from '../../../hoc'
-const ReservationDialog = ({ isOpen, onClose, stepsConfiguration }) => {
+import defaultStepsConfiguration from '../defaultStepsConfiguration'
+const ReservationDialog = ({ isOpen, onClose, stepsConfiguration = defaultStepsConfiguration }) => {
     return (
         <Provider store={store}>
             {isOpen && (

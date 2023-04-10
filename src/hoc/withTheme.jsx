@@ -1,7 +1,7 @@
 /* eslint-disable react/display-name */
 import { ThemeProvider } from '@emotion/react'
 import { createTheme } from '@mui/material'
-import React, { Suspense } from 'react'
+import { Suspense } from 'react'
 // import theme from 'app/theme'
 // const theme = await import(import.meta.env.VITE_WEBUI_MODULE) // This is properly ignored in dev environment
 const theme = import.meta.env.PROD && (await import(import.meta.env.VITE_WEBUI_MODULE))
