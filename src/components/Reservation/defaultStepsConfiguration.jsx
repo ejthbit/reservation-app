@@ -6,6 +6,7 @@ import {
     ReservationName,
     ReservationPhone,
 } from './ReservationControls/ReservationContact'
+import ReservationContactInformationDisableProvider from './ReservationControls/ReservationDisableProvider'
 import ReservationTermPicker from './ReservationControls/ReservationTermPicker/ReservationTermPicker'
 
 const defaultStepsConfiguration = [
@@ -27,20 +28,22 @@ const defaultStepsConfiguration = [
     {
         label: 'Prosím vyplňte své kontaktni údaje',
         component: (
-            <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                    <ReservationName step={'FORTH'} />
+            <ReservationContactInformationDisableProvider birthDateDep={true} nameDep={true} step="FORTH">
+                <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                        <ReservationName step={'FORTH'} isRequired />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <ReservationBirthDate step={'FORTH'} isRequired />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <ReservationEmail step={'FORTH'} />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <ReservationPhone step={'FORTH'} />
+                    </Grid>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                    <ReservationBirthDate step={'FORTH'} />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <ReservationEmail step={'FORTH'} />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <ReservationPhone step={'FORTH'} />
-                </Grid>
-            </Grid>
+            </ReservationContactInformationDisableProvider>
         ),
         step: 'FORTH',
     },

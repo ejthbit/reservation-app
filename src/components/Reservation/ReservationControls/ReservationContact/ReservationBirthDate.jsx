@@ -1,20 +1,17 @@
-import PropTypes from 'prop-types'
+import { Today } from '@mui/icons-material'
+import { InputAdornment, TextField } from '@mui/material'
 import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
+import { cs } from 'date-fns/locale'
+import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
 import { getContactInformation } from '../../../../store/reservationProcess'
 import { setContactInformation } from '../../../../store/reservationProcess/reservationProcessSlice'
-import useReservationButton from '../../../../hooks/useReservationButton'
-import { InputAdornment, TextField } from '@mui/material'
-import { Today } from '@mui/icons-material'
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
-import { cs } from 'date-fns/locale'
 import { getISODateStringWithCorrectOffset } from '../../../../utils'
 
 const ReservationBirthDate = ({ step, isRequired }) => {
     const { birthDate } = useSelector(getContactInformation)
     const dispatch = useDispatch()
-
-    useReservationButton({ dependency: [birthDate], step, isRequired })
 
     return (
         <LocalizationProvider

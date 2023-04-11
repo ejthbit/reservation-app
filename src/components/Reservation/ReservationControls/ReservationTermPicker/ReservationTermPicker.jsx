@@ -109,7 +109,7 @@ const ReservationTermPicker = ({ step }) => {
                             <ReservationTime step={step} />
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <ReservationCategorySelect step={step} />
+                            <ReservationCategorySelect isRequired step={step} />
                         </Grid>
                     </Grid>
                 ) : !isNilOrEmpty(isDoctorServing) ? (

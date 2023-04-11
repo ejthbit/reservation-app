@@ -7,7 +7,7 @@
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
-        "run:mfe": "vite build && vite preview"
+        "run:mfe": "vite build --watch && vite preview"
     },
     "dependencies": {
         "@babel/core": "^7.20.5",

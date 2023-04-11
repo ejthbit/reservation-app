@@ -84,7 +84,6 @@ const useCalendar = () => {
     const [draggedEvent, setDraggedEvent] = useState(null)
     const [openEventDialogEvent, setOpenEventDialogEvent] = useState(null)
     const [newAppointmentDate, setNewAppointmentDate] = useState({})
-
     const bookingsViewDate = useSelector(getBookingsSelectedDate)
     const { from, to } = bookingsViewDate
     const selectedAmbulanceId = useSelector(getUserConfigurationSelectedAmbulance)
@@ -92,10 +91,12 @@ const useCalendar = () => {
     const [updateBooking] = useUpdateBookingMutation()
     const [getBookings, { data: bookings = [], isFetching: isLoadingEventsForSelectedView }] =
         useLazyGetBookingsQuery()
-    const [fetchDoctorServicesByRange, { currentData: servicesDays = [] }] =
-        useLazyGetDoctorServicesByRangeQuery()
+    const [
+        fetchDoctorServicesByRange,
+        { currentData: servicesDays = [], isFetching: isLoadingServicesDays },
+    ] = useLazyGetDoctorServicesByRangeQuery()
 
-    const { data: doctorsForSelectedAmbulance = [] } =
+    const { data: doctorsForSelectedAmbulance = [], isFetching: isLoadingDoctorsForSelectedAmbulance } =
         useGetDoctorsForSelectedAmbulanceQuery(selectedAmbulanceId)
 
     const doctors = doctorsForSelectedAmbulance.reduce(
@@ -110,7 +111,6 @@ const useCalendar = () => {
         [bookingsViewDate, servicesDays]
     )
     const events = useMemo(() => makeCalendarEventsFromBookings(bookings), [bookingsViewDate, bookings])
-
     const blockedEvents = useMemo(() => {
         const timesToBlock = removeContainedEntries(
             generateHourlyIntervals(from?.slice(0, 10), to?.slice(0, 10)),
@@ -165,7 +165,8 @@ const useCalendar = () => {
     return {
         openEventDialogEvent,
         newAppointmentDate,
-        isLoadingEventsForSelectedView,
+        isLoadingEventsForSelectedView:
+            isLoadingEventsForSelectedView && isLoadingServicesDays && isLoadingDoctorsForSelectedAmbulance,
         events: [...events, ...blockedEvents, ...doctorServicesEvents],
         draggedEvent,
         moveEvent,

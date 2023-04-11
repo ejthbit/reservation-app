@@ -8,6 +8,7 @@ const AdministrationCalendarEvent = ({ event }) => {
             <Grid container direction="column">
                 <Grid item>
                     <Typography variant="body2">{title}</Typography>
+                    {resource.phone && <Typography variant="body2">{resource.phone}</Typography>}
                 </Grid>
                 {resource.completed && (
                     <Hidden mdDown>

@@ -20,7 +20,8 @@ export default defineConfig({
             },
             remotes: {
                 app: {
-                    external: `http://127.0.0.1:5001/assets/app.js`,
+                    external: `../../app.js`,
+                    // external: `http://127.0.0.1:5001/assets/app.js`,
                     from: 'vite',
                     externalType: 'url',
                 },

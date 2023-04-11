@@ -6,11 +6,13 @@ import { equals } from 'ramda'
 import { useEffect, useState } from 'react'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { useDispatch } from 'react-redux'
+import { withTheme } from '../../../../hoc'
 import useCalendar from '../../../../hooks/useCalendar'
 import { setBookingsViewDate } from '../../../../store/administration/administrationSlice'
 import { isMobile, isNilOrEmpty } from '../../../../utils'
-const StyledButton = styled(Button)(() => ({
+const StyledButton = styled(Button)(({ theme, variant }) => ({
     height: '40px',
+    color: variant === 'outlined' ? theme.palette.primary.main : theme.palette.common.white,
 }))
 const VIEW_TRANSLATIONS = {
     day: 'dnešní den',
@@ -60,7 +62,6 @@ const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }) => {
             )
         }
     }, [label])
-
     return (
         <Box marginBottom={2}>
             <Grid container spacing={1} justifyContent="center" alignItems="stretch">
@@ -68,7 +69,9 @@ const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }) => {
                     <Grid item xs={12} md={6}>
                         <Typography variant="body1" align="left">
                             {`Počet objednaných pacientek na ${VIEW_TRANSLATIONS[viewState]}: ${
-                                events.filter(({ resource }) => !resource?.blocked).length
+                                events.filter(
+                                    ({ resource }) => !resource?.blocked && !resource?.doctorService
+                                ).length
                             } `}
                         </Typography>
                     </Grid>
@@ -128,4 +131,4 @@ AdministrationCalendarToolbar.propTypes = {
     onView: PropTypes.func,
 }
 
-export default AdministrationCalendarToolbar
+export default withTheme(AdministrationCalendarToolbar)

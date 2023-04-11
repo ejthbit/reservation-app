@@ -7,7 +7,7 @@ import cs from 'date-fns/locale/cs'
 import './css/custom-calendar.css'
 
 import useCalendar from '../../../hooks/useCalendar'
-import { Box, CircularProgress, Fade, useTheme } from '@mui/material'
+import { Box, CircularProgress, Fade } from '@mui/material'
 import {
     AdministrationCalendarToolbar,
     AdministrationCalendarEvent,
@@ -15,7 +15,7 @@ import {
     AdministrationCreateCalendarEvent,
 } from './components'
 import { isMobile, isNilOrEmpty } from '../../../utils'
-import { withTheme } from '../../../hoc'
+import { theme } from '../../../hoc/withTheme'
 
 const DragAndDropCalendar = withDragAndDrop(Calendar)
 const calendarFormats = {
@@ -72,7 +72,6 @@ const AdministrationCalendar = () => {
         handleOpenEventDialog,
         handleToggleCreationModal,
     } = useCalendar()
-    const theme = useTheme()
 
     return (
         <Fade in timeout={{ enter: 1000 }}>
@@ -100,8 +99,7 @@ const AdministrationCalendar = () => {
                         return {
                             className: 'slot',
                             style: {
-                                backgroundColor: theme.palette.primary.main,
-                                position: 'sticky',
+                                backgroundColor: theme.themeOptions.palette.primary.main,
                                 color: '#fff',
                                 ...(event?.resource?.blocked && {
                                     backgroundColor: 'grey',

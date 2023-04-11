@@ -23,6 +23,7 @@ const ReservationCategorySelect = ({ step, isRequired = false }) => {
             isLoading={isFetching}
             onChange={(e) => dispatch(setSelectedCategory(e.target.value))}
             options={categories}
+            required
         />
     )
 }

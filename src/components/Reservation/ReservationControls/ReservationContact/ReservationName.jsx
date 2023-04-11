@@ -1,12 +1,11 @@
+import { AccountCircle } from '@mui/icons-material'
+import { InputAdornment, TextField } from '@mui/material'
 import PropTypes from 'prop-types'
-import { useSelector, useDispatch } from 'react-redux'
+import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useDebounce } from '../../../../hooks'
 import { getContactInformation } from '../../../../store/reservationProcess'
 import { setContactInformation } from '../../../../store/reservationProcess/reservationProcessSlice'
-import { TextField, InputAdornment } from '@mui/material'
-import useReservationButton from '../../../../hooks/useReservationButton'
-import { AccountCircle } from '@mui/icons-material'
-import { useDebounce } from '../../../../hooks'
-import { useState } from 'react'
 
 const ReservationName = ({ step, isRequired }) => {
     const dispatch = useDispatch()
@@ -16,8 +15,6 @@ const ReservationName = ({ step, isRequired }) => {
         value: nonDebounceValue,
         onDebounce: (value) => dispatch(setContactInformation({ name: value })),
     })
-    useReservationButton({ dependency: [nonDebounceValue], step, isRequired })
-
     return (
         <TextField
             id="name"

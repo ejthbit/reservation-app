@@ -83,7 +83,12 @@
     border: none;
     pointer-events: 'none';
     cursor: 'pointer';
+    left: 0% !important;
     z-index: 1001;
+}
+
+.rbc-day-slot .rbc-event:hover {
+    opacity: 0.5;
 }
 .rbc-current-time-indicator {
     background-color: crimson;

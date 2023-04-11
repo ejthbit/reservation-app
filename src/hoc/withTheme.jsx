@@ -4,7 +4,7 @@ import { createTheme } from '@mui/material'
 import { Suspense } from 'react'
 // import theme from 'app/theme'
 // const theme = await import(import.meta.env.VITE_WEBUI_MODULE) // This is properly ignored in dev environment
-const theme = import.meta.env.PROD && (await import(import.meta.env.VITE_WEBUI_MODULE))
+export const theme = import.meta.env.PROD && (await import(import.meta.env.VITE_WEBUI_MODULE))
 const withTheme = (WrappedComponent) => {
     return (props) => {
         return (

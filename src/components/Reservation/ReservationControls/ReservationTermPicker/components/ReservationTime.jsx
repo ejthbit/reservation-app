@@ -14,8 +14,8 @@ const getReservationProcessInfo = makeReservationProcessInfo()
 
 const ReservationTime = ({ step }) => {
     const dispatch = useDispatch()
-    const { selectedDate, selectedTime } = useSelector(getReservationProcessInfo)
-    useReservationButton({ dependency: [selectedTime], step, isRequired: true })
+    const { selectedDate, selectedTime, selectedCategory } = useSelector(getReservationProcessInfo)
+    useReservationButton({ dependency: [selectedTime, selectedCategory], step, isRequired: true })
     const availableTimeSlots = useMemoizedSelector(makeAvailableTimeSlotsWithTimeOnly, {}, [selectedDate])
     const areAvailableTimeSlotsLoading = useSelector(getAreAvailableTimeSlotsLoading)
 
