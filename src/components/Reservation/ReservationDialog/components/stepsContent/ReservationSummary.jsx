@@ -1,44 +1,63 @@
-/* eslint-disable react/jsx-one-expression-per-line */
 import { Grid, Typography } from '@mui/material'
-import { map, reject, values } from 'ramda'
-import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { getContactInformation, makeAppointmentDate } from '../../../../../store/reservationProcess/selectors'
-import { isNilOrEmpty } from '../../../../../utils'
+import { useGetCategories } from '../../../../../hooks/useGetCategories'
+import { makeReservationProcessInfo } from '../../../../../store/reservationProcess/selectors'
+import { getAmbulanceNameById, getCategoryNameById, isNilOrEmpty } from '../../../../../utils'
+import { useGetAmbulances } from '../../../../../hooks/useGetAmbulances'
+import { useMemo } from 'react'
 
-const getAppointmentDate = makeAppointmentDate()
+const getAppointmentDate = makeReservationProcessInfo()
 
 const ReservationSummary = () => {
-    const contactInformation = useSelector(getContactInformation)
-    const appointmentDate = useSelector(getAppointmentDate)
+    const {
+        contactInformation,
+        selectedDate,
+        selectedCategory,
+        selectedAmbulanceId,
+        selectedTime,
+        selectedDoctor,
+    } = useSelector(getAppointmentDate)
+    const { data: categories } = useGetCategories(selectedDoctor)
+    const { data: ambulances } = useGetAmbulances()
 
-    const userInfo = useMemo(
-        () =>
-            map(
-                (item) => (!isNilOrEmpty(item) ? { title: item, value: item } : null),
-                values(contactInformation)
-            ),
-        [contactInformation]
+    const { name, address } = useMemo(
+        () => getAmbulanceNameById(selectedAmbulanceId, ambulances),
+        [ambulances]
     )
 
-    const summaryInformation = useMemo(
-        () =>
-            reject(isNilOrEmpty, [
-                {
-                    title: `Termín návštevy: ${appointmentDate}`,
-                    value: appointmentDate,
-                },
-                ...userInfo,
-            ]),
-        [appointmentDate, userInfo]
-    )
+    const renderContactInfo = () => {
+        return Object.entries(contactInformation).map(([key, value]) => {
+            if (!isNilOrEmpty(value)) {
+                return (
+                    <Grid item key={key}>
+                        <Typography variant="caption">{value}</Typography>
+                    </Grid>
+                )
+            }
+            return null
+        })
+    }
 
     return (
-        <Grid container direction="column">
-            {map(
-                ({ title, value }) => !isNilOrEmpty(value) && <Typography key={value}>{title}</Typography>,
-                summaryInformation
-            )}
+        <Grid container gap="20%">
+            <Grid item>
+                <Typography variant="h5">Datum návštevy</Typography>
+                <Grid item display="flex" key={selectedDate} flexDirection="column">
+                    <Typography variant="caption">
+                        Kdy? {selectedDate}-{selectedTime}
+                    </Typography>
+                    <Typography variant="caption">
+                        Kde? Ambulance {name} ({address})
+                    </Typography>
+                    <Typography variant="caption">
+                        Typ vyšetření: {getCategoryNameById(selectedCategory, categories)}
+                    </Typography>
+                </Grid>
+            </Grid>
+            <Grid item>
+                <Typography variant="h5">Kontaktní údaje</Typography>
+                {renderContactInfo()}
+            </Grid>
         </Grid>
     )
 }

@@ -35,7 +35,7 @@ const AdministrationDrawerListItems = ({ arrayOfItems, selectedItem, isOpen, set
                                         mr: isOpen ? 2 : 'auto',
                                         justifyContent: 'center',
                                         '& svg': {
-                                            fill: theme.palette.primary.main,
+                                            fill: 'white',
                                         },
                                     })}
                                 >

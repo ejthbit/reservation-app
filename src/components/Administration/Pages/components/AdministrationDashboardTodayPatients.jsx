@@ -51,7 +51,7 @@ const AdministrationDashboardTodayPatients = () => {
                 sx={{
                     width: '100%',
                     bgcolor: '#F9F9FB',
-                    borderRadius: 2,
+                    borderRadius: 6,
                     height: '65vh',
                 }}
             >

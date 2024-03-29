@@ -10,14 +10,12 @@ export const getActiveStep = path([STATE_KEYS.RESERVATION_PROCESS, 'activeStep']
 export const getSelectedDate = path([STATE_KEYS.RESERVATION_PROCESS, 'selectedDate'])
 export const getSelectedAmbulance = path([STATE_KEYS.RESERVATION_PROCESS, 'selectedAmbulance'])
 export const getSelectedCategory = path([STATE_KEYS.RESERVATION_PROCESS, 'selectedCategory'])
-export const getAmbulances = path([STATE_KEYS.RESERVATION_PROCESS, '/', 'ambulances', 'data'])
 export const getAreAvailableTimeSlotsLoading = path([
     STATE_KEYS.RESERVATION_PROCESS,
     'availableTimeSlots',
     'isLoading',
 ])
 export const getAvailableTimeSlots = path([STATE_KEYS.RESERVATION_PROCESS, 'availableTimeSlots', 'slots'])
-export const getBookingCategories = path([STATE_KEYS.RESERVATION_PROCESS, '/', 'bookingCategories', 'data'])
 export const getPreferredDoctor = path([STATE_KEYS.RESERVATION_PROCESS, 'preferredDoctor'])
 export const getSelectedTime = path([STATE_KEYS.RESERVATION_PROCESS, 'selectedTime'])
 export const getContactInformation = path([STATE_KEYS.RESERVATION_PROCESS, 'contactInformation'])

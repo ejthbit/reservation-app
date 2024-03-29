@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
 import { Outlet } from 'react-router-dom'
@@ -41,7 +41,7 @@ const AdministrationLayout = ({ isDrawerOpen }) => {
             <Box display="flex" mb={3} alignItems="center">
                 <AdministrationPathBreadcrumbs />
                 <AmbulanceSelect
-                    sx={{ width: '40%' }}
+                    sx={{ width: '40%', variant: '' }}
                     selectedValueId={selectedAmbulanceId}
                     onAmbulanceSelect={(e) =>
                         dispatch(

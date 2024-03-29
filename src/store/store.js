@@ -4,8 +4,6 @@ import reservationProcessReducer from './reservationProcess/reservationProcessSl
 import userInfoReducer from './userInfo/userInfoSlice'
 import administrationReducer from './administration/administrationSlice'
 import {
-    ambulancesAPI,
-    bookingCategoriesAPI,
     contactMessageAPI,
     doctorServicesAPI,
     doctorsForSelectedAmbulanceAPI,
@@ -19,8 +17,6 @@ const rootReducer = combineReducers({
     [STATE_KEYS.RESERVATION_PROCESS]: reservationProcessReducer,
     [STATE_KEYS.USER_INFO]: userInfoReducer,
     [STATE_KEYS.ADMINISTRATION]: administrationReducer,
-    [ambulancesAPI.reducerPath]: ambulancesAPI.reducer,
-    [bookingCategoriesAPI.reducerPath]: bookingCategoriesAPI.reducer,
     [contactMessageAPI.reducerPath]: contactMessageAPI.reducer,
     [doctorsForSelectedAmbulanceAPI.reducerPath]: doctorsForSelectedAmbulanceAPI.reducer,
     [doctorServicesAPI.reducerPath]: doctorServicesAPI.reducer,
@@ -33,8 +29,6 @@ export const store = configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) => [
         ...getDefaultMiddleware(),
-        ambulancesAPI.middleware,
-        bookingCategoriesAPI.middleware,
         contactMessageAPI.middleware,
         doctorsForSelectedAmbulanceAPI.middleware,
         doctorServicesAPI.middleware,

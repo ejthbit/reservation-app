@@ -15,7 +15,11 @@ const ReservationDialogTitle = ({ onClose }) => {
         >
             <Box display="flex" alignItems="center" justifyContent="center">
                 <Box flexGrow={1}>
-                    {<Typography variant="h4">Rezervační formulář</Typography>}
+                    {
+                        <Typography variant="h4" fontWeight="bold">
+                            Rezervační formulář
+                        </Typography>
+                    }
                 </Box>
                 <Box alignSelf="flex-start">
                     <IconButton onClick={onClose} size="large">

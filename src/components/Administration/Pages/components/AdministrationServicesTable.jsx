@@ -132,7 +132,7 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
                     width: '100%',
                     marginTop: 2,
                     marginBottom: 2,
-                    borderRadius: 2,
+                    borderRadius: 6,
                     boxShadow: 0,
                     bgcolor: '#F9F9FB',
                 }}

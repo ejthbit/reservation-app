@@ -16,9 +16,10 @@ import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDeleteBookingMutation, useUpdateBookingMutation } from '../../../../store/administration/services'
-import { useLazyGetBookingCategoriesQuery } from '../../../../store/reservationProcess'
+import { makeArrayOfLabelValue } from '../../../../store/reservationProcess'
 import { getISODateStringWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
 import { DialogButtons, Dropdown, FormInput } from '../../../common'
+import { useGetCategories } from '../../../../hooks/useGetCategories'
 
 const AdministrationEventDetail = ({ event, handleClose }) => {
     const [startValue, setStartValue] = useState(null)
@@ -65,12 +66,7 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
         }
     }
 
-    const [getReservationCategories, { currentData: categories, isLoading }] =
-        useLazyGetBookingCategoriesQuery()
-
-    useEffect(() => {
-        if (isNilOrEmpty(categories)) getReservationCategories()
-    }, [categories])
+    const { data: categories, isLoading } = useGetCategories()
 
     useEffect(() => {
         if (!isNilOrEmpty(event)) {
@@ -124,7 +120,6 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                     control={control}
                     name="birthdate"
                     fullWidth
-                    disabled
                 />
                 <FormInput
                     label="Telefonní číslo"
@@ -132,22 +127,13 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                     control={control}
                     name="phone"
                     fullWidth
-                    disabled={true ?? !!control.defaultValuesRef.current.phone}
                 />
-                <FormInput
-                    label="E-mail"
-                    placeholder="E-mail"
-                    control={control}
-                    name="email"
-                    fullWidth
-                    disabled={true ?? !!control.defaultValuesRef.current.email}
-                />
+                <FormInput label="E-mail" placeholder="E-mail" control={control} name="email" fullWidth />
                 <Dropdown
                     label="Typ vyšetření"
                     isLoading={isLoading}
                     value={event?.resource?.category}
-                    options={categories}
-                    disabled
+                    options={makeArrayOfLabelValue('name', 'category_id', categories ?? [])}
                 />
                 <FormInput
                     label="Poznámka (pouze interní)"

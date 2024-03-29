@@ -11,6 +11,7 @@ import {
     AdministrationCalendar,
     AdministrationServices,
     AdministrationNews,
+    AdministrationOrders,
 } from './Pages'
 
 const AdministrationPage = () => {
@@ -24,6 +25,7 @@ const AdministrationPage = () => {
                 <Routes>
                     <Route path="/" element={<AdministrationTopbar />}>
                         <Route path="/" element={<AdministrationWelcome />} />
+                        <Route path="/orders" element={<AdministrationOrders />} />
                         <Route path="/services" element={<AdministrationServices />} />
                         <Route path="/calendar" element={<AdministrationCalendar />} />
                         <Route path="/announcements" element={<AdministrationNews />} />

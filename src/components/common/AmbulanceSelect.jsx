@@ -1,17 +1,11 @@
 import { Box, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
-import { useEffect } from 'react'
-import { useLazyGetAmbulancesQuery } from '../../store/reservationProcess'
-import { isNilOrEmpty } from '../../utils'
+import { useGetAmbulances } from '../../hooks/useGetAmbulances'
 import Dropdown from './Dropdown'
+import { makeArrayOfLabelValue } from '../../store/reservationProcess'
 
 const AmbulanceSelect = ({ showLabel, selectedValueId = '', onAmbulanceSelect, defaultValue }) => {
-    const [getAmbulances, { data: ambulances, isFetching }] = useLazyGetAmbulancesQuery()
-
-    useEffect(() => {
-        if (isNilOrEmpty(ambulances)) getAmbulances()
-    }, [ambulances])
-
+    const { data: ambulances, isloading } = useGetAmbulances()
     return (
         <Box>
             {showLabel && (
@@ -21,8 +15,8 @@ const AmbulanceSelect = ({ showLabel, selectedValueId = '', onAmbulanceSelect, d
             )}
             <Dropdown
                 defaultValue={defaultValue}
-                isLoading={isFetching}
-                options={ambulances}
+                isLoading={isloading}
+                options={makeArrayOfLabelValue('name', 'workplace_id', ambulances ?? [])}
                 value={selectedValueId}
                 onChange={onAmbulanceSelect}
             />

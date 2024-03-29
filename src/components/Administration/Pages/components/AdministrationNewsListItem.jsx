@@ -69,7 +69,7 @@ const AdministrationNewsListItem = ({
                         },
                     })}
                     id="switch-list-item"
-                    primary={`Autor: ${author}`}
+                    primary={author}
                     secondary={format(getDateWithCorrectOffset(created_at), 'yyyy-dd-MM')}
                 />
                 <Box

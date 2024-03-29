@@ -7,8 +7,31 @@ import useReservationButton from '../../../../hooks/useReservationButton'
 import { Phone } from '@mui/icons-material'
 import { useDebounce } from '../../../../hooks'
 import VALIDATION_PATTERNS from '../../../../utils/validationPatterns'
-import { useState } from 'react'
+import { useState, forwardRef } from 'react'
 import { string } from 'yup'
+import MaskedInput from 'react-text-mask'
+
+const PhoneMaskedInput = forwardRef((props, ref) => (
+    <MaskedInput
+        {...props}
+        ref={ref}
+        mask={[
+            /\d/,
+            /\d/,
+            /\d/, // first three digits
+            ' ', // separator
+            /\d/,
+            /\d/,
+            /\d/, // next three digits
+            ' ', // separator
+            /\d/,
+            /\d/,
+            /\d/, // last three digits
+        ]}
+        placeholderChar={'\u2000'} // non-breaking space to preserve space in the mask
+    />
+))
+PhoneMaskedInput.displayName = 'PhoneMaskedInput'
 
 const ReservationPhone = ({ step, isRequired }) => {
     const dispatch = useDispatch()
@@ -18,7 +41,7 @@ const ReservationPhone = ({ step, isRequired }) => {
     const [nonDebounceValue, setNonDebounceValue] = useState(phone)
     useDebounce({
         value: nonDebounceValue,
-        onDebounce: (value) => dispatch(setContactInformation({ phone: value })),
+        onDebounce: (value) => dispatch(setContactInformation({ phone: value.trim() })),
     })
     useReservationButton({ dependency: [nonDebounceValue], step, isRequired, isValid })
 
@@ -41,6 +64,7 @@ const ReservationPhone = ({ step, isRequired }) => {
             helperText={!isValid ? 'Nesprávný formát telefonního čísla' : ''}
             fullWidth
             InputProps={{
+                inputComponent: PhoneMaskedInput,
                 endAdornment: (
                     <InputAdornment sx={{ cursor: 'none' }} position="end">
                         <Phone />

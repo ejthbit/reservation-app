@@ -21,11 +21,12 @@ import * as yup from 'yup'
 import VALIDATION_MESSAGES from '../../../../constants/validationMessages'
 import { getUserConfigurationSelectedAmbulance } from '../../../../store/administration'
 import { useFastBookingMutation } from '../../../../store/administration/services'
-import { useGetBookingCategoriesQuery } from '../../../../store/reservationProcess'
+import { makeArrayOfLabelValue } from '../../../../store/reservationProcess'
 import { getUserInfo } from '../../../../store/userInfo'
 import { getDateWithCorrectOffset, getISODateStringWithCorrectOffset } from '../../../../utils'
 import VALIDATION_PATTERNS from '../../../../utils/validationPatterns'
 import { DialogButtons, FormInput, FormSelectInput } from '../../../common'
+import { useGetCategories } from '../../../../hooks/useGetCategories'
 
 const formValidationSchema = yup.object({
     name: yup.string().required(VALIDATION_MESSAGES.IS_REQUIRED_FIELD),
@@ -52,7 +53,7 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
     const { start, end } = data
     const [birthDate, setBirthDate] = useState(null)
 
-    const { currentData: categories } = useGetBookingCategoriesQuery()
+    const { data: categories, isLoading: isLoadingCategories } = useGetCategories()
     const [createFastBooking, { isLoading: isCreatingBooking }] = useFastBookingMutation()
     const selectedAmbulanceId = useSelector(
         (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace
@@ -123,14 +124,15 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
                         fullWidth
                         required
                     >
-                        {map(
-                            ({ label, value }) => (
-                                <MenuItem key={label} value={value}>
-                                    {label}
-                                </MenuItem>
-                            ),
-                            categories
-                        )}
+                        {!isLoadingCategories &&
+                            map(
+                                ({ label, value }) => (
+                                    <MenuItem key={label} value={value}>
+                                        {label}
+                                    </MenuItem>
+                                ),
+                                makeArrayOfLabelValue('name', 'category_id', categories)
+                            )}
                     </FormSelectInput>
                     <DatePicker
                         disableFuture

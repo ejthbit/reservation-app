@@ -1,33 +1,8 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import axiosGynInstance from '../../api/config'
 import { makeArrayOfLabelValue } from './selectors'
-import { isNilOrEmpty } from '../../utils'
+
 const ID = 'configuration'
-
-export const ambulancesAPI = createApi({
-    reducerPath: 'reservationProcess/ambulances',
-    baseQuery: axiosGynInstance,
-    endpoints: (builder) => ({
-        getAmbulances: builder.query({
-            query: () => `${ID}/getAmbulances`,
-            transformResponse: (response) => makeArrayOfLabelValue('name', 'workplace_id', response.data),
-        }),
-    }),
-})
-
-export const bookingCategoriesAPI = createApi({
-    reducerPath: 'reservationProcess/bookingCategories',
-    baseQuery: axiosGynInstance,
-    endpoints: (builder) => ({
-        getBookingCategories: builder.query({
-            query: (selectedDoctorId = '') =>
-                !isNilOrEmpty(selectedDoctorId)
-                    ? `${ID}/getBookingCategories/${selectedDoctorId}`
-                    : `${ID}/getBookingCategories`,
-            transformResponse: (response) => makeArrayOfLabelValue('name', 'category_id', response.data),
-        }),
-    }),
-})
 
 export const doctorsForSelectedAmbulanceAPI = createApi({
     reducerPath: 'reservationProcess/doctorsForSelectedAmbulance',
@@ -86,8 +61,6 @@ export const doctorServicesAPI = createApi({
     }),
 })
 
-export const { useGetAmbulancesQuery, useLazyGetAmbulancesQuery } = ambulancesAPI
-export const { useGetBookingCategoriesQuery, useLazyGetBookingCategoriesQuery } = bookingCategoriesAPI
 export const { useGetDoctorsForSelectedAmbulanceQuery, useLazyGetDoctorsForSelectedAmbulanceQuery } =
     doctorsForSelectedAmbulanceAPI
 export const { usePostContactMessage } = contactMessageAPI

@@ -12,13 +12,13 @@ const AnnouncementsList = ({ width = '100%' }) => {
     )
 
     return (
-        <Box sx={{ bgcolor: 'rgba(255,192,203, 0.5)', m: 'auto', borderRadius: 4, width }}>
+        <Box sx={{ bgcolor: 'rgba(255,192,203, 0.5)', m: 'auto', borderRadius: 6, width }}>
             {isFetchingAnnouncements && <CircularProgress />}
             {!isNilOrEmpty(enabledAnnouncements) && (
                 <List
                     sx={{ width: '100%' }}
                     subheader={
-                        <ListSubheader sx={{ bgcolor: 'transparent', borderRadius: 4 }}>
+                        <ListSubheader sx={{ bgcolor: 'transparent', borderRadius: 6 }}>
                             Aktuality
                         </ListSubheader>
                     }

@@ -15,13 +15,13 @@ import {
     AdministrationCreateCalendarEvent,
 } from './components'
 import { isMobile, isNilOrEmpty } from '../../../utils'
-import { theme } from '../../../hoc/withTheme'
+import { useTheme } from '@emotion/react'
 
 const DragAndDropCalendar = withDragAndDrop(Calendar)
 const calendarFormats = {
     dayRangeHeaderFormat: ({ start, end }) =>
         format(new Date(start), 'dd/MM/yyyy') + ' - ' + format(new Date(end), 'dd/MM/yyyy'),
-    dayFormat: (date) => format(date, 'dd/MM/yyyy'),
+    dayFormat: (date) => format(date, 'eeee dd/MM/yyyy', { locale: cs }),
     dayHeaderFormat: (date) => format(date, 'dd/MM/yyyy'),
 }
 
@@ -72,7 +72,7 @@ const AdministrationCalendar = () => {
         handleOpenEventDialog,
         handleToggleCreationModal,
     } = useCalendar()
-
+    const theme = useTheme()
     return (
         <Fade in timeout={{ enter: 1000 }}>
             <Box
@@ -99,7 +99,7 @@ const AdministrationCalendar = () => {
                         return {
                             className: 'slot',
                             style: {
-                                backgroundColor: theme.themeOptions.palette.primary.main,
+                                backgroundColor: theme.palette.primary.main,
                                 color: '#fff',
                                 ...(event?.resource?.blocked && {
                                     backgroundColor: 'grey',
