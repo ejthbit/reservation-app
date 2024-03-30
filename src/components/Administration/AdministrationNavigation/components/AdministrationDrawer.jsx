@@ -17,6 +17,7 @@ import { logOut } from '../../../../store/userInfo/userInfoSlice'
 import AdministrationDrawerListItems from './AdministrationDrawerListItems'
 import AdministrationLayout from './AdministrationLayout'
 import packageJson from '../../../../../package.json'
+import { isMobile } from '../../../../utils'
 const adminToolbarLinks = [
     { id: 0, icon: <Home />, text: 'Přehled', link: '/admin' },
     { id: 1, icon: <Event />, text: 'Objednávky', link: '/admin/orders' },
@@ -97,7 +98,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 }))
 
 const AdministrationDrawer = () => {
-    const [isDrawerOpen, toggleDrawer] = useState(true)
+    const [isDrawerOpen, toggleDrawer] = useState(isMobile ? false : true)
     const [selectedItem, setSelectedItem] = useState(0)
 
     return (
