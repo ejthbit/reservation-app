@@ -30,6 +30,12 @@ export const StyledCell = styled(TableCell)(() => ({
     borderBottom: 'none',
 }))
 
+export const StyledHeaderCell = styled(TableCell)(() => ({
+    borderBottom: 'none',
+    color: 'white',
+    fontWeight: 'bold',
+}))
+
 const validationSchema = yup.object().shape({
     data: yup.array(
         yup.object().shape({
@@ -128,7 +134,6 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
             <TableContainer
                 component={Paper}
                 sx={{
-                    px: 3,
                     width: '100%',
                     marginTop: 2,
                     marginBottom: 2,
@@ -140,40 +145,38 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
                 <Table size="medium">
                     <TableHead
                         sx={(theme) => ({
+                            color: 'white',
+                            backgroundColor: theme.palette.primary.main,
+                            borderRadius: 6,
                             padding: theme.spacing(2),
                             fontWeight: 600,
                         })}
                     >
                         <TableRow>
-                            <TableCell rowSpan="2" width="8%">
+                            <StyledHeaderCell rowSpan="2" width="8%">
                                 Den
-                            </TableCell>
-                            <TableCell rowSpan="2" width="12%">
+                            </StyledHeaderCell>
+                            <StyledHeaderCell rowSpan="2" width="12%">
                                 Datum
-                            </TableCell>
-                            <TableCell
-                                align="center"
-                                rowSpan="1"
-                                colSpan="8"
-                                sx={{ borderBottom: '1px solid #e0e0e0' }}
-                            >
+                            </StyledHeaderCell>
+                            <StyledHeaderCell align="center" rowSpan="1" colSpan="8">
                                 Seznam doktorů
-                            </TableCell>
+                            </StyledHeaderCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell width="25%">Doktor</TableCell>
-                            <TableCell width="10%" align="center">
+                            <StyledHeaderCell width="25%">Doktor</StyledHeaderCell>
+                            <StyledHeaderCell width="10%" align="center">
                                 Od
-                            </TableCell>
-                            <TableCell width="10%" align="center">
+                            </StyledHeaderCell>
+                            <StyledHeaderCell width="10%" align="center">
                                 Do
-                            </TableCell>
-                            <TableCell align="center" width="30%">
+                            </StyledHeaderCell>
+                            <StyledHeaderCell align="center" width="30%">
                                 Poznámka
-                            </TableCell>
-                            <TableCell align="center" width="5%">
+                            </StyledHeaderCell>
+                            <StyledHeaderCell align="center" width="5%">
                                 Akce
-                            </TableCell>
+                            </StyledHeaderCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -211,6 +214,7 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
                         variant="contained"
                         onClick={handleSubmit(onSubmit)}
                         disabled={!isValid}
+                        sx={{ borderRadius: 6 }}
                     >
                         Uložit
                     </Button>

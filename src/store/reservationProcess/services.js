@@ -15,19 +15,6 @@ export const doctorsForSelectedAmbulanceAPI = createApi({
     }),
 })
 
-export const contactMessageAPI = createApi({
-    reducerPath: 'reservationProcess/contactMessage',
-    baseQuery: axiosGynInstance,
-    endpoints: (builder) => ({
-        postContactMessage: builder.mutation({
-            query: (data) => ({
-                url: `${ID}/contactForm/sendMessage`,
-                method: 'POST',
-                data,
-            }),
-        }),
-    }),
-})
 export const doctorServicesAPI = createApi({
     reducerPath: 'reservationProcess/fetchDoctorServicesForSelectedMonth',
     baseQuery: axiosGynInstance,
@@ -63,11 +50,11 @@ export const doctorServicesAPI = createApi({
 
 export const { useGetDoctorsForSelectedAmbulanceQuery, useLazyGetDoctorsForSelectedAmbulanceQuery } =
     doctorsForSelectedAmbulanceAPI
-export const { usePostContactMessage } = contactMessageAPI
 export const {
     useGetDoctorServicesForMonthQuery,
     useLazyGetDoctorServicesForMonthQuery,
     useCreateServiceForMonthMutation,
     useUpdateServiceForMonthMutation,
+    useGetDoctorServicesByRangeQuery,
     useLazyGetDoctorServicesByRangeQuery,
 } = doctorServicesAPI

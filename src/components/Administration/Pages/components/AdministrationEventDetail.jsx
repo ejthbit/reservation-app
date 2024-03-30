@@ -42,6 +42,7 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
             phone: '',
             email: '',
             note: '',
+            selectedDoctor: '',
             completed: !!completedValue,
         },
     })
@@ -82,6 +83,7 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                 email: isNilOrEmpty(resource?.email) ? 'Nevyplněno' : resource?.email,
                 completed: resource?.completed,
                 note: resource?.note,
+                selectedDoctor: resource?.selectedDoctorId ?? '',
             })
         }
     }, [event, reset])
@@ -134,6 +136,14 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                     isLoading={isLoading}
                     value={event?.resource?.category}
                     options={makeArrayOfLabelValue('name', 'category_id', categories ?? [])}
+                />
+                <FormInput
+                    label="Preferovaný doktor"
+                    placeholder="Preferovaný doktor"
+                    control={control}
+                    name="selectedDoctor"
+                    disabled
+                    fullWidth
                 />
                 <FormInput
                     label="Poznámka (pouze interní)"

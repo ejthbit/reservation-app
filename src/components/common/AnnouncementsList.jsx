@@ -19,7 +19,7 @@ const AnnouncementsList = ({ width = '100%' }) => {
                     sx={{ width: '100%' }}
                     subheader={
                         <ListSubheader sx={{ bgcolor: 'transparent', borderRadius: 6 }}>
-                            Aktuality
+                            Oznámení
                         </ListSubheader>
                     }
                 >

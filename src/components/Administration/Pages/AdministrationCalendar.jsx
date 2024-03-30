@@ -13,6 +13,7 @@ import {
     AdministrationCalendarEvent,
     AdministrationEventDetail,
     AdministrationCreateCalendarEvent,
+    AdministrationCalendarHeader,
 } from './components'
 import { isMobile, isNilOrEmpty } from '../../../utils'
 import { useTheme } from '@emotion/react'
@@ -111,13 +112,6 @@ const AdministrationCalendar = () => {
                                     color: 'linen',
                                     opacity: 0.7,
                                 }),
-                                ...(event?.resource?.doctorService && {
-                                    backgroundColor: 'lightgrey',
-                                    color: 'black',
-                                    opacity: 0.7,
-                                    pointerEvents: 'none',
-                                    position: 'absolute',
-                                }),
                                 borderRadius: 0,
                             },
                         }
@@ -129,6 +123,7 @@ const AdministrationCalendar = () => {
                     onSelectEvent={onSelectEvent}
                     onSelectSlot={onSelectSlot}
                     components={{
+                        header: AdministrationCalendarHeader,
                         toolbar: AdministrationCalendarToolbar,
                         event: AdministrationCalendarEvent,
                     }}

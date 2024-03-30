@@ -103,13 +103,6 @@ const useCalendar = () => {
         (obj, item) => ((obj[item.value] = item.label), obj),
         {}
     )
-    const doctorServicesEvents = useMemo(
-        () =>
-            makeCalendarEventsFromBookings(
-                servicesDays.map((item) => ({ ...item, doctorService: true, name: doctors[item.doctorId] }))
-            ),
-        [bookingsViewDate, servicesDays]
-    )
     const events = useMemo(() => makeCalendarEventsFromBookings(bookings), [bookingsViewDate, bookings])
     const blockedEvents = useMemo(() => {
         const timesToBlock = removeContainedEntries(
@@ -167,7 +160,7 @@ const useCalendar = () => {
         newAppointmentDate,
         isLoadingEventsForSelectedView:
             isLoadingEventsForSelectedView && isLoadingServicesDays && isLoadingDoctorsForSelectedAmbulance,
-        events: [...events, ...blockedEvents, ...doctorServicesEvents],
+        events: [...events, ...blockedEvents],
         draggedEvent,
         moveEvent,
         handleDragStart,
@@ -177,6 +170,7 @@ const useCalendar = () => {
         onSelectSlot,
         handleOpenEventDialog,
         handleToggleCreationModal,
+        doctors,
     }
 }
 export default useCalendar

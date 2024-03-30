@@ -93,7 +93,7 @@ const AdministrationServices = () => {
                         <Grid container gap={2}>
                             <Grid item>
                                 <Button
-                                    sx={{ height: 48, textTransform: 'initial' }}
+                                    sx={{ height: 56, textTransform: 'initial', borderRadius: 6 }}
                                     variant="contained"
                                     color="primary"
                                     onClick={handleClearActionsWorkflow}
@@ -113,7 +113,7 @@ const AdministrationServices = () => {
                                     onChange={(date) => handleGenerateDataForTable(date)}
                                     views={['month', 'year']}
                                     openTo="month"
-                                    renderInput={(props) => <TextField {...props} variant="standard" />}
+                                    renderInput={(props) => <TextField {...props} variant="outlined" />}
                                 />
                             </Grid>
                         </Grid>

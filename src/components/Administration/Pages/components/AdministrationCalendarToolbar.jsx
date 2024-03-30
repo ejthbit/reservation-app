@@ -11,6 +11,7 @@ import useCalendar from '../../../../hooks/useCalendar'
 import { setBookingsViewDate } from '../../../../store/administration/administrationSlice'
 import { isMobile, isNilOrEmpty } from '../../../../utils'
 const StyledButton = styled(Button)(({ theme, variant }) => ({
+    borderRadius: theme.spacing(3),
     height: '40px',
     color: variant === 'outlined' ? theme.palette.primary.main : theme.palette.common.white,
 }))

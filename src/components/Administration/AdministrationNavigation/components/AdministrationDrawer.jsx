@@ -10,7 +10,7 @@ import {
     Schedule,
     Settings,
 } from '@mui/icons-material'
-import { Box, Fade, ListItemText, Typography, styled } from '@mui/material'
+import { Box, Fade, styled } from '@mui/material'
 import MuiDrawer from '@mui/material/Drawer'
 import { useState } from 'react'
 import { logOut } from '../../../../store/userInfo/userInfoSlice'
@@ -22,7 +22,7 @@ const adminToolbarLinks = [
     { id: 1, icon: <Event />, text: 'Objednávky', link: '/admin/orders' },
     { id: 2, icon: <Schedule />, text: 'Rozpis směn', link: '/admin/services' },
     { id: 3, icon: <DateRange />, text: 'Kalendař', link: '/admin/calendar' },
-    { id: 4, icon: <Newspaper />, text: 'Aktuality', link: '/admin/announcements' },
+    { id: 4, icon: <Newspaper />, text: 'Oznámení', link: '/admin/announcements' },
     { id: 5, icon: <People />, text: 'Zaměstnanci', link: '/admin/employees', disabled: true },
 ]
 const getAdminToolbarToolset = (isOpen, onClose) => [

@@ -6,7 +6,7 @@ const breadcrumbNameMap = {
     '/services': 'Měsíční plány',
     '/calendar': 'Kalendář',
     '/admin': 'Přehled',
-    '/announcements': 'Aktuality',
+    '/announcements': 'Oznámení',
 }
 
 const AdministrationPathBreadcrumbs = () => {

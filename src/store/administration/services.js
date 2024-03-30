@@ -75,22 +75,12 @@ export const announcementAPI = createApi({
                     method: 'GET',
                 }
             },
-            // providesTags: ['Booking'],
             transformResponse: (response) => response.data,
 
             providesTags: (result, error, arg) =>
                 !isNilOrEmpty(result)
                     ? [...result.map(({ id }) => ({ type: 'Announcement', id })), 'Announcement']
                     : ['Announcement'],
-            // async onQueryStarted(_, { dispatch, queryFulfilled }) {
-            //     try {
-            //         const { data } = await queryFulfilled
-            //         localStorage.setItem('user', JSON.stringify(data))
-            //         dispatch(setUser(data))
-            //     } catch (err) {
-            //         return console.error('There was an error while logIn as current user.')
-            //     }
-            // },
         }),
         createAnnouncement: builder.mutation({
             query: (announcement) => ({

@@ -6,6 +6,7 @@ const AdministrationServiceCardButton = ({ color = '#FFF', icon, title, descript
     return (
         <Card
             sx={(theme) => ({
+                borderRadius: 6,
                 backgroundColor: theme.palette.primary.main,
                 color: theme.palette.getContrastText(color),
                 width: 300,

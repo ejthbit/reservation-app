@@ -9,3 +9,4 @@ export { default as AdministrationServiceCardButton } from './AdministrationServ
 export { default as AdministrationServicesEntryMenu } from './AdministrationServicesEntryMenu'
 export { default as AdministrationServicesTable } from './AdministrationServicesTable'
 export { default as AdministrationServicesTableDoctorAssign } from './AdministrationServicesTableDoctorAssign'
+export { default as AdministrationCalendarHeader } from './AdministrationCalendarHeader'

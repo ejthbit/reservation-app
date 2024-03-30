@@ -15,6 +15,7 @@ const makeCalendarEventsFromBookings = (bookings, blocked = false) =>
             completed = false,
             note = '',
             doctorService = false,
+            selected_doctor_id = '',
         }) => {
             return {
                 id,
@@ -27,6 +28,7 @@ const makeCalendarEventsFromBookings = (bookings, blocked = false) =>
                     doctorService,
                     phone: contact?.phone,
                     email: contact?.email,
+                    selected_doctor_id,
                     category,
                     completed,
                     note,
