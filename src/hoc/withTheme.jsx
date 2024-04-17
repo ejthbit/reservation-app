@@ -13,6 +13,13 @@ const withTheme = (WrappedComponent) => {
                         ...theme.themeOptions,
                         ...{
                             components: {
+                                MuiCssBaseline: {
+                                    styleOverrides: {
+                                        body: {
+                                            backgroundColor: '#f9fafb',
+                                        },
+                                    },
+                                },
                                 MuiInputBase: {
                                     styleOverrides: {
                                         input: {

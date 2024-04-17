@@ -26,7 +26,6 @@ const AdministrationCalendarHeader = ({ date, label, localizer }) => {
         })
 
     const sortedServices = useMemo(() => sortByStartDate(servicesDays), [servicesDays])
-    console.log({ sortedServices })
     return (
         <Box display="flex" flexDirection="column">
             <Typography fontWeight="500">{format(date, 'eeee dd/MM/yyyy', { locale: cs })}</Typography>

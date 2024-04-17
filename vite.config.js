@@ -41,6 +41,14 @@ export default defineConfig({
         target: 'esnext',
         minify: false,
         cssCodeSplit: false,
+        rollupOptions: {
+            onwarn(warning, warn) {
+                if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+                    return
+                }
+                warn(warning)
+            },
+        },
     },
     server: {
         port: 3003,

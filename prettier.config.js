@@ -1,7 +1,7 @@
-{
+export default {
     "singleQuote": true,
     "tabWidth": 4,
-    "trailingComma": "es5",
+    "trailingComma": "all",
     "semi": false,
     "arrowParens": "always",
     "printWidth": 110

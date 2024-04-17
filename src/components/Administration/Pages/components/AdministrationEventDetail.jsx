@@ -8,6 +8,7 @@ import {
     DialogTitle,
     FormControlLabel,
     LinearProgress,
+    MenuItem,
     TextField,
 } from '@mui/material'
 import { MobileDateTimePicker } from '@mui/x-date-pickers'
@@ -18,8 +19,9 @@ import { useForm } from 'react-hook-form'
 import { useDeleteBookingMutation, useUpdateBookingMutation } from '../../../../store/administration/services'
 import { makeArrayOfLabelValue } from '../../../../store/reservationProcess'
 import { getISODateStringWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
-import { DialogButtons, Dropdown, FormInput } from '../../../common'
+import { DialogButtons, FormInput, FormSelectInput } from '../../../common'
 import { useGetCategories } from '../../../../hooks/useGetCategories'
+import { map } from 'ramda'
 
 const AdministrationEventDetail = ({ event, handleClose }) => {
     const [startValue, setStartValue] = useState(null)
@@ -39,6 +41,7 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
             end: '',
             name: '',
             birthdate: '',
+            category: '',
             phone: '',
             email: '',
             note: '',
@@ -67,7 +70,7 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
         }
     }
 
-    const { data: categories, isLoading } = useGetCategories()
+    const { data: categories, isLoading: isLoadingCategories } = useGetCategories()
 
     useEffect(() => {
         if (!isNilOrEmpty(event)) {
@@ -82,6 +85,7 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                 phone: isNilOrEmpty(resource?.phone) ? 'Nevyplněno' : resource?.phone,
                 email: isNilOrEmpty(resource?.email) ? 'Nevyplněno' : resource?.email,
                 completed: resource?.completed,
+                category: resource?.category,
                 note: resource?.note,
                 selectedDoctor: resource?.selectedDoctorId ?? '',
             })
@@ -129,14 +133,33 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                     control={control}
                     name="phone"
                     fullWidth
+                    disabled
                 />
-                <FormInput label="E-mail" placeholder="E-mail" control={control} name="email" fullWidth />
-                <Dropdown
+                <FormInput
+                    label="E-mail"
+                    placeholder="E-mail"
+                    control={control}
+                    name="email"
+                    fullWidth
+                    disabled
+                />
+                <FormSelectInput
+                    sx={{ marginTop: 0.5 }}
                     label="Typ vyšetření"
-                    isLoading={isLoading}
-                    value={event?.resource?.category}
-                    options={makeArrayOfLabelValue('name', 'category_id', categories ?? [])}
-                />
+                    name="category"
+                    control={control}
+                    fullWidth
+                >
+                    {!isLoadingCategories &&
+                        map(
+                            ({ label, value }) => (
+                                <MenuItem key={label} value={value}>
+                                    {label}
+                                </MenuItem>
+                            ),
+                            makeArrayOfLabelValue('name', 'category_id', categories ?? [])
+                        )}
+                </FormSelectInput>
                 <FormInput
                     label="Preferovaný doktor"
                     placeholder="Preferovaný doktor"

@@ -7,6 +7,7 @@ const breadcrumbNameMap = {
     '/calendar': 'Kalendář',
     '/admin': 'Přehled',
     '/announcements': 'Oznámení',
+    '/settings': 'Nastavení',
 }
 
 const AdministrationPathBreadcrumbs = () => {
@@ -21,10 +22,10 @@ const AdministrationPathBreadcrumbs = () => {
                 },
             }}
         >
-            <Breadcrumbs aria-label="breadcrumb" sx={{ color: 'black' }} separator={''}>
+            <Breadcrumbs aria-label="breadcrumb" sx={{ color: 'white' }} separator={''}>
                 {pathnames.map((value) => {
                     return (
-                        <Typography color="black" key={value} fontWeight="600">
+                        <Typography color="white" key={value} fontWeight="600">
                             {breadcrumbNameMap[value === '/admin' ? value : `/${value}`]}
                         </Typography>
                     )

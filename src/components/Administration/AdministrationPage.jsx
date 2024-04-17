@@ -12,6 +12,7 @@ import {
     AdministrationServices,
     AdministrationNews,
     AdministrationOrders,
+    UserSettings,
 } from './Pages'
 
 const AdministrationPage = () => {
@@ -29,6 +30,7 @@ const AdministrationPage = () => {
                         <Route path="/services" element={<AdministrationServices />} />
                         <Route path="/calendar" element={<AdministrationCalendar />} />
                         <Route path="/announcements" element={<AdministrationNews />} />
+                        <Route path="/settings" element={<UserSettings />} />
                         <Route path="*" element={<NotMatch />} />
                     </Route>
                 </Routes>

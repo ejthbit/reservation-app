@@ -8,16 +8,21 @@ import {
     Newspaper,
     People,
     Schedule,
-    Settings,
+    Settings
 } from '@mui/icons-material'
-import { Box, Fade, styled } from '@mui/material'
+import { Box, Fade, Typography, styled } from '@mui/material'
 import MuiDrawer from '@mui/material/Drawer'
 import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { AmbulanceSelect } from '../../..'
+import packageJson from '../../../../../package.json'
+import { getUserConfigurationSelectedAmbulance } from '../../../../store/administration'
+import { setUserConfigurationProperty } from '../../../../store/administration/administrationSlice'
+import { getUserInfo } from '../../../../store/userInfo'
 import { logOut } from '../../../../store/userInfo/userInfoSlice'
+import { isMobile } from '../../../../utils'
 import AdministrationDrawerListItems from './AdministrationDrawerListItems'
 import AdministrationLayout from './AdministrationLayout'
-import packageJson from '../../../../../package.json'
-import { isMobile } from '../../../../utils'
 const adminToolbarLinks = [
     { id: 0, icon: <Home />, text: 'Přehled', link: '/admin' },
     { id: 1, icon: <Event />, text: 'Objednávky', link: '/admin/orders' },
@@ -27,7 +32,7 @@ const adminToolbarLinks = [
     { id: 5, icon: <People />, text: 'Zaměstnanci', link: '/admin/employees', disabled: true },
 ]
 const getAdminToolbarToolset = (isOpen, onClose) => [
-    { id: 6, icon: <Settings />, text: 'Nastavení', link: '/admin/settings', disabled: true },
+    { id: 6, icon: <Settings />, text: 'Nastavení', link: '/admin/settings' },
     {
         id: 7,
         icon: isOpen ? <KeyboardArrowLeft /> : <KeyboardArrowRight />,
@@ -98,8 +103,14 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 }))
 
 const AdministrationDrawer = () => {
+    const { name } = useSelector(getUserInfo)
     const [isDrawerOpen, toggleDrawer] = useState(isMobile ? false : true)
     const [selectedItem, setSelectedItem] = useState(0)
+
+    const selectedAmbulanceId = useSelector(
+        (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace
+    )
+    const dispatch = useDispatch()
 
     return (
         <>
@@ -130,6 +141,30 @@ const AdministrationDrawer = () => {
                     </Box>
                 </Drawer>
             </Fade>
+            <Box
+                display="flex"
+                justifyContent="flex-end"
+                alignItems="center"
+                padding={2}
+                backgroundColor="white"
+                gap={2}
+            >
+                <AmbulanceSelect
+                    sx={{ width: '40%', variant: '' }}
+                    selectedValueId={selectedAmbulanceId}
+                    onAmbulanceSelect={(e) =>
+                        dispatch(
+                            setUserConfigurationProperty({
+                                property: 'selectedAmbulance',
+                                value: e.target.value,
+                            })
+                        )
+                    }
+                />
+                <Typography>
+                    Vítejte, <span style={{ fontWeight: 600 }}>{name}</span>
+                </Typography>
+            </Box>
             <AdministrationLayout isDrawerOpen={isDrawerOpen} />
         </>
     )

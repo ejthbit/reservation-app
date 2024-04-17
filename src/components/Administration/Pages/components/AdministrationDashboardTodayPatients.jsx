@@ -29,11 +29,10 @@ const AdministrationDashboardTodayPatients = () => {
     const workplace = useSelector(
         (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace
     )
-
     const [getBookings, { data: todayBookings, isFetching }] = useLazyGetBookingsQuery()
     // FIXME: Call with actual time
     useEffect(() => {
-        if (!todayBookings) getBookings({ from, to, workplace })
+        getBookings({ from, to, workplace })
         const interval = setInterval(() => {
             getBookings({
                 from,
@@ -43,7 +42,7 @@ const AdministrationDashboardTodayPatients = () => {
         }, 60000)
 
         return () => clearInterval(interval)
-    }, [])
+    }, [workplace])
 
     return (
         <Box width={{ md: '33.3vw', sm: '100%' }}>

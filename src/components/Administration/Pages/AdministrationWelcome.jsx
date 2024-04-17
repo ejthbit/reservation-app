@@ -5,7 +5,7 @@ import imgLogo from '../../../assets/stetoscope.svg'
 import { getUserConfigurationSelectedAmbulance } from '../../../store/administration'
 import { useGetBookingsQuery } from '../../../store/administration/services'
 import { getUserInfo } from '../../../store/userInfo'
-import { getCategoryNameById, getISODateStringWithCorrectOffset } from '../../../utils'
+import { getCategoryNameById, getISODateStringWithCorrectOffset, isMobile } from '../../../utils'
 import AdministrationDashboardTodayPatients from './components/AdministrationDashboardTodayPatients'
 import { useMemo } from 'react'
 import { useGetCategories } from '../../../hooks/useGetCategories'
@@ -47,11 +47,12 @@ const getWeekdayCounts = (data) => {
     return weekdayCounts
 }
 
-const RootBarChart = ({ data, layout = 'horizontal' }) => {
+const RootBarChart = ({ data, layout = 'horizontal', height }) => {
     if (data && data.data.length > 0)
         return (
             <BarChart
                 sx={(theme) => ({
+                    py: 3,
                     '& .MuiBarElement-root': {
                         fill: theme.palette.primary.main,
                     },
@@ -76,8 +77,7 @@ const RootBarChart = ({ data, layout = 'horizontal' }) => {
                         padding: 0,
                     },
                 }}
-                width={650}
-                height={250}
+                {...(height && { height })}
             />
         )
     else return null
@@ -156,66 +156,70 @@ const AdministrationWelcome = () => {
                     })}
                 >
                     <AdministrationDashboardTodayPatients />
-                    <Box
-                        width={{
-                            md: '66.6vw',
-                            sm: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '3vw',
-                        }}
-                    >
-                        <List
-                            sx={(theme) => ({
-                                width: '100%',
-                                bgcolor: '#F9F9FB',
-                                borderRadius: 6,
-                                height: '30vh',
-                            })}
+                    {!isMobile && (
+                        <Box
+                            width={{
+                                md: '66.6vw',
+                                sm: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '3vw',
+                            }}
                         >
-                            <Typography
-                                align="center"
-                                sx={{ mb: 1, ml: 3, mt: 1, fontSize: '1rem' }}
-                                fontWeight="600"
+                            <List
+                                sx={(theme) => ({
+                                    width: '100%',
+                                    bgcolor: '#F9F9FB',
+                                    borderRadius: 6,
+                                    height: '30vh',
+                                    padding: 2,
+                                })}
                             >
-                                Počet pacientu dle kategorie za posledních 30 dnů
-                            </Typography>
-                            <Box display="flex" alignItems="center" justifyContent="center">
+                                <Typography
+                                    align="center"
+                                    sx={{ mb: 1, ml: 3, mt: 1, fontSize: '1rem' }}
+                                    fontWeight="600"
+                                >
+                                    Počet pacientu dle kategorie za posledních 30 dnů
+                                </Typography>
                                 {isLoadingBookingsInLastMonth ? (
                                     <CircularProgress />
                                 ) : (
                                     <RootBarChart data={categoryCounts} />
                                 )}
-                            </Box>
-                        </List>
-                        <List
-                            sx={(theme) => ({
-                                width: '100%',
-                                bgcolor: '#F9F9FB',
-                                borderRadius: 6,
-                                height: '30vh',
-                                [theme.breakpoints.down('sm')]: {},
-                            })}
-                        >
-                            <Typography
-                                align="center"
-                                sx={{ mb: 1, ml: 3, mt: 1, fontSize: '1rem' }}
-                                fontWeight="600"
+                            </List>
+                            <List
+                                sx={() => ({
+                                    width: '100%',
+                                    bgcolor: '#F9F9FB',
+                                    borderRadius: 6,
+                                    height: '30vh',
+                                })}
                             >
-                                Průměrný počet pacientu dle dnů za posledních 30 dnů
-                            </Typography>
-                            <Box display="flex" alignItems="center" justifyContent="center" height="80%">
-                                {isLoadingBookingsInLastMonth ? (
-                                    <CircularProgress />
-                                ) : (
-                                    <RootBarChart
-                                        layout="vertical"
-                                        data={{ data: weekDayCounts, labels: ['Po', 'Út', 'St', 'Čt', 'Pá'] }}
-                                    />
-                                )}
-                            </Box>
-                        </List>
-                    </Box>
+                                <Typography
+                                    align="center"
+                                    sx={{ mb: 1, ml: 3, mt: 1, fontSize: '1rem' }}
+                                    fontWeight="600"
+                                >
+                                    Průměrný počet pacientu dle dnů za posledních 30 dnů
+                                </Typography>
+                                <Box display="flex" alignItems="center" justifyContent="center" height="80%">
+                                    {isLoadingBookingsInLastMonth ? (
+                                        <CircularProgress />
+                                    ) : (
+                                        <RootBarChart
+                                            height={300}
+                                            layout="vertical"
+                                            data={{
+                                                data: weekDayCounts,
+                                                labels: ['Po', 'Út', 'St', 'Čt', 'Pá'],
+                                            }}
+                                        />
+                                    )}
+                                </Box>
+                            </List>
+                        </Box>
+                    )}
                 </Box>
             </Box>
         </Fade>

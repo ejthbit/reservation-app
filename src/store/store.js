@@ -31,5 +31,5 @@ export const store = configureStore({
         announcementAPI.middleware,
         checkTokenExpirationMiddleware,
     ],
-    devTools: process.env.NODE_ENV !== 'production',
+    devTools: typeof process !== 'undefined' && process.env.NODE_ENV !== 'production',
 })

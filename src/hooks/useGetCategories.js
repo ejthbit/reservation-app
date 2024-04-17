@@ -1,6 +1,5 @@
 import useSWR from 'swr'
 import axiosGynInstance from '../api/config'
-import { makeArrayOfLabelValue } from '../store/reservationProcess'
 import { isNilOrEmpty } from '../utils'
 /**
  * The function fetcher is an asynchronous function that fetches data from a specified URL using

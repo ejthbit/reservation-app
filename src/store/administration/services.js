@@ -16,7 +16,7 @@ export const bookingsAPI = createApi({
                 }
             },
             // providesTags: ['Booking'],
-            providesTags: (result, error, arg) =>
+            providesTags: (result) =>
                 result ? [...result.map(({ id }) => ({ type: 'Booking', id })), 'Booking'] : ['Booking'],
             // async onQueryStarted(_, { dispatch, queryFulfilled }) {
             //     try {
@@ -77,7 +77,7 @@ export const announcementAPI = createApi({
             },
             transformResponse: (response) => response.data,
 
-            providesTags: (result, error, arg) =>
+            providesTags: (result) =>
                 !isNilOrEmpty(result)
                     ? [...result.map(({ id }) => ({ type: 'Announcement', id })), 'Announcement']
                     : ['Announcement'],

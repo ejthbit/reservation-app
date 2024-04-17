@@ -25,7 +25,8 @@ export const userAPI = createApi({
                         })
                     )
                 } catch (err) {
-                    return console.error('There was an error while logIn as current user.')
+                    console.error('There was an error while logIn as current user.')
+                    throw err
                 }
             },
         }),

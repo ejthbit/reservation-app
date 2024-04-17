@@ -23,8 +23,7 @@ import {
 } from '../../../../store/reservationProcess/reservationProcessSlice'
 import { isNilOrEmpty } from '../../../../utils'
 import ReservationCategorySelect from '../ReservationCategorySelect'
-import { ReservationTime } from './components'
-import TermPicker from './Components/TermPicker'
+import { ReservationTime, TermPicker } from './components'
 
 const getReservationProcessInfo = makeReservationProcessInfo()
 const ReservationTermPicker = ({ step }) => {
