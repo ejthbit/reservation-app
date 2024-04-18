@@ -1,11 +1,11 @@
 import js from '@eslint/js'
-import reactRecommended from 'eslint-plugin-react/configs/recommended.js'
+import reactRecommendedPlugin from 'eslint-plugin-react'
+import hooksPlugin from 'eslint-plugin-react-hooks'
 
 export default [
     js.configs.recommended,
-    reactRecommended,
     {
-
+        plugins: { react: reactRecommendedPlugin, 'react-hooks': hooksPlugin },
         rules: {
             'no-undef': 'warn',
             'no-unused-vars': 'warn',
@@ -14,6 +14,11 @@ export default [
             'react/no-direct-mutation-state': 'off',
             'react/prop-types': 'off',
             'react/require-render-return': 'off',
+        },
+        settings: {
+            react: {
+                version: 'detect',
+            },
         },
     },
 ]
