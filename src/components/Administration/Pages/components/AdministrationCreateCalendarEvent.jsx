@@ -21,7 +21,7 @@ import * as yup from 'yup'
 import VALIDATION_MESSAGES from '../../../../constants/validationMessages'
 import { getUserConfigurationSelectedAmbulance } from '../../../../store/administration'
 import { useFastBookingMutation } from '../../../../store/administration/services'
-import { makeArrayOfLabelValue } from '../../../../store/reservationProcess'
+import { makeArrayOfLabelValue } from '../../../../context/Reservation/ReservationHelpers'
 import { getUserInfo } from '../../../../store/userInfo'
 import { getDateWithCorrectOffset, getISODateStringWithCorrectOffset } from '../../../../utils'
 import VALIDATION_PATTERNS from '../../../../utils/validationPatterns'
@@ -41,7 +41,7 @@ const formValidationSchema = yup.object({
                     .matches(
                         VALIDATION_PATTERNS.TEL,
                         { message: VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT, excludeEmptyString: true },
-                        VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT
+                        VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT,
                     )
                     .min(9, 'Hodnota musí mít minimálně 9 číslic.'),
                 otherwise: yup.string().nullable().notRequired(),
@@ -51,12 +51,12 @@ const formValidationSchema = yup.object({
 })
 const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) => {
     const { start, end } = data
-    const [birthDate, setBirthDate] = useState(null)
+    const [birthdate, setBirthDate] = useState(null)
 
     const { data: categories, isLoading: isLoadingCategories } = useGetCategories()
     const [createFastBooking, { isLoading: isCreatingBooking }] = useFastBookingMutation()
     const selectedAmbulanceId = useSelector(
-        (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace
+        (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace,
     )
 
     const {
@@ -75,7 +75,7 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
                 email: '',
                 phone: '',
             },
-            birthDate: '',
+            birthdate: '',
             category: '',
             note: '',
         },
@@ -105,7 +105,7 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
                     <Box marginBottom={1}>
                         <Typography>{`Vybraný termín: ${format(
                             getDateWithCorrectOffset(start),
-                            'dd/MM/yyyy HH:mm:ss'
+                            'dd/MM/yyyy HH:mm:ss',
                         )} - ${format(getDateWithCorrectOffset(end), 'dd/MM/yyyy HH:mm:ss')}`}</Typography>
                     </Box>
                     <FormInput
@@ -131,7 +131,7 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
                                         {label}
                                     </MenuItem>
                                 ),
-                                makeArrayOfLabelValue('name', 'category_id', categories)
+                                makeArrayOfLabelValue('name', 'category_id', categories),
                             )}
                     </FormSelectInput>
                     <DatePicker
@@ -141,14 +141,14 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
                         views={['year', 'month', 'day']}
                         inputFormat="dd-MM-yyyy"
                         mask="__-__-____"
-                        name="birthDate"
-                        value={birthDate}
+                        name="birthdate"
+                        value={birthdate}
                         placeholder="Zadejte prosím datum narození pacienta"
                         control={control}
                         onChange={(date) => {
                             if (new Date(date).getTime()) {
                                 setBirthDate(date)
-                                setValue('birthDate', getISODateStringWithCorrectOffset(date), {
+                                setValue('birthdate', getISODateStringWithCorrectOffset(date), {
                                     shouldDirty: true,
                                 })
                             }

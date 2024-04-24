@@ -29,12 +29,12 @@ export const bookingsAPI = createApi({
             // },
         }),
         fastBooking: builder.mutation({
-            query: ({ name, start, end, category, contact = null, note = null, workplace, birthDate }) => ({
+            query: ({ name, start, end, category, contact = null, note = null, workplace, birthdate }) => ({
                 url: `bookings/booking`,
                 method: 'POST',
                 data: {
                     name,
-                    birthDate: birthDate ? birthDate.slice(0, 10) : new Date().toISOString().slice(0, 10),
+                    birthdate: birthdate ? birthdate.slice(0, 10) : new Date().toISOString().slice(0, 10),
                     start,
                     end,
                     workplace,

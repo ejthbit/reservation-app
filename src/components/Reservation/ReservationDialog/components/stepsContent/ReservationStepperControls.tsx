@@ -1,0 +1,64 @@
+// @ts-nocheck
+import { Box, Button, ButtonGroup, CircularProgress } from '@mui/material'
+import { styled } from '@mui/material/styles'
+import { includes } from 'ramda'
+import { useReservation } from 'src/context/Reservation'
+import { isMobile } from '../../../../../utils'
+import { StepsConfiguration } from '../../helpers/getReservationContentByStep'
+
+const StyledButton = styled(Button)(({ theme }) => ({
+    marginTop: theme.spacing(2),
+    minHeight: isMobile ? theme.spacing(7.5) : theme.spacing(4),
+    boxShadow: 'none',
+}))
+
+const getIndexOfActiveStep = (steps: StepsConfiguration, activeStep: string) =>
+    steps.findIndex((step) => step.step === activeStep)
+
+const ReservationStepperControls = ({ steps }: { steps: StepsConfiguration }) => {
+    const {
+        lastBooking: { isLoading },
+        activeStep,
+        setters: { setActiveStep },
+        api: { bookAnAppointment },
+        isReservationBtnDisabled,
+    } = useReservation()
+
+    const handleChangeStep = (stepValue: string) => setActiveStep(stepValue)
+    const handleConfirmAppointment = () => bookAnAppointment()
+
+    return (
+        !includes(activeStep, ['COMPLETED', 'ERROR', 'LOADING']) && (
+            <Box sx={(theme) => ({ marginBottom: theme.spacing(2) })}>
+                <ButtonGroup orientation={isMobile ? 'vertical' : 'horizontal'}>
+                    {getIndexOfActiveStep(steps, activeStep) !== 0 && (
+                        <StyledButton
+                            variant="contained"
+                            color="inherit"
+                            onClick={() =>
+                                handleChangeStep(steps[getIndexOfActiveStep(steps, activeStep) - 1].step)
+                            }
+                        >
+                            Vratit se zpět
+                        </StyledButton>
+                    )}
+                    <StyledButton
+                        variant="contained"
+                        color="primary"
+                        startIcon={isLoading && <CircularProgress color="primary" />}
+                        onClick={() =>
+                            activeStep === 'READY'
+                                ? handleConfirmAppointment()
+                                : handleChangeStep(steps[getIndexOfActiveStep(steps, activeStep) + 1].step)
+                        }
+                        disabled={isReservationBtnDisabled}
+                    >
+                        {activeStep === 'READY' ? 'Odeslat objednávku' : 'Pokračovat dále'}
+                    </StyledButton>
+                </ButtonGroup>
+            </Box>
+        )
+    )
+}
+
+export default ReservationStepperControls

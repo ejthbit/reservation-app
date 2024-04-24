@@ -1,32 +1,17 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import eslint from 'vite-plugin-eslint'
-import federation from '@originjs/vite-plugin-federation'
+import dts from 'vite-plugin-dts'
+import tsConfigPaths from 'vite-tsconfig-paths'
+import path from 'path'
+
 export default defineConfig({
     plugins: [
         react(),
         eslint(),
-        federation({
-            name: 'reservation-app',
-            filename: 'remoteEntry.js',
-            exposes: {
-                './Button': './src/components/Reservation/ReservationButton/ReservationButton.jsx',
-                './ReservationDialog': './src/components/Reservation/ReservationDialog/ReservationDialog.jsx',
-                './ProtectedRoute': './src/components/common/ProtectedRoute.jsx',
-                './AdministrationPage': './src/components/Administration/AdministrationPage.jsx',
-                './Login': './src/components/Login/Login.jsx',
-                './ReservationProvider': './src/store/ReservationProvider.jsx',
-                './AnnouncementsList': './src/components/common/AnnouncementsList.jsx',
-            },
-            remotes: {
-                app: {
-                    external: `../../app.js`,
-                    // external: `http://127.0.0.1:5001/assets/app.js`,
-                    from: 'vite',
-                    externalType: 'url',
-                },
-            },
-            shared: ['react', 'react-dom', 'react-router-dom'],
+        tsConfigPaths(),
+        dts({
+            include: ['src/'],
         }),
     ],
     preview: {
@@ -38,17 +23,32 @@ export default defineConfig({
         },
     },
     build: {
-        target: 'esnext',
+        manifest: true,
         minify: false,
-        cssCodeSplit: false,
+        reportCompressedSize: true,
+        lib: {
+            entry: path.resolve(__dirname, 'src/index.js'),
+            name: '@ejthbit/reservation-app',
+            fileName: (format) => `reservation-app.${format}.js`,
+            formats: ['es', 'umd'],
+        },
         rollupOptions: {
-            onwarn(warning, warn) {
-                if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
-                    return
-                }
-                warn(warning)
+            // make sure to externalize deps that shouldn't be bundled
+            // into your library
+            external: ['react', 'react-dom'],
+            output: {
+                generatedCode: 'es2015',
+                // Provide global variables to use in the UMD build
+                // for externalized deps
+                globals: {
+                    react: 'React',
+                    'react-dom': 'ReactDOM',
+                },
             },
         },
+        sourcemap: true,
+        //Clears the output directory before building.
+        emptyOutDir: true,
     },
     server: {
         port: 3003,

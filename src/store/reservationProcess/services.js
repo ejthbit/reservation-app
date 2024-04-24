@@ -1,7 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import axiosGynInstance from '../../api/config'
-import { makeArrayOfLabelValue } from './selectors'
-
+import { makeArrayOfLabelValue } from '../../context/Reservation/ReservationHelpers'
 const ID = 'configuration'
 
 export const doctorsForSelectedAmbulanceAPI = createApi({

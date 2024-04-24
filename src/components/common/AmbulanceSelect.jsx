@@ -2,7 +2,7 @@ import { Box, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useGetAmbulances } from '../../hooks/useGetAmbulances'
 import Dropdown from './Dropdown'
-import { makeArrayOfLabelValue } from '../../store/reservationProcess'
+import { makeArrayOfLabelValue } from '../../context/Reservation/ReservationHelpers'
 
 const AmbulanceSelect = ({ showLabel, selectedValueId = '', onAmbulanceSelect, defaultValue }) => {
     const { data: ambulances, isloading } = useGetAmbulances()

@@ -8,21 +8,21 @@ import {
     Newspaper,
     People,
     Schedule,
-    Settings
+    Settings,
 } from '@mui/icons-material'
 import { Box, Fade, Typography, styled } from '@mui/material'
 import MuiDrawer from '@mui/material/Drawer'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { AmbulanceSelect } from '../../..'
 import packageJson from '../../../../../package.json'
 import { getUserConfigurationSelectedAmbulance } from '../../../../store/administration'
 import { setUserConfigurationProperty } from '../../../../store/administration/administrationSlice'
-import { getUserInfo } from '../../../../store/userInfo'
+import { getUserInfo } from '../../../../store/userInfo/selectors'
 import { logOut } from '../../../../store/userInfo/userInfoSlice'
 import { isMobile } from '../../../../utils'
 import AdministrationDrawerListItems from './AdministrationDrawerListItems'
 import AdministrationLayout from './AdministrationLayout'
+import AmbulanceSelect from '../../../common/AmbulanceSelect'
 const adminToolbarLinks = [
     { id: 0, icon: <Home />, text: 'Přehled', link: '/admin' },
     { id: 1, icon: <Event />, text: 'Objednávky', link: '/admin/orders' },
@@ -108,7 +108,7 @@ const AdministrationDrawer = () => {
     const [selectedItem, setSelectedItem] = useState(0)
 
     const selectedAmbulanceId = useSelector(
-        (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace
+        (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace,
     )
     const dispatch = useDispatch()
 
@@ -132,7 +132,7 @@ const AdministrationDrawer = () => {
                         />
                         <AdministrationDrawerListItems
                             arrayOfItems={getAdminToolbarToolset(isDrawerOpen, () =>
-                                toggleDrawer((prevState) => !prevState)
+                                toggleDrawer((prevState) => !prevState),
                             )}
                             isOpen={isDrawerOpen}
                             selectedItem={selectedItem}
@@ -157,7 +157,7 @@ const AdministrationDrawer = () => {
                             setUserConfigurationProperty({
                                 property: 'selectedAmbulance',
                                 value: e.target.value,
-                            })
+                            }),
                         )
                     }
                 />

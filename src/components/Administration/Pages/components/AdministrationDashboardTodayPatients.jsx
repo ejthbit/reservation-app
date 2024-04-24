@@ -18,16 +18,15 @@ import { useLazyGetBookingsQuery } from '../../../../store/administration/servic
 import { getUserInfo } from '../../../../store/userInfo'
 import { getDateWithCorrectOffset, getISODateStringWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
 
-const fromDate = new Date()
 const from = getISODateStringWithCorrectOffset(
-    subMinutes(fromDate, import.meta.env.VITE_APPOINTMENT_DURATION)
+    subMinutes(new Date(), import.meta.env.VITE_APPOINTMENT_DURATION ?? 10),
 )
 const to = getISODateStringWithCorrectOffset(
-    addMinutes(fromDate, import.meta.env.VITE_APPOINTMENT_DURATION * 4)
+    addMinutes(new Date(), import.meta.env.VITE_APPOINTMENT_DURATION ?? 10 * 4),
 )
 const AdministrationDashboardTodayPatients = () => {
     const workplace = useSelector(
-        (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace
+        (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace,
     )
     const [getBookings, { data: todayBookings, isFetching }] = useLazyGetBookingsQuery()
     // FIXME: Call with actual time
@@ -83,7 +82,7 @@ const AdministrationDashboardTodayPatients = () => {
                                   </Typography>
                               </ListItem>
                           ),
-                          sortBy(prop('start'))(todayBookings)
+                          sortBy(prop('start'))(todayBookings),
                       )
                     : isFetching && (
                           <Fade in timeout={{ enter: 1000 }}>

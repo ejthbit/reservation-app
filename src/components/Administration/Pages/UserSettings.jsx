@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { getUserInfo } from '../../../store/userInfo'
 import { useForm } from 'react-hook-form'
 import { FormInput, FormSelectInput } from '../../common'
-import { makeArrayOfLabelValue } from '../../../store/reservationProcess'
+import { makeArrayOfLabelValue } from '../../../context/Reservation/ReservationHelpers'
 import { map } from 'ramda'
 import { useGetAmbulances } from '../../../hooks/useGetAmbulances'
 import { useEffect } from 'react'
@@ -64,7 +64,7 @@ const UserSettings = () => {
                             { label: 'Admin', value: 0 },
                             { label: 'Sestra', value: 1 },
                             { label: 'Doktor', value: 2 },
-                        ]
+                        ],
                     )}
                 </FormSelectInput>
                 <FormInput
@@ -90,7 +90,7 @@ const UserSettings = () => {
                                     {label}
                                 </MenuItem>
                             ),
-                            makeArrayOfLabelValue('name', 'workplace_id', ambulances ?? [])
+                            makeArrayOfLabelValue('name', 'workplace_id', ambulances ?? []),
                         )}
                 </FormSelectInput>
             </Box>

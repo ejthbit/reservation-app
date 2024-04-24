@@ -17,7 +17,7 @@ import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDeleteBookingMutation, useUpdateBookingMutation } from '../../../../store/administration/services'
-import { makeArrayOfLabelValue } from '../../../../store/reservationProcess'
+import { makeArrayOfLabelValue } from '../../../../context/Reservation/ReservationHelpers'
 import { getISODateStringWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
 import { DialogButtons, FormInput, FormSelectInput } from '../../../common'
 import { useGetCategories } from '../../../../hooks/useGetCategories'
@@ -54,7 +54,7 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
             id: event.id,
             end: addMinutes(
                 new Date(updatedBooking.start),
-                import.meta.env.VITE_APPOINTMENT_DURATION
+                import.meta.env.VITE_APPOINTMENT_DURATION,
             ).toISOString(),
             ...updatedBooking,
         })
@@ -157,7 +157,7 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                                     {label}
                                 </MenuItem>
                             ),
-                            makeArrayOfLabelValue('name', 'category_id', categories ?? [])
+                            makeArrayOfLabelValue('name', 'category_id', categories ?? []),
                         )}
                 </FormSelectInput>
                 <FormInput

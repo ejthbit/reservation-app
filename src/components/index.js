@@ -1,5 +1,5 @@
 export * from './Administration/AdministrationNavigation/components'
-export { default as AdministrationPage } from './Administration/AdministrationPage'
+export { default as AdministrationPage } from './Administration/AdministrationPage.jsx'
 export * from './Administration/Pages/components'
 export * from './Administration/Pages'
 export { default as LoginPage } from './Login/LoginPage/LoginPage'

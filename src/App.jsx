@@ -1,13 +1,13 @@
 import { Route, Routes as RRoutes, useNavigate } from 'react-router-dom'
-import { AdministrationPage, AnnouncementsList, Login, ReservationDialog } from './components'
-import ProtectedRoute from './components/common/ProtectedRoute'
+import { /* AdministrationPage, AnnouncementsList, Login, */ ReservationDialog } from './components'
+// import ProtectedRoute from './components/common/ProtectedRoute'
 
 function App() {
     const navigate = useNavigate()
     return (
         <RRoutes>
             <Route path="/" exact element={<ReservationDialog isOpen onClose={() => {}} />} />
-            <Route path="/news" exact element={<AnnouncementsList />} />
+            {/* <Route path="/news" exact element={<AnnouncementsList />} />
             <Route
                 path={'/admin/*'}
                 element={
@@ -27,7 +27,7 @@ function App() {
                         isRegistrationEnabled
                     />
                 }
-            />
+            /> */}
         </RRoutes>
     )
 }

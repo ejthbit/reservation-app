@@ -1,0 +1,23 @@
+import axiosGynInstance from 'src/api/config'
+import { TimeSlot } from './types'
+import prepareReservationForCreation, {
+    ReservationProcessData,
+} from 'src/components/Reservation/ReservationDialog/helpers/prepareReservationForCreation'
+
+export type TimeSlotRequestData = { from: string; to: string; workplace: string }
+
+const APPOINTMENT_DURATION = import.meta.env.VITE_APPOINTMENT_DURATION
+console.log(APPOINTMENT_DURATION)
+export const getAvailableTimeSlotsFetcher = async ({ from, to, workplace }: TimeSlotRequestData) =>
+    (
+        await axiosGynInstance.get<TimeSlot[]>(
+            decodeURI(`bookings/getAvailableSlots/${from}/${to}/${APPOINTMENT_DURATION}/${workplace}`),
+        )
+    ).data
+
+export const createBookingFetcher = async (reservationData: ReservationProcessData) =>
+    (await axiosGynInstance.post(`bookings/booking`, prepareReservationForCreation(reservationData))).data
+        .data
+
+export const getDoctorsForSelectedAmbulanceFetcher = async (ambulanceId: number) =>
+    (await axiosGynInstance.get(`configuration/getDoctors/${ambulanceId}`)).data.data

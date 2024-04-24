@@ -8,6 +8,7 @@ const notLoggedInUser = {
     email: null,
     name: null,
     default_workplace: null,
+    automaticallyLoggedOut: false,
 }
 
 const userInfoInitialState = {

@@ -22,7 +22,7 @@ export const userAPI = createApi({
                         setUserConfigurationProperty({
                             property: 'selectedAmbulance',
                             value: data?.user?.default_workplace,
-                        })
+                        }),
                     )
                 } catch (err) {
                     console.error('There was an error while logIn as current user.')
