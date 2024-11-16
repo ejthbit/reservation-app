@@ -84,26 +84,26 @@ const AdministrationNewsListItem = ({
                     })}
                 >
                     <FormInput
-                        className={{
-                            ...(!isEditModeEnabled && {
+                        sx={
+                            !isEditModeEnabled && {
                                 '& .MuiInput-root:before': {
                                     borderBottom: 0,
                                 },
-                            }),
-                        }}
+                            }
+                        }
                         label="Název"
                         control={control}
                         name="name"
                         disabled={!isEditModeEnabled}
                     />
                     <FormInput
-                        className={{
-                            ...(!isEditModeEnabled && {
+                        sx={
+                            !isEditModeEnabled && {
                                 '& .MuiInput-root:before': {
                                     borderBottom: 0,
                                 },
-                            }),
-                        }}
+                            }
+                        }
                         label="Popis"
                         control={control}
                         name="description"

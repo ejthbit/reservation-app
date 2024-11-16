@@ -1,6 +1,7 @@
 export type User = {
-    id?: number | null
-    email?: string | null
-    name?: string | null
-    default_workplace?: string | null
+    user_role?: number
+    id?: number
+    email?: string
+    name?: string
+    default_workplace?: string
 }

@@ -14,3 +14,15 @@ export type Booking = {
     note?: string | null
     selected_doctor_id?: number | null
 }
+
+export type UpdatedBooking = {
+    id: number
+    name: string
+    start: String
+    end: string
+    category: number
+    contact?: Contact
+    note?: string
+    workplace: number
+    birthdate: string
+}

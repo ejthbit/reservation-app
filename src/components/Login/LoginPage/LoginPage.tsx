@@ -3,11 +3,12 @@ import { Mail, Password } from '@mui/icons-material'
 import { Box, Button, CircularProgress, InputAdornment, Typography, styled } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2/Grid2'
 import { useForm } from 'react-hook-form'
-import { useUser } from 'src/context/User/UserProvider'
+
 import * as yup from 'yup'
 import { isMobile } from '../../../utils'
-//@ts-ignore
 import FormInput from '../../common/Form/FormInput'
+import { useUser } from '../../../context/User/UserProvider'
+import React from 'react'
 
 const StyledRoot = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -32,6 +33,11 @@ const LoginPage = ({
     onGetUser = () => {},
     onRegisterClick = () => {},
     isRegistrationEnabled = false,
+}: {
+    logo?: React.ReactNode
+    onGetUser?: () => void
+    onRegisterClick?: () => void
+    isRegistrationEnabled?: boolean
 }) => {
     const { logIn, userError, isLoadingUser, isLoggedIn } = useUser()
     const { handleSubmit, control, formState } = useForm({

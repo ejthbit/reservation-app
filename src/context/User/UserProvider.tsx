@@ -1,9 +1,9 @@
 import { PropsWithChildren, createContext, useContext, useState } from 'react'
-import axiosGynInstance from 'src/api/config'
-import { User } from 'src/types'
 import { Key } from 'swr'
 import useSWRMutation from 'swr/mutation'
 import { useSnackbar } from 'notistack'
+import { User } from '../../types'
+import axiosGynInstance from '../../api/config'
 
 // Define the type for user data
 interface UserData {
@@ -19,6 +19,8 @@ interface UserContextType extends User {
     isLoadingUser: boolean
     isLoggedIn: boolean
     automaticallyLoggedOut: boolean
+    userRole: number
+    defaultWorkplace: string
     logIn: (data: { email: string; password: string }) => void
     logOut: () => void
     logOutAutomatically: () => void
@@ -42,6 +44,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const { enqueueSnackbar } = useSnackbar()
 
     const [automaticallyLoggedOut, logOutAutomatically] = useState(false)
+
     const {
         data: userData,
         error: userError,
@@ -53,10 +56,12 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     })
 
     const isLoggedIn = userData?.success ?? false
-    const id = userData?.user?.id ?? null
-    const email = userData?.user?.email ?? null
-    const name = userData?.user?.name ?? null
-    const default_workplace = userData?.user?.default_workplace ?? null
+    const id = userData?.user?.id
+    const email = userData?.user?.email
+    const name = userData?.user?.name
+    // TODO: Rename me to camelCase
+    const defaultWorkplace = userData?.user?.default_workplace ?? '1'
+    const userRole = userData?.user?.user_role ?? 1
 
     const value: UserContextType = {
         userError,
@@ -66,7 +71,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         id,
         email,
         name,
-        default_workplace,
+        defaultWorkplace,
+        userRole: userRole,
         logIn,
         logOut: () => {
             reset()

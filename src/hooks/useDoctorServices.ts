@@ -45,7 +45,6 @@ export const useDoctorServices = () => {
         (key, { arg }) => getDoctorServicesForMonthFetcher(arg),
     )
 
-    console.log({ doctorsServicesForSelectedAmbulance })
     return {
         servicesDays,
         doctorsServicesForSelectedAmbulance,
