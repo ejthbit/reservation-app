@@ -8,13 +8,12 @@ import {
     makeAvailableTimeSlotsWithTimeOnly,
     makeDoctorServicesByDoctorId,
     useReservation,
-} from 'src/context/Reservation'
-import { useDoctorServices } from 'src/hooks'
-import { AmbulanceServiceDay } from 'src/types/AmbulanceService'
-import { getDateWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
+} from '../../../../context/Reservation'
+import { useDoctorServices } from '../../../../hooks'
+import { AmbulanceServiceDay } from '../../../../types/AmbulanceService'
+import { isNilOrEmpty } from '../../../../utils'
 import ReservationCategorySelect from '../ReservationCategorySelect'
 import { ReservationTime, TermPicker } from './components'
-import { format } from 'date-fns'
 
 const ReservationTermPicker = ({ step }: { step: string }) => {
     const {

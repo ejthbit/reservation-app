@@ -1,16 +1,18 @@
-import useSWR from 'swr'
 import { createBooking, deleteBooking, fetchBookings, updateBooking } from './AdministrationBookingsFetchers'
 import useSWRMutation from 'swr/dist/mutation'
-import { ReservationProcessData } from 'src/components/Reservation/ReservationDialog/helpers/prepareReservationForCreation'
-import { UpdatedBooking } from 'src/types'
+import { UpdatedBooking } from '../../types'
+import { ReservationProcessData } from '../../components/Reservation/ReservationDialog/helpers/prepareReservationForCreation'
 
-export const useGetBookings = ({ from, to, workplace }: { from: string; to: string; workplace?: string }) => {
-    const { data, error, isLoading, mutate } = useSWR(
-        ['administration/bookings', from, to, workplace], // The key for cache
-        () => fetchBookings({ from, to, workplace }), // The fetcher function
+export const useGetBookings = () => {
+    const { data, error, isMutating, trigger } = useSWRMutation(
+        'administration/bookings',
+        (
+            key,
+            { arg }: { arg: { from: string; to: string; workplace?: string } }, // The key for cache
+        ) => fetchBookings({ ...arg }), // The fetcher function
     )
 
-    return { data, error, isLoading, mutate }
+    return { data, error, isMutating, trigger }
 }
 
 export const useFastBooking = () => {

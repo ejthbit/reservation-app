@@ -3,11 +3,11 @@ import { Box } from '@mui/system'
 import PropTypes from 'prop-types'
 import { reject } from 'ramda'
 import { useMemo } from 'react'
-import { useReservation } from 'src/context/Reservation'
 import isNilOrEmpty from '../../../../utils/isNilOrEmpty'
 import DEFAULT_STEPS from '../constants/defaultSteps'
 import getReservationContentByStep, { StepsConfiguration } from '../helpers/getReservationContentByStep'
 import ReservationStepperControls from './stepsContent/ReservationStepperControls'
+import { useReservation } from '../../../../context/Reservation'
 
 const getNumberStepByName = (name: string, steps: StepsConfiguration) => {
     const numberOfSteps = steps.length

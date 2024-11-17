@@ -1,11 +1,11 @@
 import { Add } from '@mui/icons-material'
 import { Box, Button, CircularProgress, List } from '@mui/material'
 import { useState } from 'react'
-import { useUser } from 'src/context/User/UserProvider'
-import { useAnnouncements } from 'src/hooks'
-import { Announcement } from 'src/types/Announcement'
 import { isNilOrEmpty } from '../../../utils'
-import { AdministrationNewsListItem, AdministrationNewsNewAnnouncementDialog } from './components'
+import { AdministrationNewsListItem, AdministrationNewsNewAnnouncementDialog } from './components/ index'
+import { useUser } from '../../../context/User/UserProvider'
+import { useAnnouncements } from '../../../hooks'
+import { Announcement } from '../../../types/Announcement'
 
 const AdministrationNews = () => {
     const { announcements, isFetchingAnnouncements, deleteAnnouncement, updateAnnouncement } =

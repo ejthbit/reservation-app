@@ -1,18 +1,18 @@
+import { format } from 'date-fns'
 import { sortBy } from 'ramda'
 import { PropsWithChildren, createContext, useState } from 'react'
-import { ReservationProcessData } from 'src/components/Reservation/ReservationDialog/helpers/prepareReservationForCreation'
-import { Booking } from 'src/types'
-import { Doctor } from 'src/types/Doctor'
-import { getDateWithCorrectOffset, getISODateStringWithCorrectOffset } from 'src/utils'
+import { getDateWithCorrectOffset, getISODateStringWithCorrectOffset } from '../../utils'
 import useSWRMutation from 'swr/mutation'
+import { ReservationProcessData } from '../../components/Reservation/ReservationDialog/helpers/prepareReservationForCreation'
+import { Booking } from '../../types'
+import { Doctor } from '../../types/Doctor'
 import {
     TimeSlotRequestData,
     createBookingFetcher,
     getAvailableTimeSlotsFetcher,
     getDoctorsForSelectedAmbulanceFetcher,
 } from './ReservationFetchers'
-import { BookingState, ContactInformation, TimeSlot } from './types'
-import { format } from 'date-fns'
+import { BookingState, TimeSlot } from './types'
 
 const reservationProcessInitialState: BookingState = {
     selectedAmbulance: null,

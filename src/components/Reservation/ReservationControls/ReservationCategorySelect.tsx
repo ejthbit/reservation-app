@@ -1,10 +1,8 @@
 import { SelectChangeEvent } from '@mui/material'
-import { useReservation } from 'src/context/Reservation/useReservation'
 import { useGetCategories } from '../../../hooks/useGetCategories'
 import useReservationButton from '../../../hooks/useReservationButton'
-//@ts-ignore
 import { Dropdown } from '../../common'
-import { makeArrayOfLabelValue } from 'src/context/Reservation'
+import { makeArrayOfLabelValue, useReservation } from '../../../context/Reservation'
 
 const ReservationCategorySelect = ({ step, isRequired = false }: { step: string; isRequired?: boolean }) => {
     const {

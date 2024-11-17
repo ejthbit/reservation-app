@@ -1,11 +1,10 @@
 import { MobileDatePicker } from '@mui/x-date-pickers'
 import { addHours, format } from 'date-fns'
-import { useReservation } from 'src/context/Reservation'
-import { useDoctorServices } from 'src/hooks'
-import { getISODateStringWithCorrectOffset } from '../../../../../utils'
 import TermPickerDay from './TermPickerDay'
 import TermPickerInput from './TermPickerInput'
-import { AmbulanceServiceDay } from 'src/types/AmbulanceService'
+import { useDoctorServices } from '../../../../../hooks'
+import { useReservation } from '../../../../../context/Reservation'
+import { AmbulanceServiceDay } from '../../../../../types/AmbulanceService'
 
 const TermPicker = ({
     doctorServicesBySelectedDoctorIdAndMonth = [],

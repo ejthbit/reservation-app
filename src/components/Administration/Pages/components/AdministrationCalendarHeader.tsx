@@ -1,12 +1,11 @@
 import { Box, Typography } from '@mui/material'
-import { endOfDay, format, parseISO, startOfDay } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { cs } from 'date-fns/locale'
-import React, { useMemo } from 'react'
-import { useSelector } from 'react-redux'
-import { getUserConfigurationSelectedAmbulance } from '../../../../store/administration'
+import { useMemo } from 'react'
+import { useAdministration } from '../../../../context/Administration/AdministrationProvider'
+import useCalendar from '../../../../hooks/useCalendar'
 import { useGetDoctorServicesByRangeQuery } from '../../../../store/reservationProcess'
 import { getDateWithCorrectOffset, getISODateStringWithCorrectOffset } from '../../../../utils'
-import useCalendar from '../../../../hooks/useCalendar'
 
 const sortByStartDate = (array) =>
     [...array].sort((a, b) => {
@@ -16,13 +15,13 @@ const sortByStartDate = (array) =>
     })
 
 const AdministrationCalendarHeader = ({ date, label, localizer }) => {
-    const selectedAmbulanceId = useSelector(getUserConfigurationSelectedAmbulance)
+    const { selectedWorkspace } = useAdministration()
     const { doctors } = useCalendar()
     const { currentData: servicesDays = [], isFetching: isLoadingServicesDays } =
         useGetDoctorServicesByRangeQuery({
             start: getISODateStringWithCorrectOffset(date),
             end: getISODateStringWithCorrectOffset(date),
-            workplace: selectedAmbulanceId,
+            workplace: selectedWorkspace,
         })
 
     const sortedServices = useMemo(() => sortByStartDate(servicesDays), [servicesDays])

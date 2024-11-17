@@ -1,7 +1,7 @@
 import { CheckCircleOutlineOutlined } from '@mui/icons-material'
 import { Backdrop, Box, Fade, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { useReservation } from 'src/context/Reservation/useReservation'
+import { useReservation } from '../../../../context/Reservation'
 
 const ReservationBackdropMessage = () => {
     const {

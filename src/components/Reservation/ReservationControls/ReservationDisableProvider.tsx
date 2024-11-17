@@ -1,7 +1,7 @@
 import { reject } from 'ramda'
 import { PropsWithChildren, useMemo } from 'react'
-import { useReservation } from 'src/context/Reservation/useReservation'
 import { useReservationButton } from '../../../hooks'
+import { useReservation } from '../../../context/Reservation'
 
 type ReservationContactInformationDisableProviderParams = {
     nameDep?: boolean

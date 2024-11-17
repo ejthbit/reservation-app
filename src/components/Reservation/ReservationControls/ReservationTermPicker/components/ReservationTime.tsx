@@ -1,7 +1,6 @@
-import { ChangeEvent, useMemo } from 'react'
-import { makeAvailableTimeSlotsWithTimeOnly, useReservation } from 'src/context/Reservation'
+import { useMemo } from 'react'
+import { makeAvailableTimeSlotsWithTimeOnly, useReservation } from '../../../../../context/Reservation'
 import useReservationButton from '../../../../../hooks/useReservationButton'
-//@ts-ignore
 import { Dropdown } from '../../../../common'
 
 const ReservationTime = ({ step }: { step: string }) => {
@@ -23,7 +22,7 @@ const ReservationTime = ({ step }: { step: string }) => {
             isLoading={isLoading}
             label="Čas návštevy"
             value={selectedTime}
-            onChange={(e: ChangeEvent<any>) => setSelectedTime(e.target.value)}
+            onChange={(e) => setSelectedTime(e.target.value as string)}
             options={availableTimeSlots.map(({ timeSlotStart }) => ({
                 value: timeSlotStart,
                 label: timeSlotStart.slice(0, 5),

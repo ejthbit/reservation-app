@@ -1,8 +1,8 @@
 import { AccountCircle } from '@mui/icons-material'
 import { InputAdornment, TextField } from '@mui/material'
 import { useState } from 'react'
-import { useReservation } from 'src/context/Reservation'
 import { useDebounce } from '../../../../hooks'
+import { useReservation } from '../../../../context/Reservation'
 
 const ReservationName = ({ step, isRequired }: { step: string; isRequired?: boolean }) => {
     const {

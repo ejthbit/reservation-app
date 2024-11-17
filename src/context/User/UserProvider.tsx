@@ -14,7 +14,7 @@ interface UserData {
 }
 
 // Define the type for the context value
-interface UserContextType extends User {
+interface UserContextType extends Omit<User, 'default_workspace'> {
     userError: Error | undefined
     isLoadingUser: boolean
     isLoggedIn: boolean

@@ -1,6 +1,6 @@
+import { useUser } from '../context/User/UserProvider'
 import { isNilOrEmpty } from '../utils'
 
-import { useUser } from 'src/context/User/UserProvider'
 import { Middleware, SWRHook } from 'swr'
 
 const checkTokenExpirationMiddleware: Middleware = (useSWRNext: SWRHook) => (key, fetcher, config) => {

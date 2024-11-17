@@ -1,9 +1,8 @@
 import { SelectChangeEvent } from '@mui/material'
-import { useReservation } from 'src/context/Reservation/useReservation'
-import { useDoctorServices } from 'src/hooks'
 import useReservationButton from '../../../hooks/useReservationButton'
-//@ts-ignore
 import { AmbulanceSelect } from '../../common'
+import { useReservation } from '../../../context/Reservation'
+import { useDoctorServices } from '../../../hooks'
 const ReservationAmbulanceSelect = ({ showLabel = false, step }: { showLabel?: boolean; step: string }) => {
     const {
         api: { fetchDoctorServicesForSelectedMonth },
@@ -28,7 +27,7 @@ const ReservationAmbulanceSelect = ({ showLabel = false, step }: { showLabel?: b
     return (
         <AmbulanceSelect
             showLabel={showLabel}
-            selectedValueId={selectedAmbulance}
+            selectedValueId={selectedAmbulance ?? ''}
             onAmbulanceSelect={handleChangeAmbulance}
         />
     )

@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types'
 import { Box, Grid, Hidden, Typography } from '@mui/material'
+import { Event } from 'react-big-calendar'
 
-const AdministrationCalendarEvent = ({ event }) => {
+const AdministrationCalendarEvent = ({ event }: { event: Event }) => {
     const { title, resource } = event
     return (
         <Box height="100%">
@@ -20,10 +20,6 @@ const AdministrationCalendarEvent = ({ event }) => {
             </Grid>
         </Box>
     )
-}
-
-AdministrationCalendarEvent.propTypes = {
-    event: PropTypes.object,
 }
 
 export default AdministrationCalendarEvent

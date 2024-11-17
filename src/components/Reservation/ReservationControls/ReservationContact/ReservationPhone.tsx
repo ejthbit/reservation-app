@@ -1,11 +1,11 @@
 import { Phone } from '@mui/icons-material'
 import { InputAdornment, TextField } from '@mui/material'
 import { useState } from 'react'
-import { useReservation } from 'src/context/Reservation'
 import { string } from 'yup'
 import { useDebounce } from '../../../../hooks'
 import useReservationButton from '../../../../hooks/useReservationButton'
 import VALIDATION_PATTERNS from '../../../../utils/validationPatterns'
+import { useReservation } from '../../../../context/Reservation'
 
 const ReservationPhone = ({ step, isRequired }: { step: string; isRequired?: boolean }) => {
     const {

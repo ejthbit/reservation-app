@@ -1,7 +1,7 @@
-import { Booking } from 'src/types'
 import { TriggerWithArgs } from 'swr/mutation'
 import { TimeSlotRequestData } from './ReservationFetchers'
-import { Doctor } from 'src/types/Doctor'
+import { Doctor } from '../../types/Doctor'
+import { Booking } from '../../types'
 
 export type ContactInformation = {
     name: string
@@ -14,7 +14,7 @@ type LastBooking = {
     isLoading: boolean
     errors: Error | undefined
     completed: boolean
-    data?: Booking // You can replace 'Record<string, any>' with a more specific type if you know the structure of the data
+    data?: Booking
 }
 
 export type TimeSlot = {

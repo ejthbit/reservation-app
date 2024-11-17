@@ -1,15 +1,15 @@
 import { ArrowBack, ArrowForward } from '@mui/icons-material'
-import { Box, Button, Grid, styled, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography, styled } from '@mui/material'
 import { addDays, addWeeks, endOfDay, parse, startOfDay } from 'date-fns'
-import PropTypes from 'prop-types'
 import { equals } from 'ramda'
 import { useEffect, useState } from 'react'
+import { ToolbarProps } from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import { useDispatch } from 'react-redux'
+import { useAdministration } from '../../../../context/Administration/AdministrationProvider'
 import { withTheme } from '../../../../hoc'
 import useCalendar from '../../../../hooks/useCalendar'
-import { setBookingsViewDate } from '../../../../store/administration/administrationSlice'
 import { isMobile, isNilOrEmpty } from '../../../../utils'
+
 const StyledButton = styled(Button)(({ theme, variant }) => ({
     borderRadius: theme.spacing(3),
     height: '40px',
@@ -19,11 +19,11 @@ const VIEW_TRANSLATIONS = {
     day: 'dnešní den',
     work_week: 'aktuální pracovní týden',
 }
-const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }) => {
+const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }: ToolbarProps) => {
     const [viewState, setViewState] = useState(isMobile ? 'day' : 'work_week')
     const { events } = useCalendar()
-    const dispatch = useDispatch()
 
+    const { selectedViewDateRange, selectViewDateRange } = useAdministration()
     const goToDayView = () => {
         onView('day')
         setViewState('day')
@@ -34,35 +34,34 @@ const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }) => {
     }
 
     const goToBack = () => {
-        if (viewState === 'work_week') onNavigate('prev', addWeeks(date, -1))
-        else onNavigate('prev', addDays(date, -1))
+        if (viewState === 'work_week') onNavigate('PREV', addWeeks(date, -1))
+        else onNavigate('PREV', addDays(date, -1))
     }
 
     const goToNext = () => {
-        if (viewState === 'work_week') onNavigate('next', addWeeks(date, +1))
-        else onNavigate('next', addDays(date, +1))
+        if (viewState === 'work_week') onNavigate('NEXT', addWeeks(date, +1))
+        else onNavigate('NEXT', addDays(date, +1))
     }
 
     const goToToday = () => {
         const now = new Date()
         date.setMonth(now.getMonth())
-        date.setYear(now.getFullYear())
+        date.setFullYear(now.getFullYear())
         date.setDate(now.getDate())
-        onNavigate('current')
+        onNavigate('TODAY')
     }
 
     useEffect(() => {
-        if (!isNilOrEmpty(label)) {
-            dispatch(
-                setBookingsViewDate({
-                    from: startOfDay(parse(label.split(' - ')[0], 'dd/MM/yyyy', new Date())).toISOString(),
-                    to: endOfDay(
-                        parse(label.split(' - ')[1] ?? label.split(' - ')[0], 'dd/MM/yyyy', new Date())
-                    ).toISOString(),
-                })
-            )
+        if (label) {
+            selectViewDateRange({
+                from: startOfDay(parse(label.split(' - ')[0], 'dd/MM/yyyy', new Date())).toISOString(),
+                to: endOfDay(
+                    parse(label.split(' - ')[1] ?? label.split(' - ')[0], 'dd/MM/yyyy', new Date()),
+                ).toISOString(),
+            })
         }
     }, [label])
+
     return (
         <Box marginBottom={2}>
             <Grid container spacing={1} justifyContent="center" alignItems="stretch">
@@ -71,7 +70,7 @@ const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }) => {
                         <Typography variant="body1" align="left">
                             {`Počet objednaných pacientek na ${VIEW_TRANSLATIONS[viewState]}: ${
                                 events.filter(
-                                    ({ resource }) => !resource?.blocked && !resource?.doctorService
+                                    ({ resource }) => !resource?.blocked && !resource?.doctorService,
                                 ).length
                             } `}
                         </Typography>
@@ -124,12 +123,6 @@ const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }) => {
             </Grid>
         </Box>
     )
-}
-AdministrationCalendarToolbar.propTypes = {
-    label: PropTypes.string,
-    date: PropTypes.instanceOf(Date),
-    onNavigate: PropTypes.func,
-    onView: PropTypes.func,
 }
 
 export default withTheme(AdministrationCalendarToolbar)

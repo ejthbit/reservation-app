@@ -1,10 +1,10 @@
 import { Email } from '@mui/icons-material'
 import { InputAdornment, TextField } from '@mui/material'
 import { useState } from 'react'
-import { useReservation } from 'src/context/Reservation'
 import { string } from 'yup'
 import { useDebounce } from '../../../../hooks'
 import useReservationButton from '../../../../hooks/useReservationButton'
+import { useReservation } from '../../../../context/Reservation'
 
 const ReservationEmail = ({ step, isRequired }: { step: string; isRequired?: boolean }) => {
     const {

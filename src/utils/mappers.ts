@@ -1,4 +1,4 @@
-import { Ambulance, Category } from 'src/types'
+import type { Ambulance, Category } from '../types'
 
 export const getCategoryNameById = (categoryId: string, categories: Category[]) => {
     const category = categories.find((category) => category.category_id === parseInt(categoryId))

@@ -1,11 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Dialog, DialogActions, DialogContent, DialogTitle, LinearProgress } from '@mui/material'
 import { useForm } from 'react-hook-form'
-import { useUser } from 'src/context/User/UserProvider'
-import { useAnnouncements } from 'src/hooks'
-import { Announcement } from 'src/types/Announcement'
 import * as yup from 'yup'
 import { DialogButtons, FormInput } from '../../../common'
+import { Announcement } from '../../../../types/Announcement'
+import { useAnnouncements } from '../../../../hooks'
+import { useUser } from '../../../../context/User/UserProvider'
 const AdministrationNewsNewAnnouncementDialog = ({
     open,
     onClose,

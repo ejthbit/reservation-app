@@ -3,6 +3,8 @@ const authHeader = () => {
     if (storedUser) {
         const user = JSON.parse(storedUser)
         if (user && user.token) return `Bearer ${user.token}`
-    } else return undefined
+    }
+
+    return undefined
 }
 export default authHeader

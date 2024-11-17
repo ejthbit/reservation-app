@@ -1,7 +1,7 @@
 import { equals } from 'ramda'
 import { useEffect } from 'react'
-import { useReservation } from 'src/context/Reservation/useReservation'
 import { isNilOrEmpty } from '../utils'
+import { useReservation } from '../context/Reservation'
 
 const useReservationButton = ({
     dependency = [],

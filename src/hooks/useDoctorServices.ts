@@ -1,6 +1,6 @@
-import axiosGynInstance from 'src/api/config'
-import { AmbulanceService } from 'src/types/AmbulanceService'
 import useSWRMutation from 'swr/mutation'
+import { AmbulanceService } from '../types/AmbulanceService'
+import axiosGynInstance from '../api/config'
 
 type GetDoctorServicesByRangeFetcherProps = {
     start: string

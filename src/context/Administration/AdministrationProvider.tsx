@@ -22,9 +22,9 @@ export const useAdministration = () => {
 
 export const AdministrationProvider = ({ children }: PropsWithChildren) => {
     const { enqueueSnackbar } = useSnackbar()
-    const { default_workplace } = useUser()
+    const { defaultWorkplace } = useUser()
 
-    const [selectedWorkspace, setSelectedWorkspace] = useState(default_workplace)
+    const [selectedWorkspace, setSelectedWorkspace] = useState(defaultWorkplace)
     const [selectedViewDateRange, selectViewDateRange] = useState<SelectedViewDateRange | undefined>(
         undefined,
     )

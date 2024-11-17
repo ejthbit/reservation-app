@@ -1,4 +1,4 @@
 export type Contact = {
-    phone?: number
+    phone?: string
     email?: string
 }

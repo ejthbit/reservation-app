@@ -4,8 +4,8 @@ import { PickersDay, PickersDayProps } from '@mui/x-date-pickers'
 import { format, startOfToday } from 'date-fns'
 
 import { equals } from 'ramda'
-import { AmbulanceServiceDay } from 'src/types/AmbulanceService'
 import { isNilOrEmpty } from '../../../../../utils'
+import { AmbulanceServiceDay } from '../../../../../types/AmbulanceService'
 
 type TermPickerDayProps = {
     day: Date

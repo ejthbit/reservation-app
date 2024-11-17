@@ -1,7 +1,7 @@
 import { Box, CircularProgress, List, ListItem, ListItemText, ListSubheader } from '@mui/material'
 import { useMemo } from 'react'
-import { useAnnouncements } from 'src/hooks'
 import { isNilOrEmpty } from '../../utils'
+import { useAnnouncements } from '../../hooks'
 
 const AnnouncementsList = ({ width = '100%' }) => {
     const { announcements, isFetchingAnnouncements } = useAnnouncements()

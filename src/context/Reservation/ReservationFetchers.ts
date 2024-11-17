@@ -1,8 +1,8 @@
-import axiosGynInstance from 'src/api/config'
 import { TimeSlot } from './types'
 import prepareReservationForCreation, {
     ReservationProcessData,
-} from 'src/components/Reservation/ReservationDialog/helpers/prepareReservationForCreation'
+} from '../../components/Reservation/ReservationDialog/helpers/prepareReservationForCreation'
+import axiosGynInstance from '../../api/config'
 
 export type TimeSlotRequestData = { from: string; to: string; workplace: string }
 

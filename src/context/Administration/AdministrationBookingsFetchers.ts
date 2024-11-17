@@ -1,8 +1,8 @@
-import axiosGynInstance from 'src/api/config'
+import axiosGynInstance from '../../api/config'
 import prepareReservationForCreation, {
     ReservationProcessData,
-} from 'src/components/Reservation/ReservationDialog/helpers/prepareReservationForCreation'
-import { Booking, UpdatedBooking } from 'src/types'
+} from '../../components/Reservation/ReservationDialog/helpers/prepareReservationForCreation'
+import { Booking, UpdatedBooking } from '../../types'
 
 export const fetchBookings = async ({
     from,

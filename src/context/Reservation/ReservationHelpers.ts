@@ -1,8 +1,8 @@
 import { equals, filter, find, isEmpty, map, propEq } from 'ramda'
-import { ReservationProcessData } from 'src/components/Reservation/ReservationDialog/helpers/prepareReservationForCreation'
-import { AmbulanceService, DoctorService } from 'src/types/AmbulanceService'
 import { isNilOrEmpty } from '../../utils'
 import { TimeSlot } from './types'
+import { AmbulanceService, DoctorService } from '../../types/AmbulanceService'
+import { ReservationProcessData } from '../../components/Reservation/ReservationDialog/helpers/prepareReservationForCreation'
 
 export const makeArrayOfLabelValue = (label: string, value: string, arr: any[]) =>
     arr.map((record) => ({ label: record[label], value: record[value] }))

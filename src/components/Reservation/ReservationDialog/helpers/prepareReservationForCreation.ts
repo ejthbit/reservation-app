@@ -1,5 +1,5 @@
 import { addMinutes } from 'date-fns'
-import { ContactInformation } from 'src/context/Reservation/types'
+import { ContactInformation } from '../../../../context/Reservation'
 
 export type ReservationProcessData = {
     selectedDoctor: number | string

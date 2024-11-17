@@ -1,5 +1,4 @@
 import { Box, Dialog, DialogContent } from '@mui/material'
-import { ReservationProvider } from 'src/context/Reservation'
 import { withTheme } from '../../../hoc'
 import defaultStepsConfiguration from '../defaultStepsConfiguration'
 import {
@@ -8,6 +7,7 @@ import {
     ReservationDialogTitle,
     ReservationStepper,
 } from './components'
+import { ReservationProvider } from '../../../context/Reservation'
 
 type ReservationDialogProps = {
     isOpen: boolean

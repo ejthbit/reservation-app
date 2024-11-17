@@ -14,20 +14,31 @@ import {
 import { MobileDateTimePicker } from '@mui/x-date-pickers'
 import { addMinutes } from 'date-fns'
 import PropTypes from 'prop-types'
+import { map } from 'ramda'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useDeleteBookingMutation, useUpdateBookingMutation } from '../../../../store/administration/services'
+import {
+    useDeleteBooking,
+    useUpdateBooking,
+} from '../../../../context/Administration/AdministrationBookingsHooks'
 import { makeArrayOfLabelValue } from '../../../../context/Reservation/ReservationHelpers'
-import { getISODateStringWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
-import { DialogButtons, FormInput, FormSelectInput } from '../../../common'
 import { useGetCategories } from '../../../../hooks/useGetCategories'
-import { map } from 'ramda'
+import { UpdatedBooking } from '../../../../types'
+import { getISODateStringWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
+import { BookingEvent } from '../../../../utils/makeCalendarEventsFromBookings'
+import { DialogButtons, FormInput, FormSelectInput } from '../../../common'
 
-const AdministrationEventDetail = ({ event, handleClose }) => {
-    const [startValue, setStartValue] = useState(null)
+const AdministrationEventDetail = ({
+    event,
+    handleClose,
+}: {
+    event: BookingEvent
+    handleClose: () => void
+}) => {
+    const [startValue, setStartValue] = useState<Date | null>(null)
     const [completedValue, setCompletedValue] = useState(false)
-    const [updateBooking, { isLoading: updatingBooking }] = useUpdateBookingMutation()
-    const [deleteBooking, { isLoading: deletingBooking }] = useDeleteBookingMutation()
+    const { trigger: updateBooking, isMutating: updatingBooking } = useUpdateBooking()
+    const { trigger: deleteBooking, isMutating: deletingBooking } = useDeleteBooking()
 
     const {
         control,
@@ -41,32 +52,28 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
             end: '',
             name: '',
             birthdate: '',
-            category: '',
+            category: 0,
             phone: '',
             email: '',
             note: '',
-            selectedDoctor: '',
+            selectedDoctorId: '',
             completed: !!completedValue,
         },
     })
-    const handlePatchBooking = async (updatedBooking) => {
+    const handlePatchBooking = async (updatedBooking: UpdatedBooking) => {
         await updateBooking({
+            ...updatedBooking,
             id: event.id,
             end: addMinutes(
                 new Date(updatedBooking.start),
                 import.meta.env.VITE_APPOINTMENT_DURATION,
             ).toISOString(),
-            ...updatedBooking,
-        })
-            .unwrap()
-            .then((payload) => payload && handleClose())
+        }).then((payload) => payload && handleClose())
     }
     const handleDeleteBooking = async () => {
         const confirmDelete = window.confirm('Jste si jisti, že chcete zrušit tuto rezervaci? ')
         if (confirmDelete) {
-            await deleteBooking(event.id)
-                .unwrap()
-                .then((payload) => payload && handleClose())
+            await deleteBooking(event.id.toString()).then((payload) => payload && handleClose())
         }
     }
 
@@ -86,7 +93,7 @@ const AdministrationEventDetail = ({ event, handleClose }) => {
                 email: isNilOrEmpty(resource?.email) ? 'Nevyplněno' : resource?.email,
                 completed: resource?.completed,
                 category: resource?.category,
-                note: resource?.note,
+                note: resource?.note ?? '',
                 selectedDoctor: resource?.selectedDoctorId ?? '',
             })
         }

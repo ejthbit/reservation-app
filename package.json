@@ -8,20 +8,21 @@
     "type": "module",
     "version": "2.1.4",
     "files": [
-        "dist"
+        "/dist"
     ],
     "main": "./dist/reservation-app.umd.cjs",
     "module": "./dist/reservation-app.js",
     "exports": {
         ".": {
             "import": "./dist/reservation-app.js",
-            "require": "./dist/reservation-app.umd.cjs"
+            "require": "./dist/reservation-app.umd.cjs",
+            "types": "./dist/index.d.ts"
         }
     },
     "types": "./dist/index.d.ts",
     "scripts": {
         "dev": "vite --mode testing",
-        "build": "vite build",
+        "build": "tsc && vite build",
         "build:dev": "NODE_ENV=development vite build --mode testing",
         "preview": "vite preview",
         "run:mfe": "pnpm build:dev && vite preview",
@@ -39,6 +40,9 @@
     },
     "packageManager": "pnpm@9.0.2",
     "devDependencies": {
+        "@types/react-big-calendar": "^1.15.0",
+        "@typescript-eslint/eslint-plugin": "^6.10.0",
+        "@typescript-eslint/parser": "^6.10.0",
         "@types/node": "^20.12.7",
         "@types/ramda": "0.29.12",
         "swr": "^2.2.5",
@@ -69,6 +73,7 @@
         "vite-plugin-eslint": "^1.8.1",
         "vite-plugin-dts": "^3.8.3",
         "vite-tsconfig-paths": "^4.3.2",
+        "typescript": "^5.6.3",
         "yup": "^0.32.11"
     }
 }

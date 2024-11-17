@@ -6,14 +6,7 @@ import tsConfigPaths from 'vite-tsconfig-paths'
 import path from 'path'
 
 export default defineConfig({
-    plugins: [
-        react(),
-        eslint(),
-        tsConfigPaths(),
-        dts({
-            include: ['src/'],
-        }),
-    ],
+    plugins: [react(), eslint(), tsConfigPaths(), dts()],
     preview: {
         host: '127.0.0.1',
         port: 5000,
@@ -27,7 +20,7 @@ export default defineConfig({
         minify: false,
         reportCompressedSize: true,
         lib: {
-            entry: path.resolve(__dirname, 'src/index.js'),
+            entry: path.resolve(__dirname, 'src/index.ts'),
             name: '@ejthbit/reservation-app',
             fileName: (format) => `reservation-app.${format}.js`,
             formats: ['es', 'umd'],

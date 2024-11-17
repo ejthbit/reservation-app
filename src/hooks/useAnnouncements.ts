@@ -1,8 +1,8 @@
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-import axiosGynInstance from 'src/api/config'
-import { Announcement } from 'src/types/Announcement'
 import useSWR from 'swr'
+import axiosGynInstance from '../api/config'
+import { Announcement } from '../types/Announcement'
 
 const getAnnouncementsFetcher = async () =>
     await axiosGynInstance.get('configuration/getAnnouncements').then((res) => res.data)

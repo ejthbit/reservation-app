@@ -1,18 +1,35 @@
-import { Booking } from 'src/types/Booking'
+import { Booking } from '../types'
 import getDateWithCorrectOffset from './getDateWithCorrectOffset'
 import isNilOrEmpty from './isNilOrEmpty'
 
-type BookingResource = Booking & { doctorService: boolean }
-const makeCalendarEventsFromBookings = (bookings: BookingResource[], blocked = false) =>
+export type BookingEvent = {
+    id: number
+    start: Date
+    end: Date
+    title: string
+    resource: {
+        booked: boolean
+        blocked: boolean
+        doctorService?: boolean
+        phone?: string
+        email?: string
+        category?: number
+        completed: boolean
+        note?: string | null
+        selectedDoctorId?: string | null
+    }
+}
+type BookingResource = Booking & { doctorService?: boolean }
+const makeCalendarEventsFromBookings = (bookings: BookingResource[], blocked = false): BookingEvent[] =>
     bookings.map(
         ({
-            id = '',
+            id,
             name = '',
             start,
             end,
             birthdate = '',
-            contact = {},
-            category = '',
+            contact = { phone: '', email: '' },
+            category,
             completed = false,
             note = '',
             doctorService = false,
