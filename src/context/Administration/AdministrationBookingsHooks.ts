@@ -2,6 +2,24 @@ import { createBooking, deleteBooking, fetchBookings, updateBooking } from './Ad
 import useSWRMutation from 'swr/dist/mutation'
 import { UpdatedBooking } from '../../types'
 import { ReservationProcessData } from '../../components/Reservation/ReservationDialog/helpers/prepareReservationForCreation'
+import useSWR from 'swr'
+
+export const useGetImmediateBookings = ({
+    from,
+    to,
+    workplace,
+}: {
+    from: string
+    to: string
+    workplace?: string
+}) => {
+    const { data, error, isLoading, isValidating } = useSWR(
+        ['administration/bookings', { from, to, workplace }],
+        ([_, arg]) => fetchBookings(arg), // Fetcher function gets `arg` from the key
+    )
+
+    return { data, error, isLoading, isValidating }
+}
 
 export const useGetBookings = () => {
     const { data, error, isMutating, trigger } = useSWRMutation(

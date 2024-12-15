@@ -12,21 +12,20 @@ import {
 } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers'
 import { format } from 'date-fns'
-import PropTypes from 'prop-types'
 import { map } from 'ramda'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useSelector } from 'react-redux'
 import * as yup from 'yup'
 import VALIDATION_MESSAGES from '../../../../constants/validationMessages'
-import { getUserConfigurationSelectedAmbulance } from '../../../../store/administration'
-import { useFastBookingMutation } from '../../../../store/administration/services'
+import { useFastBooking } from '../../../../context/Administration/AdministrationBookingsHooks'
+import { useAdministration } from '../../../../context/Administration/AdministrationProvider'
 import { makeArrayOfLabelValue } from '../../../../context/Reservation/ReservationHelpers'
-import { getUserInfo } from '../../../../store/userInfo'
+import { useGetCategories } from '../../../../hooks/useGetCategories'
+import { Category } from '../../../../types'
 import { getDateWithCorrectOffset, getISODateStringWithCorrectOffset } from '../../../../utils'
 import VALIDATION_PATTERNS from '../../../../utils/validationPatterns'
 import { DialogButtons, FormInput, FormSelectInput } from '../../../common'
-import { useGetCategories } from '../../../../hooks/useGetCategories'
+import { ReservationProcessData } from '../../../Reservation/ReservationDialog/helpers/prepareReservationForCreation'
 
 const formValidationSchema = yup.object({
     name: yup.string().required(VALIDATION_MESSAGES.IS_REQUIRED_FIELD),
@@ -35,30 +34,34 @@ const formValidationSchema = yup.object({
         .object({
             email: yup.string().email(VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT).notRequired().nullable(),
             phone: yup.string().when('$exists', {
-                is: (exists) => exists,
+                is: (exists: boolean) => exists,
                 then: yup
                     .string()
-                    .matches(
-                        VALIDATION_PATTERNS.TEL,
-                        { message: VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT, excludeEmptyString: true },
-                        VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT,
-                    )
+                    .matches(VALIDATION_PATTERNS.TEL, {
+                        message: VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT,
+                        excludeEmptyString: true,
+                    })
                     .min(9, 'Hodnota musí mít minimálně 9 číslic.'),
                 otherwise: yup.string().nullable().notRequired(),
             }),
         })
         .notRequired(),
 })
-const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) => {
+const AdministrationCreateCalendarEvent = ({
+    open = false,
+    data,
+    handleClose,
+}: {
+    open: boolean
+    data: { start: string; end: string }
+    handleClose: () => void
+}) => {
     const { start, end } = data
-    const [birthdate, setBirthDate] = useState(null)
+    const [birthdate, setBirthDate] = useState<Date | null>(null)
 
     const { data: categories, isLoading: isLoadingCategories } = useGetCategories()
-    const [createFastBooking, { isLoading: isCreatingBooking }] = useFastBookingMutation()
-    const selectedAmbulanceId = useSelector(
-        (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace,
-    )
-
+    const { trigger: createFastBooking, isMutating: isCreatingBooking } = useFastBooking()
+    const { selectedWorkspace } = useAdministration()
     const {
         handleSubmit,
         control,
@@ -70,13 +73,13 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
         reValidateMode: 'onChange',
         resolver: yupResolver(formValidationSchema),
         defaultValues: {
-            name: '',
-            contact: {
+            contactInformation: {
+                name: '',
                 email: '',
                 phone: '',
+                birthdate: '',
             },
-            birthdate: '',
-            category: '',
+            selectedCategory: '',
             note: '',
         },
     })
@@ -87,14 +90,18 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
         handleClose()
     }
 
-    const onCreate = async (bookingValues) => {
+    const onCreate = async ({
+        contactInformation,
+        selectedCategory,
+    }: Pick<ReservationProcessData, 'contactInformation' | 'selectedCategory'>) => {
         await createFastBooking({
-            ...bookingValues,
-            ...data,
-            workplace: selectedAmbulanceId,
-        })
-            .unwrap()
-            .then((payload) => payload && onClose())
+            selectedCategory,
+            contactInformation,
+            selectedTime: getDateWithCorrectOffset(start).getTime().toString(),
+            selectedDate: getDateWithCorrectOffset(start).getDate().toLocaleString(),
+            selectedAmbulanceId: parseInt(selectedWorkspace),
+            selectedDoctor: '',
+        }).then((payload) => payload && onClose())
     }
 
     return (
@@ -109,7 +116,7 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
                         )} - ${format(getDateWithCorrectOffset(end), 'dd/MM/yyyy HH:mm:ss')}`}</Typography>
                     </Box>
                     <FormInput
-                        name="name"
+                        name="contactInformation.name"
                         label="Jméno"
                         placeholder="Zadejte prosím jméno pacienta"
                         control={control}
@@ -119,19 +126,20 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
                     <FormSelectInput
                         sx={{ marginTop: 0.5 }}
                         label="Typ vyšetření"
-                        name="category"
+                        name="selectedCategory"
                         control={control}
                         fullWidth
                         required
                     >
                         {!isLoadingCategories &&
+                            categories &&
                             map(
                                 ({ label, value }) => (
                                     <MenuItem key={label} value={value}>
                                         {label}
                                     </MenuItem>
                                 ),
-                                makeArrayOfLabelValue('name', 'category_id', categories),
+                                makeArrayOfLabelValue<Category[]>('name', 'category_id', categories),
                             )}
                     </FormSelectInput>
                     <DatePicker
@@ -141,23 +149,27 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
                         views={['year', 'month', 'day']}
                         inputFormat="dd-MM-yyyy"
                         mask="__-__-____"
-                        name="birthdate"
+                        name="contactInformation.name"
                         value={birthdate}
                         placeholder="Zadejte prosím datum narození pacienta"
                         control={control}
-                        onChange={(date) => {
-                            if (new Date(date).getTime()) {
+                        onChange={(date: Date | null) => {
+                            if (date && new Date(date).getTime()) {
                                 setBirthDate(date)
-                                setValue('birthdate', getISODateStringWithCorrectOffset(date), {
-                                    shouldDirty: true,
-                                })
+                                setValue(
+                                    'contactInformation.birthdate',
+                                    getISODateStringWithCorrectOffset(date),
+                                    {
+                                        shouldDirty: true,
+                                    },
+                                )
                             }
                         }}
                         renderInput={(params) => <TextField {...params} variant="standard" />}
                     />
                     <Box sx={{ display: 'flex', direction: 'row', gap: 1 }}>
                         <FormInput
-                            name="contact.email"
+                            name="contactInformation.email"
                             label="E-mail"
                             placeholder="Zadejte prosím e-mail pacienta"
                             control={control}
@@ -165,7 +177,7 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
                             fullWidth
                         />
                         <FormInput
-                            name="contact.phone"
+                            name="contactInformation.phone"
                             label="Telefonní číslo"
                             placeholder="Zadejte prosím telefon pacienta"
                             control={control}
@@ -199,12 +211,6 @@ const AdministrationCreateCalendarEvent = ({ open = false, data, handleClose }) 
             </Dialog>
         )
     )
-}
-
-AdministrationCreateCalendarEvent.propTypes = {
-    open: PropTypes.bool,
-    handleClose: PropTypes.func,
-    data: PropTypes.object,
 }
 
 export default AdministrationCreateCalendarEvent

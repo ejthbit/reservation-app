@@ -93,6 +93,7 @@ const useCalendar = () => {
         data: bookings = [],
         isMutating: isLoadingEventsForSelectedView,
     } = useGetBookings()
+
     const [
         fetchDoctorServicesByRange,
         { currentData: servicesDays = [], isFetching: isLoadingServicesDays },
@@ -133,20 +134,30 @@ const useCalendar = () => {
     }
     const handleDragStart = (event: BookingEvent) => setDraggedEvent(event)
 
-    const dragFromOutsideItem = () => draggedEvent
-    const moveEvent = ({ event, start, end }: { event: BookingEvent; start: Date; end: Date }) =>
+    const dragFromOutsideItem = () => draggedEvent!
+    const moveEvent = ({ event, start, end }: { event: BookingEvent | null; start: Date; end: Date }) => {
+        const { email, phone, category, birthdate, name, workplace } = event?.resource!
         updateBooking({
-            id: event.id,
+            id: event?.id!,
             start: getISODateStringWithCorrectOffset(start),
             end: getISODateStringWithCorrectOffset(end),
+            contact: { email, phone },
+            birthdate,
+            category: category ?? 0,
+            name,
+            workplace,
         })
+    }
 
     const onDropFromOutside = ({ start, end }: { start: Date; end: Date }) => {
-        const event = {
-            id: draggedEvent?.id,
-            start,
-            end,
-        }
+        const event = draggedEvent?.id
+            ? ({
+                  id: draggedEvent.id,
+                  start,
+                  end,
+              } as BookingEvent)
+            : null
+
         setDraggedEvent(null)
         moveEvent({ event, start, end })
     }

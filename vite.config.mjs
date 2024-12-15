@@ -40,7 +40,7 @@ export default defineConfig({
             },
         },
         sourcemap: true,
-        //Clears the output directory before building.
+        // Clears the output directory before building.
         emptyOutDir: true,
     },
     server: {

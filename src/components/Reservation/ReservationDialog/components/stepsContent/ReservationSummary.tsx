@@ -48,7 +48,9 @@ const ReservationSummary = () => {
                     </Typography>
                     <Typography variant="caption">
                         Typ vyšetření:{' '}
-                        {selectedCategory && getCategoryNameById(selectedCategory as string, categories)}
+                        {selectedCategory &&
+                            categories &&
+                            getCategoryNameById(selectedCategory as string, categories)}
                     </Typography>
                 </Grid>
             </Grid>

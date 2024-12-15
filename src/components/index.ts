@@ -1,6 +1,6 @@
 export * from './Administration/AdministrationNavigation/components'
 export { default as AdministrationPage } from './Administration/AdministrationPage.js'
-export * from './Administration/Pages/components/ index'
+export * from './Administration/Pages/components'
 export * from './Administration/Pages'
 export { default as LoginPage } from './Login/LoginPage/LoginPage'
 export { default as RegistrationPage } from './Login/RegistrationPage/RegistrationPage'

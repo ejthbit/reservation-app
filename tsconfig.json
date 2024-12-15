@@ -6,7 +6,7 @@
         "isolatedModules": true,
         "jsx": "react-jsx",
         "lib": ["DOM", "DOM.Iterable", "es2022"],
-        "module": "commonjs",
+        "module": "ES2022",
         "moduleResolution": "node",
         "noEmitOnError": true,
         "noImplicitOverride": true,

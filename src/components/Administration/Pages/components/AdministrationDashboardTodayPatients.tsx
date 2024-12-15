@@ -12,10 +12,8 @@ import {
 import { addMinutes, format, subMinutes } from 'date-fns'
 import { equals, map, prop, sortBy } from 'ramda'
 import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { getUserConfigurationSelectedAmbulance } from '../../../../store/administration'
-import { useLazyGetBookingsQuery } from '../../../../store/administration/services'
-import { getUserInfo } from '../../../../store/userInfo'
+import { useGetBookings } from '../../../../context/Administration/AdministrationBookingsHooks'
+import { useAdministration } from '../../../../context/Administration/AdministrationProvider'
 import { getDateWithCorrectOffset, getISODateStringWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
 
 const from = getISODateStringWithCorrectOffset(
@@ -24,11 +22,11 @@ const from = getISODateStringWithCorrectOffset(
 const to = getISODateStringWithCorrectOffset(
     addMinutes(new Date(), import.meta.env.VITE_APPOINTMENT_DURATION ?? 10 * 4),
 )
+
 const AdministrationDashboardTodayPatients = () => {
-    const workplace = useSelector(
-        (state) => getUserConfigurationSelectedAmbulance(state) ?? getUserInfo(state)?.default_workplace,
-    )
-    const [getBookings, { data: todayBookings, isFetching }] = useLazyGetBookingsQuery()
+    const { selectedWorkspace: workplace } = useAdministration()
+    const { data: todayBookings, isMutating: isFetching, trigger: getBookings } = useGetBookings()
+
     // FIXME: Call with actual time
     useEffect(() => {
         getBookings({ from, to, workplace })
@@ -98,7 +96,5 @@ const AdministrationDashboardTodayPatients = () => {
         </Box>
     )
 }
-
-AdministrationDashboardTodayPatients.propTypes = {}
 
 export default AdministrationDashboardTodayPatients

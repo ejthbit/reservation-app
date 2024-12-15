@@ -17,13 +17,14 @@ import {
 } from './components'
 import { isMobile, isNilOrEmpty } from '../../../utils'
 import { useTheme } from '@emotion/react'
+import { BookingEvent, BookingEventResource } from '../../../utils/makeCalendarEventsFromBookings'
 
-const DragAndDropCalendar = withDragAndDrop(Calendar)
+const DragAndDropCalendar = withDragAndDrop<BookingEvent, BookingEventResource>(Calendar)
 const calendarFormats = {
-    dayRangeHeaderFormat: ({ start, end }) =>
+    dayRangeHeaderFormat: ({ start, end }: { start: string; end: string }) =>
         format(new Date(start), 'dd/MM/yyyy') + ' - ' + format(new Date(end), 'dd/MM/yyyy'),
-    dayFormat: (date) => format(date, 'eeee dd/MM/yyyy', { locale: cs }),
-    dayHeaderFormat: (date) => format(date, 'dd/MM/yyyy'),
+    dayFormat: (date: Date) => format(date, 'eeee dd/MM/yyyy', { locale: cs }),
+    dayHeaderFormat: (date: Date) => format(date, 'dd/MM/yyyy'),
 }
 
 const localizer = dateFnsLocalizer({
@@ -83,7 +84,7 @@ const AdministrationCalendar = () => {
                 <DragAndDropCalendar
                     formats={calendarFormats}
                     onEventDrop={moveEvent}
-                    dragFromOutsideItem={draggedEvent ? dragFromOutsideItem() : null}
+                    dragFromOutsideItem={draggedEvent ? dragFromOutsideItem() : undefined}
                     onDropFromOutside={onDropFromOutside}
                     handleDragStart={handleDragStart}
                     min={new Date(0, 0, 0, 7, 0, 0)}

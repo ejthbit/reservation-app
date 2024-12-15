@@ -2,7 +2,7 @@ import { addMinutes } from 'date-fns'
 import { ContactInformation } from '../../../../context/Reservation'
 
 export type ReservationProcessData = {
-    selectedDoctor: number | string
+    selectedDoctor?: number | string
     selectedDate: string
     selectedTime: string
     selectedAmbulanceId: number | null
@@ -10,7 +10,7 @@ export type ReservationProcessData = {
     contactInformation: ContactInformation
 }
 const prepareReservationForCreation = ({
-    selectedDoctor,
+    selectedDoctor = '',
     selectedDate,
     selectedTime,
     selectedAmbulanceId,

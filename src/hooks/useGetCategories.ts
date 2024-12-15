@@ -1,6 +1,7 @@
 import useSWR from 'swr'
 import axiosGynInstance from '../api/config'
 import { isNilOrEmpty } from '../utils'
+import { Category } from '../types'
 /**
  * The function fetcher is an asynchronous function that fetches data from a specified URL using
  * axiosGynInstance and returns the data if it exists, otherwise throws an error with the message from
@@ -13,9 +14,12 @@ import { isNilOrEmpty } from '../utils'
  */
 
 const fetcher = async (url: string) => {
-    const { data: response } = await axiosGynInstance.get(url)
+    const { data: response, statusText } = await axiosGynInstance.get<{
+        data: Category[]
+        status: number
+    }>(url)
     if (!response.data) {
-        throw Error(response.data.message)
+        throw Error(statusText)
     }
     return response.data
 }

@@ -11,13 +11,12 @@ import { validationMessages } from '../../../constants'
 import { useUser } from '../../../context/User/UserProvider'
 
 const RegistrationPage = ({ logo, onLoginClick }: { logo: React.ReactNode; onLoginClick: () => void }) => {
-    const {} = useUser()
-
     const [recaptcha, setRecaptcha] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const {
         handleSubmit,
         control,
-        formState: { isValid, submitCount },
+        formState: { isValid, submitCount, errors },
         reset,
     } = useForm({
         mode: 'onChange',
@@ -115,11 +114,11 @@ const RegistrationPage = ({ logo, onLoginClick }: { logo: React.ReactNode; onLog
                         {!isLoading ? 'Registrovat se' : <CircularProgress size={22} />}
                     </Button>
                 </Grid>
-                {isSuccess && (
+                {/* {isSuccess && (
                     <Grid>
                         <Typography color="green">Účet byl úspěšně vytvořen.</Typography>
                     </Grid>
-                )}
+                )} */}
                 <Grid sx={{ textAlign: 'center' }}>
                     <Link
                         underline="hover"
@@ -135,13 +134,13 @@ const RegistrationPage = ({ logo, onLoginClick }: { logo: React.ReactNode; onLog
                     </Link>
                 </Grid>
             </form>
-            {error && (
+            {/* {error && (
                 <Grid>
                     <Typography variant="body1" color="error">
                         {error?.message}
                     </Typography>
                 </Grid>
-            )}
+            )} */}
         </Grid>
     )
 }

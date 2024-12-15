@@ -4,7 +4,7 @@ import { TimeSlot } from './types'
 import { AmbulanceService, DoctorService } from '../../types/AmbulanceService'
 import { ReservationProcessData } from '../../components/Reservation/ReservationDialog/helpers/prepareReservationForCreation'
 
-export const makeArrayOfLabelValue = (label: string, value: string, arr: any[]) =>
+export const makeArrayOfLabelValue = <T extends any[]>(label: string, value: string, arr: T) =>
     arr.map((record) => ({ label: record[label], value: record[value] }))
 
 export const makeReservationProcessInfo = ({

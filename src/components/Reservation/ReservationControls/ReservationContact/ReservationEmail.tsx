@@ -13,7 +13,7 @@ const ReservationEmail = ({ step, isRequired }: { step: string; isRequired?: boo
     } = useReservation()
 
     const [isValid, setIsValid] = useState(true)
-    const [nonDebounceValue, setNonDebounceValue] = useState(email)
+    const [nonDebounceValue, setNonDebounceValue] = useState(email!)
 
     useDebounce({
         value: nonDebounceValue,

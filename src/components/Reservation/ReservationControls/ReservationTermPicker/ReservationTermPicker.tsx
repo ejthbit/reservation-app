@@ -61,6 +61,7 @@ const ReservationTermPicker = ({ step }: { step: string }) => {
             if (!isNilOrEmpty(serviceItem?.doctors)) {
                 return equals(serviceItem.date, selectedDate)
             }
+            return undefined
         })
         const servingDoctor = !isNilOrEmpty(selectedDoctor)
             ? servesItem?.doctors.find(propEq('doctorId', selectedDoctor))

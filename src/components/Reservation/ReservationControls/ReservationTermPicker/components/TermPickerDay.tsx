@@ -20,8 +20,10 @@ const TermPickerDay = ({
     const isDoctorAvailable =
         !DayComponentProps.outsideCurrentMonth &&
         doctorServicesBySelectedDoctorIdAndMonth.find(({ date, doctors }) => {
-            if (!isNilOrEmpty(doctors))
+            if (!isNilOrEmpty(doctors)) {
                 return equals(date, format(day, 'yyyy-MM-dd')) && day >= startOfToday()
+            }
+            return undefined
         })
 
     return (

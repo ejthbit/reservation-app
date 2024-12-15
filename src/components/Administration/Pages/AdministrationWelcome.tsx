@@ -1,35 +1,44 @@
 import { Box, CircularProgress, Fade, Hidden, List, Typography } from '@mui/material'
 import { endOfToday, getDay, isWeekend, startOfToday, subDays } from 'date-fns'
-import { useSelector } from 'react-redux'
+import { useMemo } from 'react'
 import imgLogo from '../../../assets/stetoscope.svg'
-import { getUserConfigurationSelectedAmbulance } from '../../../store/administration'
-import { useGetBookingsQuery } from '../../../store/administration/services'
-import { getUserInfo } from '../../../store/userInfo'
+import { useGetCategories } from '../../../hooks/useGetCategories'
 import { getCategoryNameById, getISODateStringWithCorrectOffset, isMobile } from '../../../utils'
 import AdministrationDashboardTodayPatients from './components/AdministrationDashboardTodayPatients'
-import { useMemo } from 'react'
-import { useGetCategories } from '../../../hooks/useGetCategories'
 
 import { BarChart } from '@mui/x-charts/BarChart'
-const getCategoryCounts = (data, categories) => {
-    if (!data || !categories) return []
-    const counts = data?.reduce((acc, curr) => {
-        const category = curr.category
-        acc[category] = (acc[category] || 0) + 1
-        return acc
-    }, {})
-    const dataForReturn = []
-    const labels = []
+import { useGetImmediateBookings } from '../../../context/Administration/AdministrationBookingsHooks'
+import { useAdministration } from '../../../context/Administration/AdministrationProvider'
+import { useUser } from '../../../context/User/UserProvider'
+import { Booking, Category } from '../../../types'
 
-    Object.entries(counts).forEach(([category, count]) => {
-        labels.push(getCategoryNameById(category, categories))
+const getCategoryCounts = (data: Booking[] | undefined, categories: Category[] | undefined) => {
+    const dataForReturn: number[] = []
+    const labels: string[] = []
+
+    if (!data || !categories) {
+        return { data: [], labels: [] }
+    }
+
+    const counts: Record<string, number> = data?.reduce(
+        (acc, curr) => {
+            const category = curr.category.toString()
+            acc[category] = (acc[category] || 0) + 1
+            return acc
+        },
+        {} as Record<string, number>,
+    )
+
+    Object.entries(counts).forEach(([categoryId, count]) => {
+        const label = getCategoryNameById(categoryId, categories)
+        if (label) labels.push(label)
         dataForReturn.push(count)
     })
 
     return { data: dataForReturn, labels }
 }
 
-const getWeekdayCounts = (data) => {
+const getWeekdayCounts = (data: Booking[] | undefined) => {
     if (!data) return []
 
     const weekdayCounts = Array(5).fill(0) // Initialize an array to hold counts for each weekday (Monday to Friday)
@@ -47,7 +56,18 @@ const getWeekdayCounts = (data) => {
     return weekdayCounts
 }
 
-const RootBarChart = ({ data, layout = 'horizontal', height }) => {
+const RootBarChart = ({
+    data,
+    layout = 'horizontal',
+    height,
+}: {
+    data: {
+        data: number[]
+        labels: string[]
+    }
+    layout?: 'horizontal' | 'vertical' | undefined
+    height?: number
+}) => {
     if (data && data.data.length > 0)
         return (
             <BarChart
@@ -60,11 +80,11 @@ const RootBarChart = ({ data, layout = 'horizontal', height }) => {
                 series={[
                     {
                         data: data.data,
-                        labels: 'Počet',
+                        label: 'Počet',
                         id: 'number',
                         highlightScope: { faded: 'global', highlighted: 'series' },
                         layout,
-                        faded: { innerRadius: 30, additionalRadius: -30, color: 'black' },
+                        // faded: { innerRadius: 30, additionalRadius: -30, color: 'black' },
                     },
                 ]}
                 {...(layout === 'horizontal'
@@ -83,24 +103,28 @@ const RootBarChart = ({ data, layout = 'horizontal', height }) => {
     else return null
 }
 const AdministrationWelcome = () => {
-    const { name } = useSelector(getUserInfo)
+    const { name } = useUser()
     const { data: categories } = useGetCategories()
-    const selectedAmbulanceId = useSelector(getUserConfigurationSelectedAmbulance)
-    const { data: todayBookings } = useGetBookingsQuery({
+    const { selectedWorkspace } = useAdministration()
+    const { data: todayBookings } = useGetImmediateBookings({
         from: getISODateStringWithCorrectOffset(startOfToday()),
         to: getISODateStringWithCorrectOffset(endOfToday()),
-        workplace: selectedAmbulanceId,
+        workplace: selectedWorkspace,
     })
-    const { data: bookingsInLastMonth, isLoading: isLoadingBookingsInLastMonth } = useGetBookingsQuery({
+
+    const { data: bookingsInLastMonth, isLoading: isLoadingBookingsInLastMonth } = useGetImmediateBookings({
         from: getISODateStringWithCorrectOffset(subDays(startOfToday(), 30)),
         to: getISODateStringWithCorrectOffset(startOfToday()),
-        workplace: selectedAmbulanceId,
+        workplace: selectedWorkspace,
     })
+
     const categoryCounts = useMemo(
         () => getCategoryCounts(bookingsInLastMonth, categories),
-        [bookingsInLastMonth, categories]
+        [bookingsInLastMonth, categories],
     )
+
     const weekDayCounts = useMemo(() => getWeekdayCounts(bookingsInLastMonth), [bookingsInLastMonth])
+
     return (
         <Fade in timeout={{ enter: 600 }}>
             <Box
