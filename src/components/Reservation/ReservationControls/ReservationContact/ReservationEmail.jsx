@@ -9,6 +9,12 @@ import { string } from 'yup'
 import { useState } from 'react'
 import { useDebounce } from '../../../../hooks'
 
+const checkIfEmailIsValid = async (value, setter) => {
+    const emailValidation = string().email()
+    const res = await emailValidation.isValid(value)
+    return setter(!!res)
+}
+
 const ReservationEmail = ({ step, isRequired }) => {
     const dispatch = useDispatch()
     const { email } = useSelector(getContactInformation)
@@ -22,12 +28,6 @@ const ReservationEmail = ({ step, isRequired }) => {
     })
     useReservationButton({ dependency: [nonDebounceValue], step, isRequired, isValid })
 
-    const checkIfEmailIsValid = async (value) => {
-        const emailValidation = string().email()
-        const res = await emailValidation.isValid(value)
-        return setIsValid(!!res)
-    }
-
     return (
         <TextField
             id="email"
@@ -38,7 +38,7 @@ const ReservationEmail = ({ step, isRequired }) => {
             helperText={!isValid ? 'Email je nevalidní!' : ''}
             error={!isValid}
             onChange={(e) => setNonDebounceValue(e.target.value)}
-            onBlur={(e) => checkIfEmailIsValid(e.target.value)}
+            onBlur={((e) => checkIfEmailIsValid(e.target.value), setIsValid)}
             fullWidth
             InputProps={{
                 endAdornment: (
