@@ -6,9 +6,9 @@ import { isNilOrEmpty } from '../../../../utils'
 
 interface AdminToolbarItems {
     id: number
-    icon: ReactNode // Assuming icons are React components
+    icon?: ReactNode // Assuming icons are React components
     text: string
-    link: string
+    link?: string
     disabled?: boolean // optional property
     onClick?: (navigate: NavigateFunction) => void
     hiddenMobile?: boolean
@@ -46,18 +46,20 @@ const AdministrationDrawerListItems = ({
                                 }}
                                 {...(!isNilOrEmpty(link) && { to: link, component: Link })}
                             >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: isOpen ? 2 : 'auto',
-                                        justifyContent: 'center',
-                                        '& svg': {
-                                            fill: 'white',
-                                        },
-                                    }}
-                                >
-                                    {icon}
-                                </ListItemIcon>
+                                {icon && (
+                                    <ListItemIcon
+                                        sx={{
+                                            minWidth: 0,
+                                            mr: isOpen ? 2 : 'auto',
+                                            justifyContent: 'center',
+                                            '& svg': {
+                                                fill: 'white',
+                                            },
+                                        }}
+                                    >
+                                        {icon}
+                                    </ListItemIcon>
+                                )}
                                 {isOpen && (
                                     <ListItemText
                                         primary={text}

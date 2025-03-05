@@ -7,21 +7,20 @@ import cs from 'date-fns/locale/cs'
 import './css/custom-calendar.css'
 
 import useCalendar from '../../../hooks/useCalendar'
-import { Box, CircularProgress, Fade } from '@mui/material'
+import { Box, CircularProgress, Fade, useTheme } from '@mui/material'
 import {
     AdministrationCalendarToolbar,
     AdministrationCalendarEvent,
     AdministrationEventDetail,
-    AdministrationCreateCalendarEvent,
+    AdministrationCreateCalendarEventDialog,
     AdministrationCalendarHeader,
 } from './components'
-import { isMobile, isNilOrEmpty } from '../../../utils'
-import { useTheme } from '@emotion/react'
+import { isMobile } from '../../../utils'
 import { BookingEvent, BookingEventResource } from '../../../utils/makeCalendarEventsFromBookings'
 
 const DragAndDropCalendar = withDragAndDrop<BookingEvent, BookingEventResource>(Calendar)
 const calendarFormats = {
-    dayRangeHeaderFormat: ({ start, end }: { start: string; end: string }) =>
+    dayRangeHeaderFormat: ({ start, end }: { start: Date; end: Date }) =>
         format(new Date(start), 'dd/MM/yyyy') + ' - ' + format(new Date(end), 'dd/MM/yyyy'),
     dayFormat: (date: Date) => format(date, 'eeee dd/MM/yyyy', { locale: cs }),
     dayHeaderFormat: (date: Date) => format(date, 'dd/MM/yyyy'),
@@ -64,7 +63,6 @@ const AdministrationCalendar = () => {
         openEventDialogEvent,
         isLoadingEventsForSelectedView,
         events,
-        draggedEvent,
         moveEvent,
         handleDragStart,
         dragFromOutsideItem,
@@ -77,14 +75,11 @@ const AdministrationCalendar = () => {
     const theme = useTheme()
     return (
         <Fade in timeout={{ enter: 1000 }}>
-            <Box
-                className={isLoadingEventsForSelectedView ? 'loading' : null}
-                sx={{ zIndex: '1000', width: '100%' }}
-            >
+            <Box sx={{ zIndex: '1000', width: '100%' }}>
                 <DragAndDropCalendar
                     formats={calendarFormats}
                     onEventDrop={moveEvent}
-                    dragFromOutsideItem={draggedEvent ? dragFromOutsideItem() : undefined}
+                    // dragFromOutsideItem={(event: BookingEvent) => dragFromOutsideItem(event)}
                     onDropFromOutside={onDropFromOutside}
                     handleDragStart={handleDragStart}
                     min={new Date(0, 0, 0, 7, 0, 0)}
@@ -140,15 +135,17 @@ const AdministrationCalendar = () => {
                         />
                     </Fade>
                 )}
-                <AdministrationCreateCalendarEvent
-                    open={!isNilOrEmpty(newAppointmentDate)}
+                <AdministrationCreateCalendarEventDialog
+                    open={!newAppointmentDate}
                     handleClose={handleToggleCreationModal}
-                    data={newAppointmentDate}
+                    data={newAppointmentDate!}
                 />
-                <AdministrationEventDetail
-                    event={openEventDialogEvent}
-                    handleClose={() => handleOpenEventDialog(null)}
-                />
+                {openEventDialogEvent && (
+                    <AdministrationEventDetail
+                        event={openEventDialogEvent}
+                        handleClose={() => handleOpenEventDialog(openEventDialogEvent)}
+                    />
+                )}
             </Box>
         </Fade>
     )

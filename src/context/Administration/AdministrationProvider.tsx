@@ -2,7 +2,7 @@ import { useSnackbar } from 'notistack'
 import { PropsWithChildren, createContext, useContext, useMemo, useState } from 'react'
 import { useUser } from '../User/UserProvider'
 
-type SelectedViewDateRange = { from?: string; to?: string }
+export type SelectedViewDateRange = { from?: string; to?: string }
 type Administration = {
     selectedWorkspace: string
     selectedViewDateRange?: SelectedViewDateRange

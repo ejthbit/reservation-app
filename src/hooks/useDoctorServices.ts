@@ -1,5 +1,5 @@
 import useSWRMutation from 'swr/mutation'
-import { AmbulanceService } from '../types/AmbulanceService'
+import { AmbulanceService, DoctorService } from '../types/AmbulanceService'
 import axiosGynInstance from '../api/config'
 
 type GetDoctorServicesByRangeFetcherProps = {
@@ -29,7 +29,7 @@ export const useDoctorServices = () => {
         error: servicesDaysError,
         reset: clearDoctorServicesByRange,
         isMutating: isLoadingServicesDays,
-    } = useSWRMutation<AmbulanceService, Error, string, GetDoctorServicesByRangeFetcherProps>(
+    } = useSWRMutation<DoctorService[], Error, string, GetDoctorServicesByRangeFetcherProps>(
         'bookings/getDoctorServicesByRange',
         (key, { arg }) => getDoctorServicesByRangeFetcher(arg),
     )

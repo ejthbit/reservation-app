@@ -5,6 +5,7 @@ import TermPickerInput from './TermPickerInput'
 import { useDoctorServices } from '../../../../../hooks'
 import { useReservation } from '../../../../../context/Reservation'
 import { AmbulanceServiceDay } from '../../../../../types/AmbulanceService'
+import { getDateWithCorrectOffset } from '../../../../../utils'
 
 const TermPicker = ({
     doctorServicesBySelectedDoctorIdAndMonth = [],
@@ -25,9 +26,8 @@ const TermPicker = ({
     return (
         <MobileDatePicker
             label="Datum návštevy"
-            inputFormat="dd-MM-yyyy"
-            mask="__-__-____"
-            value={selectedDate}
+            format="dd-MM-yyyy"
+            value={getDateWithCorrectOffset(selectedDate)}
             onMonthChange={(date) => {
                 const currentMonth = format(date, 'yyyy-MM')
                 selectedAmbulance &&
@@ -37,16 +37,18 @@ const TermPicker = ({
                     })
                 setTermPickerDate(addHours(date, 1))
             }}
-            renderDay={(day, _value, DayComponentProps) => (
-                <TermPickerDay
-                    key={format(day, 'yyyy-MM-dd')}
-                    day={day}
-                    DayComponentProps={DayComponentProps}
-                    doctorServicesBySelectedDoctorIdAndMonth={doctorServicesBySelectedDoctorIdAndMonth}
-                />
-            )}
+            slots={{
+                textField: (props) => <TermPickerInput ref={props.inputRef} {...props} />,
+                day: (dayComponentProps) => (
+                    <TermPickerDay
+                        key={format(dayComponentProps.day, 'yyyy-MM-dd')}
+                        day={dayComponentProps.day}
+                        DayComponentProps={dayComponentProps}
+                        doctorServicesBySelectedDoctorIdAndMonth={doctorServicesBySelectedDoctorIdAndMonth}
+                    />
+                ),
+            }}
             views={['year', 'month', 'day']}
-            renderInput={(props) => <TermPickerInput ref={props.inputRef} {...props} />}
             onChange={setTermPickerDate}
             disablePast
         />

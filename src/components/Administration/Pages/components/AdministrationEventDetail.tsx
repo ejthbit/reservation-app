@@ -16,7 +16,7 @@ import { addMinutes } from 'date-fns'
 import PropTypes from 'prop-types'
 import { map } from 'ramda'
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import {
     useDeleteBooking,
     useUpdateBooking,
@@ -40,6 +40,10 @@ const AdministrationEventDetail = ({
     const { trigger: updateBooking, isMutating: updatingBooking } = useUpdateBooking()
     const { trigger: deleteBooking, isMutating: deletingBooking } = useDeleteBooking()
 
+    if (!event.id) {
+        return null
+    }
+
     const {
         control,
         handleSubmit,
@@ -60,10 +64,11 @@ const AdministrationEventDetail = ({
             completed: !!completedValue,
         },
     })
-    const handlePatchBooking = async (updatedBooking: UpdatedBooking) => {
+    const handlePatchBooking = async (updatedBooking: Omit<UpdatedBooking, 'id' | 'workplace'>) => {
         await updateBooking({
             ...updatedBooking,
             id: event.id,
+            workplace: event.resource?.workplace ?? 1,
             end: addMinutes(
                 new Date(updatedBooking.start),
                 import.meta.env.VITE_APPOINTMENT_DURATION,
@@ -83,18 +88,18 @@ const AdministrationEventDetail = ({
         if (!isNilOrEmpty(event)) {
             const { start, title: name, resource } = event
             setStartValue(start)
-            setCompletedValue(resource?.completed)
+            setCompletedValue(resource?.completed ?? false)
             // setPrecautionaryInspectionValue(equals(resource?.category, 2))
             reset({
                 start: getISODateStringWithCorrectOffset(start),
-                name: name.split(' - ')[0],
-                birthdate: name.split(' - ')[1],
+                name: name?.split(' - ')[0],
+                birthdate: name?.split(' - ')[1],
                 phone: isNilOrEmpty(resource?.phone) ? 'Nevyplněno' : resource?.phone,
                 email: isNilOrEmpty(resource?.email) ? 'Nevyplněno' : resource?.email,
                 completed: resource?.completed,
                 category: resource?.category,
                 note: resource?.note ?? '',
-                selectedDoctor: resource?.selectedDoctorId ?? '',
+                selectedDoctorId: resource?.selectedDoctorId ?? '',
             })
         }
     }, [event, reset])
@@ -103,28 +108,33 @@ const AdministrationEventDetail = ({
         <Dialog maxWidth="sm" open={!isNilOrEmpty(event)} onClose={handleClose} disableScrollLock fullWidth>
             <DialogTitle>Detail</DialogTitle>
             <DialogContent sx={{ display: 'grid', gap: 1 }}>
-                <MobileDateTimePicker
-                    id="start"
-                    label="Začátek rezervace"
-                    variant="dialog"
-                    inputFormat="dd-MM-yyyy HH:mm"
-                    mask="__-__-____ __:__"
-                    value={startValue}
+                <Controller
                     name="start"
-                    sx={{
-                        '& .MuiPickersToolbar-penIconButton': {
-                            display: 'none',
-                        },
-                    }}
-                    onChange={(date) => {
-                        setStartValue(date)
-                        setValue('start', getISODateStringWithCorrectOffset(date), {
-                            shouldDirty: true,
-                        })
-                    }}
-                    renderInput={(params) => <TextField {...params} variant="standard" required />}
-                    ampm={false}
-                    minutesStep={Number(import.meta.env.VITE_APPOINTMENT_DURATION)}
+                    control={control}
+                    render={({ field }) => (
+                        <MobileDateTimePicker
+                            key="start"
+                            label="Začátek rezervace"
+                            // variant="dialog"
+                            format="dd-MM-yyyy HH:mm"
+                            value={startValue}
+                            sx={{
+                                '& .MuiPickersToolbar-penIconButton': {
+                                    display: 'none',
+                                },
+                            }}
+                            onChange={(date: Date | null) => {
+                                field.onChange(date)
+                                setStartValue(date)
+                                date &&
+                                    setValue('start', getISODateStringWithCorrectOffset(date), {
+                                        shouldDirty: true,
+                                    })
+                            }}
+                            ampm={false}
+                            minutesStep={Number(import.meta.env.VITE_APPOINTMENT_DURATION)}
+                        />
+                    )}
                 />
                 <FormInput label="Jméno" control={control} name="name" fullWidth />
                 <FormInput
@@ -171,7 +181,7 @@ const AdministrationEventDetail = ({
                     label="Preferovaný doktor"
                     placeholder="Preferovaný doktor"
                     control={control}
-                    name="selectedDoctor"
+                    name="selectedDoctorId"
                     disabled
                     fullWidth
                 />

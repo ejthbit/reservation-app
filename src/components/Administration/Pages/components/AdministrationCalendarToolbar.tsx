@@ -8,7 +8,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { useAdministration } from '../../../../context/Administration/AdministrationProvider'
 import { withTheme } from '../../../../hoc'
 import useCalendar from '../../../../hooks/useCalendar'
-import { isMobile, isNilOrEmpty } from '../../../../utils'
+import { isMobile } from '../../../../utils'
 
 const StyledButton = styled(Button)(({ theme, variant }) => ({
     borderRadius: theme.spacing(3),
@@ -20,10 +20,10 @@ const VIEW_TRANSLATIONS = {
     work_week: 'aktuální pracovní týden',
 }
 const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }: ToolbarProps) => {
-    const [viewState, setViewState] = useState(isMobile ? 'day' : 'work_week')
+    const [viewState, setViewState] = useState<'day' | 'work_week'>(isMobile ? 'day' : 'work_week')
     const { events } = useCalendar()
 
-    const { selectedViewDateRange, selectViewDateRange } = useAdministration()
+    const { selectViewDateRange } = useAdministration()
     const goToDayView = () => {
         onView('day')
         setViewState('day')
@@ -53,10 +53,11 @@ const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }: Tool
 
     useEffect(() => {
         if (label) {
+            const labelWithoutSeparator = label.split(' - ')
             selectViewDateRange({
-                from: startOfDay(parse(label.split(' - ')[0], 'dd/MM/yyyy', new Date())).toISOString(),
+                from: startOfDay(parse(labelWithoutSeparator[0]!!, 'dd/MM/yyyy', new Date())).toISOString(),
                 to: endOfDay(
-                    parse(label.split(' - ')[1] ?? label.split(' - ')[0], 'dd/MM/yyyy', new Date()),
+                    parse(labelWithoutSeparator[1] ?? labelWithoutSeparator[0]!!, 'dd/MM/yyyy', new Date()),
                 ).toISOString(),
             })
         }

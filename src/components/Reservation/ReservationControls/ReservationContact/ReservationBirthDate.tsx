@@ -21,8 +21,7 @@ const ReservationBirthDate = ({ step, isRequired = false }: { step: string; isRe
         >
             <MobileDatePicker
                 label="Datum narození"
-                inputFormat="dd-MM-yyyy"
-                mask="__-__-____"
+                format="dd-MM-yyyy"
                 value={birthdate}
                 name="birthdate"
                 views={['year', 'month', 'day']}
@@ -33,27 +32,29 @@ const ReservationBirthDate = ({ step, isRequired = false }: { step: string; isRe
                         birthdate: getISODateStringWithCorrectOffset(date).slice(0, 10),
                     })
                 }
-                renderInput={({ inputRef, inputProps, label, InputProps }) => (
-                    <TextField
-                        sx={{ cursor: 'pointer' }}
-                        ref={inputRef}
-                        {...inputProps}
-                        color="info"
-                        label={label}
-                        placeholder="Zadejte prosím své datum narození"
-                        variant="standard"
-                        required={isRequired}
-                        fullWidth
-                        InputProps={{
-                            ...InputProps,
-                            endAdornment: (
-                                <InputAdornment sx={{ cursor: 'pointer' }} position="end">
-                                    <Today />
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                )}
+                slots={{
+                    textField: ({ inputRef, inputProps, label, InputProps }) => (
+                        <TextField
+                            sx={{ cursor: 'pointer' }}
+                            ref={inputRef}
+                            {...inputProps}
+                            color="info"
+                            label={label}
+                            placeholder="Zadejte prosím své datum narození"
+                            variant="standard"
+                            required={isRequired}
+                            fullWidth
+                            InputProps={{
+                                ...InputProps,
+                                endAdornment: (
+                                    <InputAdornment sx={{ cursor: 'pointer' }} position="end">
+                                        <Today />
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                    ),
+                }}
             />
         </LocalizationProvider>
     )

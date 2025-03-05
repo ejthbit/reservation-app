@@ -11,7 +11,7 @@ import {
     Settings,
 } from '@mui/icons-material'
 import { Box, Fade, Typography } from '@mui/material'
-import { ReactNode, useState } from 'react'
+import { useState } from 'react'
 import packageJson from '../../../../../package.json'
 import { isMobile } from '../../../../utils'
 import { Drawer } from '../../../common'
@@ -25,7 +25,7 @@ import { useUser } from '../../../../context/User/UserProvider'
 
 type GetAdminToolbarToolset = {
     isDrawerOpen: boolean
-    onClose: (value: boolean) => void
+    onClose: () => void
     onLogOut: () => void
 }
 
@@ -44,7 +44,9 @@ const getAdminToolbarToolset = ({ isDrawerOpen, onClose, onLogOut }: GetAdminToo
         id: 7,
         icon: isDrawerOpen ? <KeyboardArrowLeft /> : <KeyboardArrowRight />,
         text: 'Skrýt panel',
-        onClick: onClose,
+        onClick: async () => {
+            onClose()
+        },
         hiddenMobile: true,
     },
     {

@@ -2,7 +2,7 @@ export { default as AdministrationCalendarEvent } from './AdministrationCalendar
 export { default as AdministrationCalendarToolbar } from './AdministrationCalendarToolbar'
 // @ts-ignore
 
-export { default as AdministrationCreateCalendarEvent } from './AdministrationCreateCalendarEvent'
+export { default as AdministrationCreateCalendarEventDialog } from './AdministrationCreateCalendarEvent'
 export { default as AdministrationDashboardTodayPatients } from './AdministrationDashboardTodayPatients'
 export { default as AdministrationEventDetail } from './AdministrationEventDetail'
 // @ts-ignore

@@ -14,7 +14,7 @@ import { DatePicker } from '@mui/x-date-pickers'
 import { format } from 'date-fns'
 import { map } from 'ramda'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import VALIDATION_MESSAGES from '../../../../constants/validationMessages'
 import { useFastBooking } from '../../../../context/Administration/AdministrationBookingsHooks'
@@ -47,7 +47,7 @@ const formValidationSchema = yup.object({
         })
         .notRequired(),
 })
-const AdministrationCreateCalendarEvent = ({
+const AdministrationCreateCalendarEventDialog = ({
     open = false,
     data,
     handleClose,
@@ -142,31 +142,43 @@ const AdministrationCreateCalendarEvent = ({
                                 makeArrayOfLabelValue<Category[]>('name', 'category_id', categories),
                             )}
                     </FormSelectInput>
-                    <DatePicker
-                        disableFuture
-                        label="Datum narození"
-                        openTo="year"
-                        views={['year', 'month', 'day']}
-                        inputFormat="dd-MM-yyyy"
-                        mask="__-__-____"
+                    <Controller
                         name="contactInformation.name"
-                        value={birthdate}
-                        placeholder="Zadejte prosím datum narození pacienta"
                         control={control}
-                        onChange={(date: Date | null) => {
-                            if (date && new Date(date).getTime()) {
-                                setBirthDate(date)
-                                setValue(
-                                    'contactInformation.birthdate',
-                                    getISODateStringWithCorrectOffset(date),
-                                    {
-                                        shouldDirty: true,
-                                    },
-                                )
-                            }
-                        }}
-                        renderInput={(params) => <TextField {...params} variant="standard" />}
+                        render={({ field }) => (
+                            <DatePicker
+                                disableFuture
+                                label="Datum narození"
+                                openTo="year"
+                                views={['year', 'month', 'day']}
+                                format="dd-MM-yyyy"
+                                value={birthdate}
+                                slots={{
+                                    textField: (params) => (
+                                        <TextField
+                                            {...params}
+                                            variant="standard"
+                                            helperText="Zadejte prosím datum narození pacienta"
+                                        />
+                                    ),
+                                }}
+                                onChange={(date: Date | null) => {
+                                    field.onChange(date)
+                                    if (date && new Date(date).getTime()) {
+                                        setBirthDate(date)
+                                        setValue(
+                                            'contactInformation.birthdate',
+                                            getISODateStringWithCorrectOffset(date),
+                                            {
+                                                shouldDirty: true,
+                                            },
+                                        )
+                                    }
+                                }}
+                            />
+                        )}
                     />
+
                     <Box sx={{ display: 'flex', direction: 'row', gap: 1 }}>
                         <FormInput
                             name="contactInformation.email"
@@ -213,4 +225,4 @@ const AdministrationCreateCalendarEvent = ({
     )
 }
 
-export default AdministrationCreateCalendarEvent
+export default AdministrationCreateCalendarEventDialog

@@ -18,7 +18,7 @@ export type Booking = {
 export type UpdatedBooking = {
     id: number
     name: string
-    start: String
+    start: string
     end: string
     category: number
     contact?: Contact

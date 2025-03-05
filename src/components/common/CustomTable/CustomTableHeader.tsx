@@ -1,9 +1,30 @@
 import { Print } from '@mui/icons-material'
 import { IconButton, TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material'
-import PropTypes from 'prop-types'
 
-const CustomTableHeader = ({ headCells, classes, order, orderBy, onRequestSort, handlePrint }) => {
-    const createSortHandler = (property) => (event) => onRequestSort(event, property)
+interface HeadCell {
+    id: string
+    label: string
+    disableSorting?: boolean
+}
+
+interface CustomTableHeaderProps {
+    headCells: HeadCell[]
+    order: 'asc' | 'desc'
+    orderBy: string
+    onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void
+    handlePrint: () => void
+}
+
+const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
+    headCells,
+    order,
+    orderBy,
+    onRequestSort,
+    handlePrint,
+}) => {
+    const createSortHandler = (property: string) => (event: React.MouseEvent) => {
+        onRequestSort(event, property)
+    }
 
     return (
         <TableHead>
@@ -12,12 +33,12 @@ const CustomTableHeader = ({ headCells, classes, order, orderBy, onRequestSort, 
                     <TableCell
                         key={`${id}-${label}`}
                         padding="normal"
-                        sortDirection={orderBy === id && order}
+                        sortDirection={orderBy === id ? order : false}
                     >
                         <TableSortLabel
                             active={orderBy === id}
                             direction={orderBy === id ? order : 'asc'}
-                            onClick={(e) => (disableSorting ? e.preventDefault() : createSortHandler(id)())}
+                            onClick={(e) => (disableSorting ? e.preventDefault() : createSortHandler(id)(e))}
                             hideSortIcon={disableSorting}
                         >
                             {label}
@@ -29,23 +50,14 @@ const CustomTableHeader = ({ headCells, classes, order, orderBy, onRequestSort, 
                         </TableSortLabel>
                     </TableCell>
                 ))}
-                <IconButton onClick={handlePrint}>
-                    <Print />
-                </IconButton>
+                <TableCell padding="normal">
+                    <IconButton onClick={handlePrint}>
+                        <Print />
+                    </IconButton>
+                </TableCell>
             </TableRow>
         </TableHead>
     )
-}
-
-CustomTableHeader.propTypes = {
-    headCells: PropTypes.array,
-    classes: PropTypes.object.isRequired,
-    numSelected: PropTypes.number.isRequired,
-    onRequestSort: PropTypes.func.isRequired,
-    onSelectAllClick: PropTypes.func.isRequired,
-    order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-    orderBy: PropTypes.string.isRequired,
-    rowCount: PropTypes.number.isRequired,
 }
 
 export default CustomTableHeader

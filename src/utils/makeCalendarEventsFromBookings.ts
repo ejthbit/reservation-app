@@ -18,14 +18,17 @@ export type BookingEventResource = {
 }
 
 export type BookingEvent = {
-    id: number
+    id?: number
     start: Date
     end: Date
     title?: string
     resource?: BookingEventResource
 }
 type BookingResource = Booking & { doctorService?: boolean }
-const makeCalendarEventsFromBookings = (bookings: BookingResource[], blocked = false): BookingEvent[] =>
+const makeCalendarEventsFromBookings = (
+    bookings: Partial<BookingResource>[],
+    blocked = false,
+): BookingEvent[] =>
     bookings.map(
         ({
             id,
@@ -39,12 +42,12 @@ const makeCalendarEventsFromBookings = (bookings: BookingResource[], blocked = f
             note = '',
             doctorService = false,
             selected_doctor_id = '',
-            workplace,
+            workplace = 0,
         }) => {
             return {
                 id,
-                start: getDateWithCorrectOffset(start),
-                end: getDateWithCorrectOffset(end),
+                start: getDateWithCorrectOffset(start!),
+                end: getDateWithCorrectOffset(end!),
                 title: `${blocked ? 'Zavřeno' : name}${!isNilOrEmpty(birthdate) ? ` - ${birthdate}` : ''}`,
                 resource: {
                     name,

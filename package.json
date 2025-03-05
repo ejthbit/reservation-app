@@ -50,7 +50,7 @@
         "@hookform/resolvers": "^2.9.10",
         "@mui/icons-material": "^5.15.15",
         "@mui/x-charts": "^7.2.0",
-        "@mui/x-date-pickers": "^5.0.18",
+        "@mui/x-date-pickers": "^7.27.1",
         "@originjs/vite-plugin-federation": "^1.1.13",
         "@types/react": "^18.2.79",
         "@types/react-dom": "^18.2.25",

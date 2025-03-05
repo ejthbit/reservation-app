@@ -1,30 +1,38 @@
 import { addMinutes } from 'date-fns'
 import { equals } from 'ramda'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SlotInfo } from 'react-big-calendar'
 import { useGetBookings, useUpdateBooking } from '../context/Administration/AdministrationBookingsHooks'
 import { useAdministration } from '../context/Administration/AdministrationProvider'
-import {
-    useGetDoctorsForSelectedAmbulanceQuery,
-    useLazyGetDoctorServicesByRangeQuery,
-} from '../store/reservationProcess'
+
 import {
     getDateWithCorrectOffset,
     getISODateStringWithCorrectOffset,
     makeCalendarEventsFromBookings,
 } from '../utils'
 import { BookingEvent } from '../utils/makeCalendarEventsFromBookings'
+import { useDoctorServices } from './useDoctorServices'
+import { useReservation } from '../context/Reservation'
+import { DoctorService } from '../types/AmbulanceService'
+type Intervals = {
+    start: string
+    end: string
+}[]
 
-const hourlyIntervals = (arr) =>
+type DoctorsIdsWithNames = {
+    [key: string]: string
+}
+
+const hourlyIntervals = (arr: DoctorService[]): Intervals[] =>
     arr.map((obj) => {
         const start = getDateWithCorrectOffset(obj.start)
         const end = getDateWithCorrectOffset(obj.end)
 
-        const diffInMs = end - start
-        const diffInHrs = diffInMs / (1000 * 30 * 60)
+        const diffInMinutes = (end.getTime() - start.getTime()) / (1000 * 60)
+        const intervalCount = diffInMinutes / 30 // Number of 30-minute intervals
 
-        const intervals = []
-        for (let i = 0; i < diffInHrs; i++) {
+        const intervals: Intervals = []
+        for (let i = 0; i < intervalCount; i++) {
             const intervalStart = getISODateStringWithCorrectOffset(
                 new Date(start.getTime() + i * 30 * 60 * 1000),
             )
@@ -36,16 +44,8 @@ const hourlyIntervals = (arr) =>
 
         return intervals
     })
-
-const flattenedIntervals = (arr) => [].concat(...hourlyIntervals(arr))
-
-const removeContainedEntries = (array1, array2) => {
-    return array1.filter((entry1) => {
-        return !array2.some((entry2) => {
-            return entry1.start >= entry2.start && entry1.end <= entry2.end
-        })
-    })
-}
+const flattenedIntervals = (arr: DoctorService[]): Intervals =>
+    arr.reduce<Intervals>((acc, obj) => acc.concat(...hourlyIntervals([obj])), [])
 
 const generateHourlyIntervals = (startDate: string, endDate: string) => {
     const startDateTime = new Date(startDate + 'T07:00:00')
@@ -79,11 +79,18 @@ const generateHourlyIntervals = (startDate: string, endDate: string) => {
 
     return intervals
 }
+const removeContainedEntries = (array1: Intervals, array2: Intervals) => {
+    return array1.filter((entry1) => {
+        return !array2.some((entry2) => {
+            return entry1.start >= entry2.start && entry1.end <= entry2.end
+        })
+    })
+}
 
 const useCalendar = () => {
     const [draggedEvent, setDraggedEvent] = useState<BookingEvent | null>(null)
     const [openEventDialogEvent, setOpenEventDialogEvent] = useState<BookingEvent | null>(null)
-    const [newAppointmentDate, setNewAppointmentDate] = useState({})
+    const [newAppointmentDate, setNewAppointmentDate] = useState<{ start: string; end: string } | null>(null)
     const { selectedViewDateRange, selectedWorkspace } = useAdministration()
     const { from = '', to = '' } = selectedViewDateRange ?? {}
 
@@ -94,18 +101,29 @@ const useCalendar = () => {
         isMutating: isLoadingEventsForSelectedView,
     } = useGetBookings()
 
-    const [
-        fetchDoctorServicesByRange,
-        { currentData: servicesDays = [], isFetching: isLoadingServicesDays },
-    ] = useLazyGetDoctorServicesByRangeQuery()
+    const {
+        api: { fetchDoctorServicesByRange },
+        servicesDays = [],
+        isLoadingServicesDays,
+    } = useDoctorServices()
 
-    const { data: doctorsForSelectedAmbulance = [], isFetching: isLoadingDoctorsForSelectedAmbulance } =
-        useGetDoctorsForSelectedAmbulanceQuery(selectedWorkspace)
+    const {
+        api: { getDoctorsForSelectedAmbulance },
+        doctorsForSelectedAmbulance,
+    } = useReservation()
 
-    const doctors = doctorsForSelectedAmbulance.reduce(
-        (obj, item) => ((obj[item.value] = item.label), obj),
-        {},
+    const doctors: DoctorsIdsWithNames = useMemo(
+        () =>
+            doctorsForSelectedAmbulance?.data?.reduce<DoctorsIdsWithNames>(
+                (obj, item) => {
+                    obj[item.doctor_id] = item.name
+                    return obj
+                },
+                {} as DoctorsIdsWithNames, // Ensure the accumulator is typed as DoctorsIdsWithNames
+            ) || {}, // Provide a fallback value of empty object if data is undefined
+        [doctorsForSelectedAmbulance],
     )
+
     const events = useMemo(() => makeCalendarEventsFromBookings(bookings), [selectedViewDateRange, bookings])
 
     const blockedEvents = useMemo(() => {
@@ -118,7 +136,7 @@ const useCalendar = () => {
 
     const handleOpenEventDialog = (existingEvent: BookingEvent) =>
         !existingEvent?.resource?.blocked && setOpenEventDialogEvent(existingEvent)
-    const handleToggleCreationModal = () => setNewAppointmentDate({})
+    const handleToggleCreationModal = () => setNewAppointmentDate(null)
 
     const onSelectEvent = (event: BookingEvent) => handleOpenEventDialog(event)
 
@@ -134,13 +152,23 @@ const useCalendar = () => {
     }
     const handleDragStart = (event: BookingEvent) => setDraggedEvent(event)
 
-    const dragFromOutsideItem = () => draggedEvent!
-    const moveEvent = ({ event, start, end }: { event: BookingEvent | null; start: Date; end: Date }) => {
+    //Fix me
+    const dragFromOutsideItem = useCallback((draggedEvent: BookingEvent) => draggedEvent!, [draggedEvent])
+
+    const moveEvent = ({
+        event,
+        start,
+        end,
+    }: {
+        event: BookingEvent | null
+        start: string | Date
+        end: string | Date
+    }) => {
         const { email, phone, category, birthdate, name, workplace } = event?.resource!
         updateBooking({
             id: event?.id!,
-            start: getISODateStringWithCorrectOffset(start),
-            end: getISODateStringWithCorrectOffset(end),
+            start: typeof start === 'string' ? start : getISODateStringWithCorrectOffset(start),
+            end: typeof end === 'string' ? end : getISODateStringWithCorrectOffset(end),
             contact: { email, phone },
             birthdate,
             category: category ?? 0,
@@ -149,7 +177,7 @@ const useCalendar = () => {
         })
     }
 
-    const onDropFromOutside = ({ start, end }: { start: Date; end: Date }) => {
+    const onDropFromOutside = ({ start, end }: { start: string | Date; end: string | Date }) => {
         const event = draggedEvent?.id
             ? ({
                   id: draggedEvent.id,
@@ -165,15 +193,16 @@ const useCalendar = () => {
     useEffect(() => {
         if (!from && !to) {
             getBookings({ from, to, workplace: selectedWorkspace })
-            fetchDoctorServicesByRange({ start: from, end: to, workplace: selectedWorkspace })
+            fetchDoctorServicesByRange({ start: from, end: to, workplace: parseInt(selectedWorkspace) })
         }
+        getDoctorsForSelectedAmbulance && getDoctorsForSelectedAmbulance(parseInt(selectedWorkspace))
     }, [selectedViewDateRange, selectedWorkspace])
 
     return {
         openEventDialogEvent,
         newAppointmentDate,
         isLoadingEventsForSelectedView:
-            isLoadingEventsForSelectedView && isLoadingServicesDays && isLoadingDoctorsForSelectedAmbulance,
+            isLoadingEventsForSelectedView && isLoadingServicesDays && doctorsForSelectedAmbulance?.isLoading,
         events: [...events, ...blockedEvents],
         draggedEvent,
         moveEvent,
