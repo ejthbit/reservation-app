@@ -5,7 +5,7 @@ import axiosGynInstance from '../api/config'
 import { Announcement } from '../types/Announcement'
 
 const getAnnouncementsFetcher = async () =>
-    await axiosGynInstance.get('configuration/getAnnouncements').then((res) => res.data)
+    await axiosGynInstance.get('configuration/getAnnouncements').then((res) => res.data.data)
 
 export const useAnnouncements = () => {
     const { enqueueSnackbar } = useSnackbar()
@@ -31,13 +31,19 @@ export const useAnnouncements = () => {
         }
     }
 
-    const updateAnnouncement = async (editedAnnouncement: Announcement, onSuccess?: () => void) => {
+    const updateAnnouncement = async (
+        editedAnnouncement: Announcement,
+        onSuccess?: (payload: Announcement) => void,
+    ) => {
         try {
             setIsSendingAnnouncementAction(true)
-            await axiosGynInstance.put('administration/announcements/announcement', editedAnnouncement)
+            const payload = await axiosGynInstance.put<Announcement>(
+                'administration/announcements/announcement',
+                editedAnnouncement,
+            )
             setIsSendingAnnouncementAction(false)
             mutate()
-            onSuccess && onSuccess()
+            onSuccess && onSuccess(payload.data)
             enqueueSnackbar('Oznámení bylo úspěšně uloženo.', { variant: 'success' })
         } catch (error) {
             enqueueSnackbar('Nastala chyba při úpravě oznámení.', { variant: 'error' })

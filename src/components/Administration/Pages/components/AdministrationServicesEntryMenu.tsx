@@ -1,13 +1,28 @@
-import PropTypes from 'prop-types'
-import * as React from 'react'
-import { IconButton, MenuItem, Menu } from '@mui/material'
 import { Add, Delete, MoreVert } from '@mui/icons-material'
+import { IconButton, Menu, MenuItem, PopoverVirtualElement } from '@mui/material'
+import * as React from 'react'
 const ITEM_HEIGHT = 48
-const AdministrationServicesEntryMenu = ({ onDelete, onAssign, disabled, disabledAdd }) => {
-    const [anchorEl, setAnchorEl] = React.useState(null)
+
+type AdministrationServicesEntryMenuProps = {
+    onDelete: React.MouseEventHandler<HTMLLIElement>
+    onAssign: React.MouseEventHandler<HTMLLIElement>
+    disabled: boolean
+    disabledAdd: boolean
+}
+
+const AdministrationServicesEntryMenu = ({
+    onDelete,
+    onAssign,
+    disabled,
+    disabledAdd,
+}: AdministrationServicesEntryMenuProps) => {
+    const [anchorEl, setAnchorEl] = React.useState<
+        Element | (() => Element) | PopoverVirtualElement | (() => PopoverVirtualElement) | null | undefined
+    >(null)
     const open = Boolean(anchorEl)
 
-    const handleClick = (event) => setAnchorEl(event.currentTarget)
+    const handleClick: React.MouseEventHandler<HTMLButtonElement> = (event) =>
+        setAnchorEl(event.currentTarget)
 
     const handleClose = () => setAnchorEl(null)
 
@@ -49,11 +64,6 @@ const AdministrationServicesEntryMenu = ({ onDelete, onAssign, disabled, disable
             </Menu>
         </div>
     )
-}
-
-AdministrationServicesEntryMenu.propTypes = {
-    onDelete: PropTypes.func,
-    disabled: PropTypes.bool,
 }
 
 export default AdministrationServicesEntryMenu

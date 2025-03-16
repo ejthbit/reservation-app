@@ -1,6 +1,7 @@
 import { Route, Routes as RRoutes, useNavigate } from 'react-router-dom'
 import { AdministrationPage, AnnouncementsList, Login, ReservationDialog } from './components'
 import ProtectedRoute from './components/common/ProtectedRoute'
+import { UserProvider } from './context/User/UserProvider'
 
 function App() {
     const navigate = useNavigate()
@@ -11,20 +12,24 @@ function App() {
             <Route
                 path={'/admin/*'}
                 element={
-                    <ProtectedRoute shouldLogin loginPath={'/login'}>
-                        <AdministrationPage />
-                    </ProtectedRoute>
+                    <UserProvider>
+                        <ProtectedRoute shouldLogin loginPath={'/login'}>
+                            <AdministrationPage />
+                        </ProtectedRoute>
+                    </UserProvider>
                 }
             />
             <Route
                 path={'/login'}
                 element={
-                    <Login
-                        onGetUser={() => {
-                            navigate('/admin')
-                        }}
-                        isRegistrationEnabled
-                    />
+                    <UserProvider>
+                        <Login
+                            onGetUser={() => {
+                                navigate('/admin')
+                            }}
+                            isRegistrationEnabled
+                        />
+                    </UserProvider>
                 }
             />
         </RRoutes>

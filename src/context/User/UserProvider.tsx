@@ -38,7 +38,7 @@ export const useUser = () => {
 
 type SignInPayload = { arg: { email: string; password: string } }
 const signIn = async (key: Key, { arg }: SignInPayload) =>
-    (await axiosGynInstance.post<UserData>('administration/signIn', arg, { withCredentials: true })).data
+    (await axiosGynInstance.post<UserData>('administration/signIn', arg, { withCredentials: false })).data
 
 export const UserProvider = ({ children }: PropsWithChildren) => {
     const { enqueueSnackbar } = useSnackbar()

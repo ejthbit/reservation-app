@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { useUser } from '../../context/User/UserProvider'
 
 type ProtectedRouteProps = {
@@ -20,14 +20,13 @@ const ProtectedRoute = ({ children, shouldLogin = false, loginPath }: ProtectedR
     }, [isLoggedIn])
 
     if (isLoggedIn) return children
-    // return isAuthenticated ? (
-    //     children
-    // ) : shouldLogin ? (
-    //     <Navigate to={{ pathname: loginPath }} />
-    // ) : (
-    //     <Navigate to={{ pathname: '/' }} />
-    // )
-    return null
+    return isLoggedIn ? (
+        children
+    ) : shouldLogin ? (
+        <Navigate to={{ pathname: loginPath }} />
+    ) : (
+        <Navigate to={{ pathname: '/' }} />
+    )
 }
 
 export default ProtectedRoute

@@ -135,11 +135,13 @@ const AdministrationCalendar = () => {
                         />
                     </Fade>
                 )}
-                <AdministrationCreateCalendarEventDialog
-                    open={!newAppointmentDate}
-                    handleClose={handleToggleCreationModal}
-                    data={newAppointmentDate!}
-                />
+                {newAppointmentDate && (
+                    <AdministrationCreateCalendarEventDialog
+                        open={!!newAppointmentDate.start}
+                        handleClose={handleToggleCreationModal}
+                        data={newAppointmentDate}
+                    />
+                )}
                 {openEventDialogEvent && (
                     <AdministrationEventDetail
                         event={openEventDialogEvent}

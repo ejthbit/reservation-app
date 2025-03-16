@@ -1,5 +1,5 @@
 import { createBooking, deleteBooking, fetchBookings, updateBooking } from './AdministrationBookingsFetchers'
-import useSWRMutation from 'swr/dist/mutation'
+import useSWRMutation from 'swr/mutation'
 import { UpdatedBooking } from '../../types'
 import { ReservationProcessData } from '../../components/Reservation/ReservationDialog/helpers/prepareReservationForCreation'
 import useSWR from 'swr'

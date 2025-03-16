@@ -1,27 +1,58 @@
 import { MenuItem, TableRow, useTheme } from '@mui/material'
 import { map, values } from 'ramda'
-import { useFieldArray } from 'react-hook-form'
-import { useSelector } from 'react-redux'
-import { getUserConfigurationSelectedAmbulance } from '../../../../store/administration'
-import { useGetDoctorsForSelectedAmbulanceQuery } from '../../../../store/reservationProcess'
+import { Control, useFieldArray, UseFormSetValue, UseFormTrigger } from 'react-hook-form'
 import { getHalfHourTimeIncrements } from '../../../../utils'
 import { FormInput, FormSelectInput } from '../../../common'
 import { getTimeValuesToFilterOut } from '../utils/Services/utils'
 import AdministrationServicesEntryMenu from './AdministrationServicesEntryMenu'
 import { StyledCell } from './AdministrationServicesTable'
+import { useAdministration } from '../../../../context/Administration/AdministrationProvider'
+import { useReservation } from '../../../../context/Reservation'
+import { useEffect } from 'react'
+import { AmbulanceServiceDay, DoctorService } from '../../../../types/AmbulanceService'
+
+type AdministrationServicesTableDoctorAssignProps = {
+    idx: number
+    control: Control<
+        {
+            data: AmbulanceServiceDay[]
+        },
+        any
+    >
+    setValue: UseFormSetValue<{
+        data: AmbulanceServiceDay[]
+    }>
+    date: string
+    trigger: UseFormTrigger<{
+        data: AmbulanceServiceDay[]
+    }>
+}
 
 const openingHours = getHalfHourTimeIncrements('07:00', '19:00') // TODO: use env variable
-const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date, trigger }) => {
+const AdministrationServicesTableDoctorAssign = ({
+    idx,
+    control,
+    setValue,
+    date,
+    trigger,
+}: AdministrationServicesTableDoctorAssignProps) => {
     const theme = useTheme()
-    const selectedAmbulanceId = useSelector(getUserConfigurationSelectedAmbulance)
+    const { selectedWorkspace: selectedAmbulanceId } = useAdministration()
 
-    const { currentData: doctorsForSelectedAmbulance, isFetching } =
-        useGetDoctorsForSelectedAmbulanceQuery(selectedAmbulanceId)
+    const {
+        doctorsForSelectedAmbulance: { data: doctorsForSelectedAmbulance, isLoading },
+        api: { getDoctorsForSelectedAmbulance },
+    } = useReservation()
+
+    useEffect(() => {
+        if (getDoctorsForSelectedAmbulance) getDoctorsForSelectedAmbulance(parseInt(selectedAmbulanceId))
+    }, [selectedAmbulanceId])
+
     const { fields, append, remove, update } = useFieldArray({
         control,
-        name: `data[${idx}].doctors`,
+        name: `data.${idx}.doctors`,
     })
-    const handleRemoveDoctorFromDay = (doctorIndex) => remove(doctorIndex)
+    const handleRemoveDoctorFromDay = (doctorIndex: number) => remove(doctorIndex)
 
     const handleAssignDoctorToDay = () => {
         append({
@@ -29,12 +60,15 @@ const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date,
             start: '',
             end: '',
             note: '',
-        })
+        } as DoctorService)
         trigger(`data.${idx}.doctors`)
     }
 
-    const handleUpdateFieldValue = (doctorIndex, property, value) =>
-        update(doctorIndex, { ...fields[doctorIndex], [`fields[${doctorIndex}][${property}]`]: value })
+    const handleUpdateFieldValue = (doctorIndex: number, property: string, value: string) =>
+        update(doctorIndex, {
+            ...fields[doctorIndex],
+            [`fields[${doctorIndex}][${property}]`]: value,
+        } as DoctorService)
 
     return fields.map(({ id, start }, index) => (
         <TableRow key={id}>
@@ -45,12 +79,12 @@ const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date,
                     fullWidth
                     required
                     displayEmpty
-                    className={{
-                        [theme.breakpoints.up('md')]: {
-                            width: '270px',
-                        },
-                    }}
-                    isLoading={isFetching}
+                    // className={{
+                    //     [theme.breakpoints.up('md')]: {
+                    //         width: '270px',
+                    //     },
+                    // }}
+                    isLoading={isLoading}
                 >
                     <MenuItem
                         value=""
@@ -61,18 +95,18 @@ const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date,
                     >
                         Zavřeno
                     </MenuItem>
-                    {map(
-                        ({ value, label }) => (
+                    {doctorsForSelectedAmbulance &&
+                        doctorsForSelectedAmbulance.map(({ doctor_id, name }) => (
                             <MenuItem
-                                key={value}
-                                value={value}
-                                onClick={(e) => handleUpdateFieldValue(index, 'doctorId', e.target.value)}
+                                key={doctor_id}
+                                value={doctor_id}
+                                onClick={(e) =>
+                                    handleUpdateFieldValue(index, 'doctorId', doctor_id /* e.target.value */)
+                                }
                             >
-                                {label}
+                                {name}
                             </MenuItem>
-                        ),
-                        values(doctorsForSelectedAmbulance)
-                    )}
+                        ))}
                 </FormSelectInput>
             </StyledCell>
             {fields.some(({ doctorId }) => doctorId !== '') && (
@@ -91,7 +125,11 @@ const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date,
                                         value={`${date}T${entry}:00.000Z`}
                                         onClick={(e) => {
                                             trigger(`data.${idx}.doctors.${index}.end`)
-                                            return handleUpdateFieldValue(index, 'start', e.target.value)
+                                            return handleUpdateFieldValue(
+                                                index,
+                                                'start',
+                                                `${date}T${entry}:00.000Z`,
+                                            )
                                         }}
                                     >
                                         {entry}
@@ -99,7 +137,7 @@ const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date,
                                 ),
                                 fields.length > 1 && start == ''
                                     ? getTimeValuesToFilterOut(fields, openingHours)
-                                    : openingHours
+                                    : openingHours,
                             )}
                         </FormSelectInput>
                     </StyledCell>
@@ -117,13 +155,17 @@ const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date,
                                         value={`${date}T${entry}:00.000Z`}
                                         onClick={(e) => {
                                             trigger(`data.${idx}.doctors.${index}.start`)
-                                            return handleUpdateFieldValue(index, 'end', e.target.value)
+                                            return handleUpdateFieldValue(
+                                                index,
+                                                'end',
+                                                `${date}T${entry}:00.000Z`,
+                                            )
                                         }}
                                     >
                                         {entry}
                                     </MenuItem>
                                 ),
-                                openingHours
+                                openingHours,
                             )}
                         </FormSelectInput>
                     </StyledCell>
@@ -143,7 +185,5 @@ const AdministrationServicesTableDoctorAssign = ({ idx, control, setValue, date,
         </TableRow>
     ))
 }
-
-AdministrationServicesTableDoctorAssign.propTypes = {}
 
 export default AdministrationServicesTableDoctorAssign

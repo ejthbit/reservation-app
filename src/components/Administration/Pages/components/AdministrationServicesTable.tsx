@@ -1,3 +1,4 @@
+//@ts-ignore
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
     Box,
@@ -14,17 +15,14 @@ import {
 } from '@mui/material'
 import { format } from 'date-fns'
 import { useSnackbar } from 'notistack'
-import PropTypes from 'prop-types'
 import { useEffect } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import * as yup from 'yup'
-import {
-    useCreateServiceForMonthMutation,
-    useUpdateServiceForMonthMutation,
-} from '../../../../store/reservationProcess'
+
 import { isNilOrEmpty, isSuccess } from '../../../../utils'
 import { checkArrayStartEndValues } from '../utils/Services/validations'
 import AdministrationServicesTableDoctorAssign from './AdministrationServicesTableDoctorAssign'
+import { AmbulanceServiceDay } from '../../../../types/AmbulanceService'
 
 export const StyledCell = styled(TableCell)(() => ({
     borderBottom: 'none',
@@ -45,48 +43,55 @@ const validationSchema = yup.object().shape({
                         start: yup
                             .string()
                             .test('start-required', 'Zadaná hodnota musí být vyplněna!', function (value) {
-                                return !isNilOrEmpty(this.parent.end)
-                                    ? !isNilOrEmpty(this.parent.end) && value
-                                    : true
+                                return this.parent.end ? this.parent.end && value : true
                             })
                             .test(
                                 'start',
                                 'Zadaná hodnota musí být menší než hodnota `Do`!',
                                 function (value) {
+                                    if (!value) return true
                                     const endDate = new Date(this.parent.end)
                                     const startDate = new Date(value)
-                                    if (isNilOrEmpty(value)) return true
                                     return !isNilOrEmpty(this.parent.end) ? startDate < endDate : true
-                                }
+                                },
                             )
                             .test(
                                 'isGreater',
                                 'Hodnota musí být vetší než hodnota `Do` předchozího záznamu.',
-                                checkArrayStartEndValues
+                                checkArrayStartEndValues,
                             ),
                         end: yup
                             .string()
                             .test('end-required', 'Zadaná hodnota musí být vyplněna!', function (value) {
-                                return !isNilOrEmpty(this.parent.start)
-                                    ? !isNilOrEmpty(this.parent.start) && value
-                                    : true
+                                return this.parent.start ? this.parent.start && value : true
                             })
                             .test('end', 'Zadaná hodnota musí být vetší než hodnota`Od`!', function (value) {
+                                if (!value) return true
                                 const endDate = new Date(value)
                                 const startDate = new Date(this.parent.start)
-                                if (isNilOrEmpty(value)) return true
                                 return !isNilOrEmpty(this.parent.start) ? startDate < endDate : true
                             }),
                         note: yup.string().notRequired(),
-                    })
-                )
+                    }),
+                ),
             ),
-        })
+        }),
     ),
 })
-const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkplaceId }) => {
-    const [createService] = useCreateServiceForMonthMutation()
-    const [updateService] = useUpdateServiceForMonthMutation()
+type ServicesTableProps = {
+    data: AmbulanceServiceDay[]
+    selectedMonth: string
+    isEditingServices: boolean
+    selectedWorkplaceId: string | number
+}
+const ServicesTable = ({
+    data,
+    selectedMonth,
+    isEditingServices,
+    selectedWorkplaceId,
+}: ServicesTableProps) => {
+    // const [createService] = useCreateServiceForMonthMutation()
+    // const [updateService] = useUpdateServiceForMonthMutation()
 
     const {
         handleSubmit,
@@ -106,19 +111,17 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
         control,
     })
     const { enqueueSnackbar } = useSnackbar()
-    const onSubmit = async ({ data }) => {
+    const onSubmit = async ({ data }: Pick<ServicesTableProps, 'data'>) => {
         const apiData = {
             month: selectedMonth,
             days: data,
             workplace: selectedWorkplaceId,
         }
         try {
-            const res = !isEditingServices
-                ? await createService(apiData).unwrap()
-                : await updateService(apiData).unwrap()
-            if (isSuccess(res)) {
-                enqueueSnackbar('Rozpis byl úspěšně uložen.', { variant: 'success' })
-            }
+            const res = !isEditingServices ? console.log(apiData) : console.log(apiData)
+            // if (isSuccess(res)) {
+            //     enqueueSnackbar('Rozpis byl úspěšně uložen.', { variant: 'success' })
+            // }
         } catch (err) {
             enqueueSnackbar('Nastala chyba při ukládání.', { variant: 'error' })
         }
@@ -153,13 +156,13 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
                         })}
                     >
                         <TableRow>
-                            <StyledHeaderCell rowSpan="2" width="8%">
+                            <StyledHeaderCell rowSpan={2} width="8%">
                                 Den
                             </StyledHeaderCell>
-                            <StyledHeaderCell rowSpan="2" width="12%">
+                            <StyledHeaderCell rowSpan={2} width="12%">
                                 Datum
                             </StyledHeaderCell>
-                            <StyledHeaderCell align="center" rowSpan="1" colSpan="8">
+                            <StyledHeaderCell align="center" rowSpan={1} colSpan={8}>
                                 Seznam doktorů
                             </StyledHeaderCell>
                         </TableRow>
@@ -222,13 +225,6 @@ const ServicesTable = ({ data, selectedMonth, isEditingServices, selectedWorkpla
             </TableContainer>
         </Fade>
     )
-}
-
-ServicesTable.propTypes = {
-    data: PropTypes.array,
-    selectedMonth: PropTypes.string,
-    isEditingServices: PropTypes.bool,
-    selectedWorkplaceId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }
 
 export default ServicesTable

@@ -83,6 +83,7 @@ const LoginPage = ({
                                 control={control}
                                 placeholder="E-mail"
                                 label="E-mail"
+                                autoComplete="username"
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">
@@ -101,6 +102,7 @@ const LoginPage = ({
                                 control={control}
                                 placeholder="Heslo"
                                 label="Heslo"
+                                autoComplete="current-password"
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">

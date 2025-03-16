@@ -22,7 +22,7 @@ const prepareReservationForCreation = ({
     return {
         ...((email || phone) && { contact: { email, phone } }),
         name,
-        birthdate,
+        birthDate: birthdate,
         start,
         end: addMinutes(new Date(start), import.meta.env.VITE_APPOINTMENT_DURATION).toISOString(),
         workplace: selectedAmbulanceId,

@@ -3,8 +3,9 @@ import { Box, Fade, IconButton, ListItem, ListItemText, Switch } from '@mui/mate
 import { format } from 'date-fns'
 import { useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
-import { getDateWithCorrectOffset, isSuccess } from '../../../../utils'
+import { getDateWithCorrectOffset } from '../../../../utils'
 import { FormInput } from '../../../common'
+import { Announcement } from '../../../../types/Announcement'
 
 interface AdministrationNewsListItemProps {
     id?: string
@@ -15,10 +16,13 @@ interface AdministrationNewsListItemProps {
     author: string
     index: number
     onDelete: () => void
-    onUpdate: (data: AdministrationNewsListItemFormData) => Promise<any>
+    onUpdate: (
+        data: AdministrationNewsListItemFormData,
+        onSuccess: (payload: Announcement) => void,
+    ) => Promise<void>
 }
 
-type AdministrationNewsListItemFormData = Pick<
+export type AdministrationNewsListItemFormData = Pick<
     AdministrationNewsListItemProps,
     'id' | 'created_at' | 'name' | 'description' | 'author' | 'enabled'
 >
@@ -50,11 +54,10 @@ const AdministrationNewsListItem: React.FC<AdministrationNewsListItemProps> = ({
     const [enabledSwitch, setEnabledSwitch] = useState(enabled)
 
     const handleUpdate = async (data: AdministrationNewsListItemFormData) => {
-        const payload = await onUpdate(data)
-        if (isSuccess(payload)) {
+        await onUpdate(data, (payload) => {
             setEditModeEnabled(false)
             reset(payload)
-        }
+        })
     }
 
     const toggleEditMode = () => {
@@ -66,11 +69,10 @@ const AdministrationNewsListItem: React.FC<AdministrationNewsListItemProps> = ({
 
     const handleSwitchChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const newEnabledState = event.target.checked
-        const res = await onUpdate({ author, created_at, description, name, id, enabled: newEnabledState })
-        if (isSuccess(res)) {
+        await onUpdate({ author, created_at, description, name, id, enabled: newEnabledState }, () => {
             setEnabledSwitch(newEnabledState)
             setValue('enabled', newEnabledState)
-        }
+        })
     }
 
     return (
@@ -103,38 +105,20 @@ const AdministrationNewsListItem: React.FC<AdministrationNewsListItemProps> = ({
                     gap={1}
                     sx={(theme) => ({ [theme.breakpoints.down('sm')]: { width: '100%' } })}
                 >
-                    <Controller
+                    <FormInput
                         name="name"
+                        label="Název"
                         control={control}
-                        render={({ field }) => (
-                            <FormInput
-                                {...field}
-                                label="Název"
-                                disabled={!isEditModeEnabled}
-                                sx={
-                                    !isEditModeEnabled
-                                        ? { '& .MuiInput-root:before': { borderBottom: 0 } }
-                                        : {}
-                                }
-                            />
-                        )}
+                        disabled={!isEditModeEnabled}
+                        sx={!isEditModeEnabled ? { '& .MuiInput-root:before': { borderBottom: 0 } } : {}}
                     />
-                    <Controller
+                    <FormInput
                         name="description"
                         control={control}
-                        render={({ field }) => (
-                            <FormInput
-                                {...field}
-                                label="Popis"
-                                multiline
-                                disabled={!isEditModeEnabled}
-                                sx={
-                                    !isEditModeEnabled
-                                        ? { '& .MuiInput-root:before': { borderBottom: 0 } }
-                                        : {}
-                                }
-                            />
-                        )}
+                        label="Popis"
+                        multiline
+                        disabled={!isEditModeEnabled}
+                        sx={!isEditModeEnabled ? { '& .MuiInput-root:before': { borderBottom: 0 } } : {}}
                     />
                 </Box>
                 <Box

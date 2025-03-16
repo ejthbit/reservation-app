@@ -1,7 +1,8 @@
 import { indexOf } from 'ramda'
 import { isNilOrEmpty } from '../../../../../utils'
 
-export const checkArrayStartEndValues = (value, p) => {
+//TODO
+export const checkArrayStartEndValues = (value: string | undefined, p: any) => {
     if (!isNilOrEmpty(value)) {
         const indexOfCurrent = indexOf(p.from[0].value, p.from[1].value.doctors)
         if (indexOfCurrent >= 1) {

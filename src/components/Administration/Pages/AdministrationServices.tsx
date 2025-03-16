@@ -3,43 +3,44 @@ import { Box, Button, CircularProgress, Fade, Grid, TextField, Typography, useTh
 import { MobileDatePicker } from '@mui/x-date-pickers'
 import { format, getMonth, getYear } from 'date-fns'
 import { useSnackbar } from 'notistack'
-import { equals, includes, map } from 'ramda'
+import { equals, includes } from 'ramda'
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { getUserConfigurationSelectedAmbulance } from '../../../store/administration'
-import { useLazyGetDoctorServicesForMonthQuery } from '../../../store/reservationProcess'
 import { isNilOrEmpty } from '../../../utils'
 import { getWorkDaysInMonth } from '../../../utils/getDaysUtil'
 import { AdministrationServiceCardButton, AdministrationServicesTable } from './components'
+import { useAdministration } from '../../../context/Administration/AdministrationProvider'
+import { useDoctorServices } from '../../../hooks'
+import { AmbulanceServiceDay } from '../../../types/AmbulanceService'
 
-const actionLabel = {
-    1: 'Vytvořit nový měsíční plán',
-    2: 'Upravit měsíční plán',
-}
+const actionLabel = ['Prosím vyberte hodnotu', 'Vytvořit nový měsíční plán', 'Upravit měsíční plán']
+
 const AdministrationServices = () => {
     const theme = useTheme()
-    const selectedAmbulanceId = useSelector(getUserConfigurationSelectedAmbulance)
-    const [fetchDoctorServicesForSelectedMonth, { isFetching }] = useLazyGetDoctorServicesForMonthQuery()
+    const { selectedWorkspace: selectedAmbulanceId } = useAdministration()
+    const {
+        api: { fetchDoctorServicesForSelectedMonth },
+        isLoadingDoctorsServicesForSelectedAmbulance,
+    } = useDoctorServices()
 
     const d = new Date()
     const [selectedAction, setSelectedAction] = useState(0)
     const [selectedMonth, setSelectedMonth] = useState(new Date(d.setMonth(d.getMonth() + 1)))
-    const [dates, setDates] = useState([])
+    const [dates, setDates] = useState<AmbulanceServiceDay[]>([])
     const { enqueueSnackbar } = useSnackbar()
-    const handleSetActionWorkflow = (value) => setSelectedAction(value)
+    const handleSetActionWorkflow = (value: number) => setSelectedAction(value)
 
     const handleClearActionsWorkflow = () => {
         setDates([])
         handleSetActionWorkflow(0)
     }
 
-    const handleGenerateDataForTable = async (date) => {
+    const handleGenerateDataForTable = async (date: Date) => {
         setSelectedMonth(date)
         try {
             const payload = await fetchDoctorServicesForSelectedMonth({
                 month: format(date, 'yyyy-MM'),
-                workplace: selectedAmbulanceId,
-            }).unwrap()
+                workplace: parseInt(selectedAmbulanceId),
+            })
             if (equals(selectedAction, 2) && payload.days) {
                 setDates(payload.days)
             } else if (equals(selectedAction, 1) && payload.days) {
@@ -47,25 +48,24 @@ const AdministrationServices = () => {
                 enqueueSnackbar('Na daný měsíc již existuje rozpis.', { variant: 'warning' })
             }
         } catch (error) {
-            if (error.code === 'ERR_BAD_REQUEST') {
+            const err = error as { code?: string }
+            if (err.code === 'ERR_BAD_REQUEST') {
                 enqueueSnackbar('Pro zadaný měsíc zatím neexistuje rozpis služeb', { variant: 'warning' })
                 if (equals(selectedAction, 1)) {
                     const workingDates = getWorkDaysInMonth(getMonth(date), getYear(date))
                     setDates(
-                        map(
-                            (date) => ({
-                                date,
-                                doctors: [
-                                    {
-                                        doctorId: '',
-                                        start: '',
-                                        end: '',
-                                        note: '',
-                                    },
-                                ],
-                            }),
-                            workingDates
-                        )
+                        workingDates.map((date, index) => ({
+                            date,
+                            doctors: [
+                                {
+                                    doctorId: '',
+                                    start: '',
+                                    end: '',
+                                    note: '',
+                                    id: index.toString(),
+                                },
+                            ],
+                        })),
                     )
                 }
             } else enqueueSnackbar('Při načítační nastala chyba', { variant: 'error' })
@@ -106,14 +106,15 @@ const AdministrationServices = () => {
                                 <MobileDatePicker
                                     label="Výběr měsíce: "
                                     orientation="landscape"
-                                    inputFormat="MMMM, yyyy"
-                                    mask="____, ____"
-                                    margin="none"
+                                    format="MMMM, yyyy"
+                                    // margin="none"
                                     value={selectedMonth}
-                                    onChange={(date) => handleGenerateDataForTable(date)}
+                                    onChange={(date) => date && handleGenerateDataForTable(date)}
                                     views={['month', 'year']}
                                     openTo="month"
-                                    renderInput={(props) => <TextField {...props} variant="outlined" />}
+                                    slots={{
+                                        textField: (props) => <TextField {...props} variant="outlined" />,
+                                    }}
                                 />
                             </Grid>
                         </Grid>
@@ -133,7 +134,7 @@ const AdministrationServices = () => {
                             <AdministrationServiceCardButton
                                 color={theme.palette.primary.main}
                                 icon={AddBox}
-                                title={'Vytvořit nový měsíční plán'}
+                                title={actionLabel[1] as string}
                                 description={
                                     'Zjednodušuje proces vytváření a správy měsíčního plánu pro vybranou ambulanci. Zjednodušuje úkol přiřazení lékařů ke každému dni a umožňuje snadnou úpravu plánu podle potřeby. Tato funkce šetří čas a zvyšuje efektivitu procesu plánování, což zajišťuje, že poskytované služby fungují hladce a efektivně.'
                                 }
@@ -144,7 +145,7 @@ const AdministrationServices = () => {
                             <AdministrationServiceCardButton
                                 color={theme.palette.primary.main}
                                 icon={Edit}
-                                title={'Upravit měsíční plán'}
+                                title={actionLabel[2] as string}
                                 description={
                                     'Zjednodušuje proces úprav měsíčního plánu pro vybranou ambulanci. Zjednodušuje úkol úpravy pracovního plánu lékařů a umožňuje snadné upravování plánu podle potřeby. Tato funkce šetří čas a zvyšuje efektivitu procesu plánování, což zajišťuje, že poskytované služby fungují hladce a efektivně.'
                                 }
@@ -178,7 +179,7 @@ const AdministrationServices = () => {
                         </Box>
                     )
                 )}
-                {isFetching && (
+                {isLoadingDoctorsServicesForSelectedAmbulance && (
                     <Fade in timeout={{ enter: 1000 }}>
                         <CircularProgress
                             size={100}

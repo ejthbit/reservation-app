@@ -1,7 +1,6 @@
 import { Add } from '@mui/icons-material'
 import { Box, Button, CircularProgress, List } from '@mui/material'
 import { useState } from 'react'
-import { isNilOrEmpty } from '../../../utils'
 import { AdministrationNewsListItem, AdministrationNewsNewAnnouncementDialog } from './components'
 import { useUser } from '../../../context/User/UserProvider'
 import { useAnnouncements } from '../../../hooks'
@@ -21,15 +20,17 @@ const AdministrationNews = () => {
             return await deleteAnnouncement(id)
         }
     }
-    const handleUpdate = async (updatedAnnouncement: Announcement) =>
-        await updateAnnouncement({ ...updatedAnnouncement, author: email! })
+    const handleUpdate = async (
+        updatedAnnouncement: Announcement,
+        onSuccess: (payload: Announcement) => void,
+    ) => await updateAnnouncement({ ...updatedAnnouncement, author: email! }, (payload) => onSuccess(payload))
 
     return (
         <Box sx={{ bgcolor: '#F9F9FB', borderRadius: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
             <Button size="large" startIcon={<Add />} onClick={handleToggleCreationDialog}>
                 Přidat nové oznámení
             </Button>
-            {!isNilOrEmpty(announcements) && (
+            {announcements && (
                 <List sx={{ width: '100%', maxWidth: '100%' }}>
                     {announcements?.map((announcement, index) => (
                         <AdministrationNewsListItem

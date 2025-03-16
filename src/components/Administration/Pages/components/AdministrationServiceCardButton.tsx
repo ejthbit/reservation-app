@@ -1,8 +1,30 @@
-import { Card, CardContent, CardHeader, Typography } from '@mui/material'
-import PropTypes from 'prop-types'
+import { Card, CardContent, CardHeader, SvgIconProps, Typography } from '@mui/material'
+import React from 'react'
 
-const AdministrationServiceCardButton = ({ color = '#FFF', icon, title, description, onClick }) => {
-    const Icon = icon
+type AdministrationServiceCardButtonProps = {
+    color: string
+    icon: React.ElementType
+    title: string
+    description: string
+    onClick: () => void
+}
+
+type IconProps = {
+    icon: React.ElementType
+    sx?: SvgIconProps['sx']
+}
+
+const Icon = ({ icon: IconComponent, sx }: IconProps) => {
+    return <IconComponent sx={sx} />
+}
+
+const AdministrationServiceCardButton = ({
+    color = '#FFF',
+    icon,
+    title,
+    description,
+    onClick,
+}: AdministrationServiceCardButtonProps) => {
     return (
         <Card
             sx={(theme) => ({
@@ -27,7 +49,7 @@ const AdministrationServiceCardButton = ({ color = '#FFF', icon, title, descript
             })}
             onClick={onClick}
         >
-            <CardHeader avatar={<Icon sx={{ width: 50, height: 50 }} />} />
+            <CardHeader avatar={<Icon icon={icon} sx={{ width: 50, height: 50 }} />} />
             <CardContent sx={{ paddingTop: 0 }}>
                 <Typography gutterBottom variant="body1" component="div">
                     {title.toUpperCase()}
@@ -40,13 +62,6 @@ const AdministrationServiceCardButton = ({ color = '#FFF', icon, title, descript
             </CardContent>
         </Card>
     )
-}
-
-AdministrationServiceCardButton.propTypes = {
-    icon: PropTypes.object,
-    title: PropTypes.string,
-    description: PropTypes.string,
-    onClick: PropTypes.func,
 }
 
 export default AdministrationServiceCardButton

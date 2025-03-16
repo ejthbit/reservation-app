@@ -2,9 +2,9 @@
 import { Box, Button, ButtonGroup, CircularProgress } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { includes } from 'ramda'
-import { useReservation } from 'src/context/Reservation'
 import { isMobile } from '../../../../../utils'
 import { StepsConfiguration } from '../../helpers/getReservationContentByStep'
+import { useReservation } from '../../../../../context/Reservation'
 
 const StyledButton = styled(Button)(({ theme }) => ({
     marginTop: theme.spacing(2),

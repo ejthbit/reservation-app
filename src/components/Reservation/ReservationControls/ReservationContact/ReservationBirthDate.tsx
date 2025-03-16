@@ -1,11 +1,33 @@
-// @ts-nocheck
 import { Today } from '@mui/icons-material'
-import { InputAdornment, TextField } from '@mui/material'
+import { InputAdornment, TextField, TextFieldProps } from '@mui/material'
 import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { cs } from 'date-fns/locale'
-import { useReservation } from 'src/context/Reservation'
-import { getISODateStringWithCorrectOffset } from '../../../../utils'
+import { getDateWithCorrectOffset, getISODateStringWithCorrectOffset } from '../../../../utils'
+import { useReservation } from '../../../../context/Reservation'
+import { forwardRef } from 'react'
+
+const BirthDateTextField = forwardRef((props: TextFieldProps, ref: React.Ref<HTMLDivElement>) => (
+    <TextField
+        sx={{ cursor: 'pointer' }}
+        ref={ref}
+        color="info"
+        label={props.label}
+        placeholder="Zadejte prosím své datum narození"
+        variant="standard"
+        // required={props.isRequired}
+        fullWidth
+        inputProps={{
+            ...props.inputProps,
+            endAdornment: (
+                <InputAdornment sx={{ cursor: 'pointer' }} position="end">
+                    <Today />
+                </InputAdornment>
+            ),
+        }}
+        {...props}
+    />
+))
 
 const ReservationBirthDate = ({ step, isRequired = false }: { step: string; isRequired?: boolean }) => {
     const {
@@ -22,38 +44,19 @@ const ReservationBirthDate = ({ step, isRequired = false }: { step: string; isRe
             <MobileDatePicker
                 label="Datum narození"
                 format="dd-MM-yyyy"
-                value={birthdate}
+                value={birthdate ? getDateWithCorrectOffset(birthdate) : null}
                 name="birthdate"
                 views={['year', 'month', 'day']}
                 openTo="year"
                 disableFuture
                 onChange={(date) =>
+                    date &&
                     setContactInfo({
                         birthdate: getISODateStringWithCorrectOffset(date).slice(0, 10),
                     })
                 }
                 slots={{
-                    textField: ({ inputRef, inputProps, label, InputProps }) => (
-                        <TextField
-                            sx={{ cursor: 'pointer' }}
-                            ref={inputRef}
-                            {...inputProps}
-                            color="info"
-                            label={label}
-                            placeholder="Zadejte prosím své datum narození"
-                            variant="standard"
-                            required={isRequired}
-                            fullWidth
-                            InputProps={{
-                                ...InputProps,
-                                endAdornment: (
-                                    <InputAdornment sx={{ cursor: 'pointer' }} position="end">
-                                        <Today />
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
-                    ),
+                    textField: BirthDateTextField,
                 }}
             />
         </LocalizationProvider>

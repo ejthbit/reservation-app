@@ -15,28 +15,31 @@ import {
     UserSettings,
 } from './Pages'
 import { SWRConfig } from 'swr'
+import { AdministrationProvider } from '../../context/Administration/AdministrationProvider'
 
 const AdministrationPage = () => (
     <SWRConfig>
-        <LocalizationProvider
-            dateAdapter={AdapterDateFns}
-            adapterLocale={cs}
-            localeText={{ okButtonLabel: 'Potvrdit', cancelButtonLabel: 'Zavřít' }}
-        >
-            <SnackbarProvider maxSnack={3} autoHideDuration={3000}>
-                <Routes>
-                    <Route path="/" element={<AdministrationTopbar />}>
-                        <Route path="/" element={<AdministrationWelcome />} />
-                        <Route path="/orders" element={<AdministrationOrders />} />
-                        <Route path="/services" element={<AdministrationServices />} />
-                        <Route path="/calendar" element={<AdministrationCalendar />} />
-                        <Route path="/announcements" element={<AdministrationNews />} />
-                        <Route path="/settings" element={<UserSettings />} />
-                        <Route path="*" element={<NotMatch />} />
-                    </Route>
-                </Routes>
-            </SnackbarProvider>
-        </LocalizationProvider>
+        <AdministrationProvider>
+            <LocalizationProvider
+                dateAdapter={AdapterDateFns}
+                adapterLocale={cs}
+                localeText={{ okButtonLabel: 'Potvrdit', cancelButtonLabel: 'Zavřít' }}
+            >
+                <SnackbarProvider maxSnack={3} autoHideDuration={3000}>
+                    <Routes>
+                        <Route path="/" element={<AdministrationTopbar />}>
+                            <Route path="/" element={<AdministrationWelcome />} />
+                            <Route path="/orders" element={<AdministrationOrders />} />
+                            <Route path="/services" element={<AdministrationServices />} />
+                            <Route path="/calendar" element={<AdministrationCalendar />} />
+                            <Route path="/announcements" element={<AdministrationNews />} />
+                            <Route path="/settings" element={<UserSettings />} />
+                            <Route path="*" element={<NotMatch />} />
+                        </Route>
+                    </Routes>
+                </SnackbarProvider>
+            </LocalizationProvider>
+        </AdministrationProvider>
     </SWRConfig>
 )
 

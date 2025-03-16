@@ -40,10 +40,6 @@ const AdministrationEventDetail = ({
     const { trigger: updateBooking, isMutating: updatingBooking } = useUpdateBooking()
     const { trigger: deleteBooking, isMutating: deletingBooking } = useDeleteBooking()
 
-    if (!event.id) {
-        return null
-    }
-
     const {
         control,
         handleSubmit,
@@ -64,20 +60,27 @@ const AdministrationEventDetail = ({
             completed: !!completedValue,
         },
     })
+
+    if (!event.id) {
+        return null
+    }
+
     const handlePatchBooking = async (updatedBooking: Omit<UpdatedBooking, 'id' | 'workplace'>) => {
-        await updateBooking({
-            ...updatedBooking,
-            id: event.id,
-            workplace: event.resource?.workplace ?? 1,
-            end: addMinutes(
-                new Date(updatedBooking.start),
-                import.meta.env.VITE_APPOINTMENT_DURATION,
-            ).toISOString(),
-        }).then((payload) => payload && handleClose())
+        if (event.id) {
+            await updateBooking({
+                ...updatedBooking,
+                id: event.id,
+                workplace: event.resource?.workplace ?? 1,
+                end: addMinutes(
+                    new Date(updatedBooking.start),
+                    import.meta.env.VITE_APPOINTMENT_DURATION,
+                ).toISOString(),
+            }).then((payload) => payload && handleClose())
+        }
     }
     const handleDeleteBooking = async () => {
         const confirmDelete = window.confirm('Jste si jisti, že chcete zrušit tuto rezervaci? ')
-        if (confirmDelete) {
+        if (confirmDelete && event.id) {
             await deleteBooking(event.id.toString()).then((payload) => payload && handleClose())
         }
     }
