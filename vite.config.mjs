@@ -3,10 +3,18 @@ import react from '@vitejs/plugin-react'
 import eslint from 'vite-plugin-eslint'
 import dts from 'vite-plugin-dts'
 import tsConfigPaths from 'vite-tsconfig-paths'
-import path from 'path'
+import { resolve, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
-    plugins: [react(), eslint(), tsConfigPaths(), dts()],
+    plugins: [
+        react(),
+        eslint(),
+        tsConfigPaths(),
+        dts({ tsconfigPath: './tsconfig.json', rollupTypes: true }),
+    ],
     preview: {
         host: '127.0.0.1',
         port: 5000,
@@ -20,10 +28,9 @@ export default defineConfig({
         minify: false,
         reportCompressedSize: true,
         lib: {
-            entry: path.resolve(__dirname, 'src/index.ts'),
+            entry: resolve(__dirname, 'src/index.ts'),
             name: '@ejthbit/reservation-app',
-            fileName: (format) => `reservation-app.${format}.js`,
-            formats: ['es', 'umd'],
+            fileName: (format) => `index.${format}.js`,
         },
         rollupOptions: {
             // make sure to externalize deps that shouldn't be bundled
