@@ -27,7 +27,7 @@ const AdministrationDrawerListItems = ({
 }: AdministrationDrawerListItemsProps) => {
     const navigate = useNavigate()
     return (
-        <List disablePadding>
+        <List>
             {map(
                 ({ id, icon, text, link, disabled, onClick, hiddenMobile = false }) => (
                     <ListItem key={text} disablePadding title={text}>

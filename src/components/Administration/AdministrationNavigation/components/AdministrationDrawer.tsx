@@ -10,7 +10,7 @@ import {
     Schedule,
     Settings,
 } from '@mui/icons-material'
-import { Box, Fade, Typography } from '@mui/material'
+import { Box, Divider, Fade, Typography } from '@mui/material'
 import { useState } from 'react'
 import packageJson from '../../../../../package.json'
 import { isMobile } from '../../../../utils'
@@ -108,7 +108,7 @@ const AdministrationDrawer = () => {
                 justifyContent="flex-end"
                 alignItems="center"
                 padding={2}
-                bgcolor="white"
+                bgcolor={'white'}
                 gap={2}
             >
                 <AmbulanceSelect
@@ -120,6 +120,7 @@ const AdministrationDrawer = () => {
                     Vítejte, <span style={{ fontWeight: 600 }}>{name}</span>
                 </Typography>
             </Box>
+            <Divider />
             <AdministrationLayout isDrawerOpen={isDrawerOpen} />
         </>
     )

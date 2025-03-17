@@ -1,6 +1,5 @@
 import { Box, DialogTitle, IconButton, Typography } from '@mui/material'
 import { Close } from '@mui/icons-material'
-import PropTypes from 'prop-types'
 
 const ReservationDialogTitle = ({ onClose }: { onClose: () => void }) => {
     return (
@@ -15,11 +14,9 @@ const ReservationDialogTitle = ({ onClose }: { onClose: () => void }) => {
         >
             <Box display="flex" alignItems="center" justifyContent="center">
                 <Box flexGrow={1}>
-                    {
-                        <Typography variant="h4" fontWeight="bold">
-                            Rezervační formulář
-                        </Typography>
-                    }
+                    <Typography variant="h6" fontWeight="bold">
+                        Rezervační formulář
+                    </Typography>
                 </Box>
                 <Box alignSelf="flex-start">
                     <IconButton onClick={onClose} size="large">
@@ -29,10 +26,6 @@ const ReservationDialogTitle = ({ onClose }: { onClose: () => void }) => {
             </Box>
         </DialogTitle>
     )
-}
-
-ReservationDialogTitle.propTypes = {
-    onClose: PropTypes.func.isRequired,
 }
 
 export default ReservationDialogTitle

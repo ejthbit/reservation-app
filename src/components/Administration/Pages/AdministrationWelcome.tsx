@@ -76,6 +76,9 @@ const RootBarChart = ({
                     '& .MuiBarElement-root': {
                         fill: theme.palette.primary.main,
                     },
+                    '& .MuiChartsLegend-mark': {
+                        fill: theme.palette.primary.main,
+                    },
                 })}
                 series={[
                     {

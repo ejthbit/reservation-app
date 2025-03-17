@@ -15,7 +15,6 @@ const BirthDateTextField = forwardRef((props: TextFieldProps, ref: React.Ref<HTM
         label={props.label}
         placeholder="Zadejte prosím své datum narození"
         variant="standard"
-        // required={props.isRequired}
         fullWidth
         inputProps={{
             ...props.inputProps,
@@ -56,7 +55,7 @@ const ReservationBirthDate = ({ step, isRequired = false }: { step: string; isRe
                     })
                 }
                 slots={{
-                    textField: BirthDateTextField,
+                    textField: (props) => <BirthDateTextField required={isRequired} {...props} />,
                 }}
             />
         </LocalizationProvider>

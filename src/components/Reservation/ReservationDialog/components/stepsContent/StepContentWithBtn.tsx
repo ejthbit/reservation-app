@@ -26,20 +26,13 @@ const StepContentWithBtn = ({
 }: StepContentWithBtnProps) => {
     return (
         <Paper square elevation={0}>
-            {typeof text === 'string' ? (
-                <Typography color={variant}>
-                    {text}
-                    {variant === 'primary' ? <Done /> : <Error />}
-                </Typography>
-            ) : (
-                text
-            )}
+            {typeof text === 'string' ? <Typography color={variant}>{text}</Typography> : text}
             {onSecondaryBtnClick && secondaryBtnText && (
                 <StyledButton variant="outlined" onClick={onSecondaryBtnClick}>
                     {secondaryBtnText}
                 </StyledButton>
             )}
-            <StyledButton variant="outlined" color="primary" onClick={onBtnClick}>
+            <StyledButton variant="contained" color="primary" onClick={onBtnClick}>
                 {btnText}
             </StyledButton>
         </Paper>

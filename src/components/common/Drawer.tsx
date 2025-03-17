@@ -6,7 +6,7 @@ export const drawerWidth = 240
 
 const openedMixin = (theme: Theme): CSSObject => ({
     color: 'white',
-    borderRadius: '0 100px 0 0',
+    // borderRadius: '0 100px 0 0',
     width: drawerWidth,
     transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
@@ -19,7 +19,7 @@ const openedMixin = (theme: Theme): CSSObject => ({
 
 const closedMixin = (theme: Theme): CSSObject => ({
     color: 'white',
-    borderRadius: '0 50px 0 0',
+    // borderRadius: '0 50px 0 0',
     transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,

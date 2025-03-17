@@ -27,7 +27,7 @@ function App() {
                             onGetUser={() => {
                                 navigate('/admin')
                             }}
-                            isRegistrationEnabled
+                            isRegistrationEnabled={false}
                         />
                     </UserProvider>
                 }

@@ -14,6 +14,7 @@ type LoginProps = {
 const Login = ({ onGetUser, logo, isRegistrationEnabled = false, adminPath = '/admin' }: LoginProps) => {
     const [showRegistration, setShowRegistration] = useState(false)
     const { isLoggedIn } = useUser()
+    console.log(isLoggedIn)
     const navigate = useNavigate()
 
     const handleToggleView = () => setShowRegistration((prevState) => !prevState)

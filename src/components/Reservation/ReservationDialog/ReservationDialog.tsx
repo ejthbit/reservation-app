@@ -1,4 +1,4 @@
-import { Box, Dialog, DialogContent } from '@mui/material'
+import { Box, Dialog, DialogContent, Divider } from '@mui/material'
 import { withTheme } from '../../../hoc'
 import defaultStepsConfiguration from '../defaultStepsConfiguration'
 import {
@@ -28,8 +28,15 @@ const ReservationDialog = ({
             {isOpen && (
                 <Box>
                     <ReservationBackdropMessage />
-                    <Dialog maxWidth="md" open={isOpen} onClose={onClose} fullWidth>
+                    <Dialog
+                        maxWidth="md"
+                        open={isOpen}
+                        onClose={onClose}
+                        fullWidth
+                        PaperProps={{ sx: { borderRadius: '1rem' } }}
+                    >
                         <ReservationDialogTitle onClose={onClose} />
+                        <Divider />
                         <DialogContent>
                             <ReservationStepper stepsConfiguration={stepsConfiguration} />
                         </DialogContent>

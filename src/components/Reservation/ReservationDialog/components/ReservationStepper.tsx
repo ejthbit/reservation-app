@@ -1,6 +1,6 @@
 import { Step, StepContent, StepLabel, Stepper } from '@mui/material'
+import { CheckCircle } from '@mui/icons-material'
 import { Box } from '@mui/system'
-import PropTypes from 'prop-types'
 import { reject } from 'ramda'
 import { useMemo } from 'react'
 import isNilOrEmpty from '../../../../utils/isNilOrEmpty'
@@ -57,25 +57,26 @@ export const ReservationStepper = ({ stepsConfiguration }: { stepsConfiguration:
                 },
             })}
         >
-            <Stepper activeStep={getNumberStepByName(activeStep, steps)} orientation="vertical">
+            <Stepper
+                activeStep={getNumberStepByName(activeStep, steps)}
+                orientation="vertical"
+                connector={null}
+            >
                 {steps.map(
                     ({ label, step }) =>
                         step && (
                             <Step key={label}>
                                 <StepLabel error={!!errors}>{label}</StepLabel>
-                                <StepContent>
+                                <StepContent sx={{ border: 'none' }}>
                                     <Box>{getReservationContentByStep(step, stepsConfiguration)}</Box>
-                                    <ReservationStepperControls steps={steps} />
                                 </StepContent>
                             </Step>
                         ),
                 )}
+                <ReservationStepperControls steps={steps} />
             </Stepper>
         </Box>
     )
 }
 
-ReservationStepper.propTypes = {
-    stepsConfiguration: PropTypes.array,
-}
 export default ReservationStepper

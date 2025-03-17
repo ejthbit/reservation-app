@@ -34,7 +34,7 @@ const AdministrationLayout = ({ isDrawerOpen }: { isDrawerOpen: boolean }) => {
                 alignItems="center"
                 sx={(theme) => ({
                     backgroundColor: theme.palette.primary.main,
-                    borderRadius: 6,
+                    borderRadius: 2,
                     padding: 2,
                 })}
             >

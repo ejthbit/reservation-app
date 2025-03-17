@@ -10,6 +10,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
     marginTop: theme.spacing(2),
     minHeight: isMobile ? theme.spacing(7.5) : theme.spacing(4),
     boxShadow: 'none',
+    textTransform: 'none',
 }))
 
 const getIndexOfActiveStep = (steps: StepsConfiguration, activeStep: string) =>
@@ -29,33 +30,37 @@ const ReservationStepperControls = ({ steps }: { steps: StepsConfiguration }) =>
 
     return (
         !includes(activeStep, ['COMPLETED', 'ERROR', 'LOADING']) && (
-            <Box sx={(theme) => ({ marginBottom: theme.spacing(2) })}>
-                <ButtonGroup orientation={isMobile ? 'vertical' : 'horizontal'}>
-                    {getIndexOfActiveStep(steps, activeStep) !== 0 && (
-                        <StyledButton
-                            variant="contained"
-                            color="inherit"
-                            onClick={() =>
-                                handleChangeStep(steps[getIndexOfActiveStep(steps, activeStep) - 1].step)
-                            }
-                        >
-                            Vratit se zpět
-                        </StyledButton>
-                    )}
+            <Box
+                sx={(theme) => ({
+                    marginBottom: theme.spacing(2),
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                })}
+            >
+                {getIndexOfActiveStep(steps, activeStep) !== 0 && (
                     <StyledButton
-                        variant="contained"
-                        color="primary"
-                        startIcon={isLoading && <CircularProgress color="primary" />}
+                        variant="outlined"
+                        color="inherit"
                         onClick={() =>
-                            activeStep === 'READY'
-                                ? handleConfirmAppointment()
-                                : handleChangeStep(steps[getIndexOfActiveStep(steps, activeStep) + 1].step)
+                            handleChangeStep(steps[getIndexOfActiveStep(steps, activeStep) - 1].step)
                         }
-                        disabled={isReservationBtnDisabled}
                     >
-                        {activeStep === 'READY' ? 'Odeslat objednávku' : 'Pokračovat dále'}
+                        Vratit se zpět
                     </StyledButton>
-                </ButtonGroup>
+                )}
+                <StyledButton
+                    variant="contained"
+                    color="primary"
+                    startIcon={isLoading && <CircularProgress color="primary" />}
+                    onClick={() =>
+                        activeStep === 'READY'
+                            ? handleConfirmAppointment()
+                            : handleChangeStep(steps[getIndexOfActiveStep(steps, activeStep) + 1].step)
+                    }
+                    disabled={isReservationBtnDisabled}
+                >
+                    {activeStep === 'READY' ? 'Odeslat objednávku' : 'Pokračovat dále'}
+                </StyledButton>
             </Box>
         )
     )

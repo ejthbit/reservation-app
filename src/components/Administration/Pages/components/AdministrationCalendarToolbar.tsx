@@ -11,7 +11,7 @@ import useCalendar from '../../../../hooks/useCalendar'
 import { isMobile } from '../../../../utils'
 
 const StyledButton = styled(Button)(({ theme, variant }) => ({
-    borderRadius: theme.spacing(3),
+    borderRadius: theme.spacing(1),
     height: '40px',
     color: variant === 'outlined' ? theme.palette.primary.main : theme.palette.common.white,
 }))

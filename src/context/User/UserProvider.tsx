@@ -54,14 +54,16 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     } = useSWRMutation<UserData, Error, string, { email: string; password: string }>('api/user', signIn, {
         onSuccess: (data) => localStorage.setItem('user', JSON.stringify(data)),
     })
+    const storedUserItem = localStorage.getItem('user')
+    const storedUser = storedUserItem ? JSON.parse(storedUserItem) : undefined
 
-    const isLoggedIn = userData?.success ?? false
-    const id = userData?.user?.id
-    const email = userData?.user?.email
-    const name = userData?.user?.name
+    const isLoggedIn = storedUser?.success ?? userData?.success ?? false
+    const id = storedUser?.user?.id ?? userData?.user?.id
+    const email = storedUser?.user?.email ?? userData?.user?.email
+    const name = storedUser?.user?.name ?? userData?.user?.name
     // TODO: Rename me to camelCase
-    const defaultWorkplace = userData?.user?.default_workplace ?? '1'
-    const userRole = userData?.user?.user_role ?? 1
+    const defaultWorkplace = storedUser?.user?.default_workplace ?? userData?.user?.default_workplace ?? '1'
+    const userRole = storedUser?.user?.user_role ?? userData?.user?.user_role ?? 1
 
     const value: UserContextType = {
         userError,

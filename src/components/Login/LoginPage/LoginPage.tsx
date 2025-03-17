@@ -69,7 +69,7 @@ const LoginPage = ({
             spacing={2}
         >
             <StyledRoot component="form">
-                <Grid container flexDirection="column" padding={isMobile ? 4 : 8}>
+                <Grid container flexDirection="column" padding={isMobile ? 4 : 8} justifyContent="center">
                     <Grid>
                         <Typography variant="h3" textAlign="center" fontWeight={'bold'}>
                             Administrace

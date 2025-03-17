@@ -1,4 +1,4 @@
-import { Button, DialogActions, Typography } from '@mui/material'
+import { DialogActions, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 
 const ReservationDialogActions = ({ onClose }: { onClose: () => void }) => {
@@ -8,8 +8,9 @@ const ReservationDialogActions = ({ onClose }: { onClose: () => void }) => {
                 display: 'flex',
                 justifyContent: 'space-between',
                 paddingRight: '52px',
-                paddingLeft: '52px',
-                '& .MuiTypography-body2': {
+                paddingLeft: '30px',
+                marginBottom: theme.spacing(2),
+                '& .MuiTypography-caption': {
                     '& span': {
                         color: 'red !important',
                     },
@@ -23,12 +24,9 @@ const ReservationDialogActions = ({ onClose }: { onClose: () => void }) => {
                 },
             })}
         >
-            <Typography variant="body2">
+            <Typography variant="caption">
                 Povinná pole jsou označena <span> *</span>
             </Typography>
-            <Button variant="outlined" onClick={onClose} color="primary">
-                Zavřít
-            </Button>
         </DialogActions>
     )
 }

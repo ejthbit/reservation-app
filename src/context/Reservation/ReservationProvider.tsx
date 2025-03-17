@@ -126,6 +126,7 @@ export const ReservationProvider = ({ children }: PropsWithChildren) => {
         setContactInfo({ ...reservationProcessInitialState.contactInformation })
         setReservationBtnDisabled(reservationProcessInitialState.isReservationBtnDisabled)
     }
+    console.log({ isCreatingBooking, booking })
     const value: BookingState = {
         activeStep,
         selectedDate,
