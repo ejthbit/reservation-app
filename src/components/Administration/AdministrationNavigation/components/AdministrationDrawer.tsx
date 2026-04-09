@@ -10,7 +10,7 @@ import {
     Schedule,
     Settings,
 } from '@mui/icons-material'
-import { Box, Divider, Fade, Typography } from '@mui/material'
+import { Box, Fade, Typography } from '@mui/material'
 import { useState } from 'react'
 import packageJson from '../../../../../package.json'
 import { isMobile } from '../../../../utils'
@@ -19,7 +19,7 @@ import AmbulanceSelect from '../../../common/AmbulanceSelect'
 import AdministrationDrawerListItems from './AdministrationDrawerListItems'
 import AdministrationLayout from './AdministrationLayout'
 
-import { type NavigateFunction } from 'react-router-dom'
+import { type NavigateFunction, useLocation } from 'react-router-dom'
 import { useAdministration } from '../../../../context/Administration/AdministrationProvider'
 import { useUser } from '../../../../context/User/UserProvider'
 
@@ -68,11 +68,52 @@ const getAdminToolbarToolset = ({ isDrawerOpen, onClose, onLogOut }: GetAdminToo
 const AdministrationDrawer = () => {
     const { name, logOut } = useUser()
     const { selectWorkspace, selectedWorkspace } = useAdministration()
-    const [isDrawerOpen, toggleDrawer] = useState(isMobile ? false : true)
-    const [selectedItem, setSelectedItem] = useState(0)
+    const [isDrawerOpen, toggleDrawer] = useState(false)
+    const location = useLocation()
+
+    const allItems = [
+        ...adminToolbarLinks,
+        ...getAdminToolbarToolset({
+            isDrawerOpen,
+            onClose: () => toggleDrawer((prevState) => !prevState),
+            onLogOut: logOut,
+        }),
+    ]
+    const selectedItem =
+        allItems.find(({ link }) => link && location.pathname === link)?.id ??
+        allItems.find(({ link }) => link && link !== '/admin' && location.pathname.startsWith(link))?.id ??
+        0
 
     return (
         <>
+            <Box
+                sx={{
+                    background: `#5A2EC4`,
+                    color: 'white',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                component="div"
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                padding={2}
+                gap={2}
+            >
+                <Typography ml={2}>
+                    Vítejte, <span style={{ fontWeight: 600 }}>{name}</span>
+                </Typography>
+                <AmbulanceSelect
+                    selectedValueId={selectedWorkspace}
+                    onAmbulanceSelect={(e) => selectWorkspace(e.target.value as string)}
+                    sx={{
+                        color: 'white',
+                        '& .MuiSelect-icon': { color: 'white' },
+                        '&::before, &::after': { borderColor: 'white' },
+                    }}
+                />
+            </Box>
             <Fade in timeout={{ enter: 400 }}>
                 <Drawer variant="permanent" open={isDrawerOpen} anchor="left">
                     <Box
@@ -87,7 +128,6 @@ const AdministrationDrawer = () => {
                             arrayOfItems={adminToolbarLinks}
                             isOpen={isDrawerOpen}
                             selectedItem={selectedItem}
-                            setSelectedItem={setSelectedItem}
                         />
                         <AdministrationDrawerListItems
                             arrayOfItems={getAdminToolbarToolset({
@@ -97,30 +137,10 @@ const AdministrationDrawer = () => {
                             })}
                             isOpen={isDrawerOpen}
                             selectedItem={selectedItem}
-                            setSelectedItem={setSelectedItem}
                         />
                     </Box>
                 </Drawer>
             </Fade>
-            <Box
-                component="div"
-                display="flex"
-                justifyContent="flex-end"
-                alignItems="center"
-                padding={2}
-                bgcolor={'white'}
-                gap={2}
-            >
-                <AmbulanceSelect
-                    // sx={{ width: '40%', variant: '' }}
-                    selectedValueId={selectedWorkspace}
-                    onAmbulanceSelect={(e) => selectWorkspace(e.target.value as string)}
-                />
-                <Typography>
-                    Vítejte, <span style={{ fontWeight: 600 }}>{name}</span>
-                </Typography>
-            </Box>
-            <Divider />
             <AdministrationLayout isDrawerOpen={isDrawerOpen} />
         </>
     )

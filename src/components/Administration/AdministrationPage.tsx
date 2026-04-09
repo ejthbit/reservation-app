@@ -3,7 +3,6 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import cs from 'date-fns/locale/cs'
 import { SnackbarProvider } from 'notistack'
 import { Route, Routes } from 'react-router-dom'
-import { withTheme } from '../../hoc'
 import { NotMatch } from '../common'
 import { AdministrationTopbar } from './AdministrationNavigation/components'
 import {
@@ -16,9 +15,10 @@ import {
 } from './Pages'
 import { SWRConfig } from 'swr'
 import { AdministrationProvider } from '../../context/Administration/AdministrationProvider'
+import checkTokenExpirationMiddleware from '../../middlewares/logOutAutomatically'
 
 const AdministrationPage = () => (
-    <SWRConfig>
+    <SWRConfig value={{ use: [checkTokenExpirationMiddleware] }}>
         <AdministrationProvider>
             <LocalizationProvider
                 dateAdapter={AdapterDateFns}
@@ -43,4 +43,4 @@ const AdministrationPage = () => (
     </SWRConfig>
 )
 
-export default withTheme(AdministrationPage)
+export default AdministrationPage

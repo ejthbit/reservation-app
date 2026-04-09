@@ -1,7 +1,7 @@
 import { Email } from '@mui/icons-material'
 import { InputAdornment, TextField } from '@mui/material'
 import { useState } from 'react'
-import { string } from 'yup'
+import { z } from 'zod'
 import { useDebounce } from '../../../../hooks'
 import useReservationButton from '../../../../hooks/useReservationButton'
 import { useReservation } from '../../../../context/Reservation'
@@ -21,10 +21,9 @@ const ReservationEmail = ({ step, isRequired }: { step: string; isRequired?: boo
     })
     useReservationButton({ dependency: [nonDebounceValue], step, isRequired, isValid })
 
-    const checkIfEmailIsValid = async (value: string) => {
-        const emailValidation = string().email()
-        const res = await emailValidation.isValid(value)
-        return setIsValid(!!res)
+    const checkIfEmailIsValid = (value: string) => {
+        const result = z.string().email().safeParse(value)
+        return setIsValid(result.success)
     }
 
     return (

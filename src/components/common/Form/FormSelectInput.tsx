@@ -34,6 +34,8 @@ const FormSelectInput = <T extends FieldValues, V extends FieldPath<T>>({
         defaultValue: undefined,
     })
 
+    const selectValue = isLoading ? '' : inputProps.value
+
     return (
         <TextField
             select
@@ -48,7 +50,7 @@ const FormSelectInput = <T extends FieldValues, V extends FieldPath<T>>({
                 },
                 displayEmpty,
             }}
-            inputProps={{ readOnly: disabled, ...inputProps }}
+            inputProps={{ readOnly: disabled, ...inputProps, value: selectValue }}
             {...otherTextFieldProps}
         >
             {isLoading && (

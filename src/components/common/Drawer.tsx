@@ -4,27 +4,31 @@ import { Theme, CSSObject } from '@mui/material/styles'
 
 export const drawerWidth = 240
 
+const headerHeight = 64
+
 const openedMixin = (theme: Theme): CSSObject => ({
     color: 'white',
-    // borderRadius: '0 100px 0 0',
     width: drawerWidth,
+    top: headerHeight,
+    height: `calc(100% - ${headerHeight}px)`,
     transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
     }),
-    backgroundColor: theme.palette.primary.main,
+    background: `linear-gradient(to bottom, #5A2EC4, #311B92)`,
     border: 'none',
     overflowX: 'hidden',
 })
 
 const closedMixin = (theme: Theme): CSSObject => ({
     color: 'white',
-    // borderRadius: '0 50px 0 0',
+    top: headerHeight,
+    height: `calc(100% - ${headerHeight}px)`,
     transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
-    backgroundColor: theme.palette.primary.main,
+    background: `linear-gradient(to bottom, #5A2EC4, #311B92)`,
     border: 'none',
     overflowX: 'hidden',
     width: `calc(${theme.spacing(7)} + 1px)`,

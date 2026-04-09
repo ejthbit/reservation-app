@@ -1,5 +1,4 @@
 import { format } from 'date-fns'
-import { sortBy } from 'ramda'
 import { PropsWithChildren, createContext, useState } from 'react'
 import { getDateWithCorrectOffset, getISODateStringWithCorrectOffset } from '../../utils'
 import useSWRMutation from 'swr/mutation'
@@ -126,7 +125,6 @@ export const ReservationProvider = ({ children }: PropsWithChildren) => {
         setContactInfo({ ...reservationProcessInitialState.contactInformation })
         setReservationBtnDisabled(reservationProcessInitialState.isReservationBtnDisabled)
     }
-    console.log({ isCreatingBooking, booking })
     const value: BookingState = {
         activeStep,
         selectedDate,
@@ -137,7 +135,7 @@ export const ReservationProvider = ({ children }: PropsWithChildren) => {
         contactInformation,
         isReservationBtnDisabled,
         availableTimeSlots: {
-            slots: slots ? sortBy(({ timeSlotStart }) => timeSlotStart, slots) : slots,
+            slots: slots ? [...slots].sort((a, b) => a.timeSlotStart.localeCompare(b.timeSlotStart)) : slots,
             errors: error,
             isLoading: isMutating,
         },

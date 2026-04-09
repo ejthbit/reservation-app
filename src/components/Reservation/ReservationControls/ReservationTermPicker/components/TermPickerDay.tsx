@@ -3,7 +3,6 @@ import { Badge } from '@mui/material'
 import { PickersDay, PickersDayProps } from '@mui/x-date-pickers'
 import { format, startOfToday } from 'date-fns'
 
-import { equals } from 'ramda'
 import { isNilOrEmpty } from '../../../../../utils'
 import { AmbulanceServiceDay } from '../../../../../types/AmbulanceService'
 
@@ -21,7 +20,7 @@ const TermPickerDay = ({
         !DayComponentProps.outsideCurrentMonth &&
         doctorServicesBySelectedDoctorIdAndMonth.find(({ date, doctors }) => {
             if (!isNilOrEmpty(doctors)) {
-                return equals(date, format(day, 'yyyy-MM-dd')) && day >= startOfToday()
+                return date === format(day, 'yyyy-MM-dd') && day >= startOfToday()
             }
             return undefined
         })

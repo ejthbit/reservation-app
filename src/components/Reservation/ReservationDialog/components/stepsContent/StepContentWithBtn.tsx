@@ -1,4 +1,3 @@
-import { Done, Error } from '@mui/icons-material'
 import { Button, Paper, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import React from 'react'
@@ -6,6 +5,7 @@ import React from 'react'
 const StyledButton = styled(Button)(({ theme }) => ({
     marginTop: theme.spacing(2),
     marginRight: theme.spacing(1),
+    background: `linear-gradient(to right, #6A11CB, #2575FC)`,
 }))
 
 type StepContentWithBtnProps = {

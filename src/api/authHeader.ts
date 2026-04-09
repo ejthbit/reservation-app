@@ -1,8 +1,12 @@
 const authHeader = () => {
     const storedUser = localStorage.getItem('user')
     if (storedUser) {
-        const user = JSON.parse(storedUser)
-        if (user && user.token) return `Bearer ${user.token}`
+        try {
+            const user = JSON.parse(storedUser)
+            if (user && user.token) return `Bearer ${user.token}`
+        } catch {
+            localStorage.removeItem('user')
+        }
     }
 
     return undefined

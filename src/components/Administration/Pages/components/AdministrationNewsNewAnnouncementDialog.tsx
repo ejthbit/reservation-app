@@ -1,7 +1,7 @@
-import { yupResolver } from '@hookform/resolvers/yup'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Dialog, DialogActions, DialogContent, DialogTitle, LinearProgress } from '@mui/material'
 import { useForm } from 'react-hook-form'
-import * as yup from 'yup'
+import { z } from 'zod'
 import { DialogButtons, FormInput } from '../../../common'
 import { Announcement } from '../../../../types/Announcement'
 import { useAnnouncements } from '../../../../hooks'
@@ -24,10 +24,10 @@ const AdministrationNewsNewAnnouncementDialog = ({
     } = useForm({
         mode: 'onSubmit',
         reValidateMode: 'onChange',
-        resolver: yupResolver(
-            yup.object({
-                name: yup.string().required(),
-                description: yup.string().required(),
+        resolver: zodResolver(
+            z.object({
+                name: z.string().min(1),
+                description: z.string().min(1),
             }),
         ),
         defaultValues: {

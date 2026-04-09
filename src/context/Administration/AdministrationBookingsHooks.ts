@@ -35,8 +35,8 @@ export const useGetBookings = () => {
 
 export const useFastBooking = () => {
     const { trigger, data, error, isMutating } = useSWRMutation(
-        'administration/bookings', // Cache key to optionally invalidate
-        (key, { arg }: { arg: ReservationProcessData }) => createBooking(arg), // Mutation function
+        'administration/bookings',
+        (key, { arg }: { arg: ReservationProcessData }) => createBooking(arg),
     )
 
     return { trigger, data, error, isMutating }

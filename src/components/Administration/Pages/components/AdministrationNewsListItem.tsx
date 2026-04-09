@@ -83,35 +83,44 @@ const AdministrationNewsListItem: React.FC<AdministrationNewsListItemProps> = ({
                     [theme.breakpoints.down('sm')]: { flexDirection: 'column', alignItems: 'center' },
                 })}
             >
-                <ListItemText
-                    sx={(theme) => ({
-                        width: '22%',
-                        '& .MuiTypography-root': {
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                        },
-                        [theme.breakpoints.down('sm')]: { width: '100%' },
-                    })}
-                    id="switch-list-item"
-                    primary={author}
-                    secondary={format(getDateWithCorrectOffset(created_at), 'yyyy-dd-MM')}
-                />
-
                 <Box
                     display="flex"
                     flexDirection="column"
-                    width="60%"
+                    width="80%"
                     gap={1}
                     sx={(theme) => ({ [theme.breakpoints.down('sm')]: { width: '100%' } })}
                 >
-                    <FormInput
-                        name="name"
-                        label="Název"
-                        control={control}
-                        disabled={!isEditModeEnabled}
-                        sx={!isEditModeEnabled ? { '& .MuiInput-root:before': { borderBottom: 0 } } : {}}
-                    />
+                    <Box display="flex" gap={2}>
+                        <FormInput
+                            name="name"
+                            label="Název"
+                            control={control}
+                            disabled={!isEditModeEnabled}
+                            sx={{
+                                flex: 1,
+                                ...(!isEditModeEnabled
+                                    ? { '& .MuiInput-root:before': { borderBottom: 0 } }
+                                    : {}),
+                            }}
+                        />
+                        <ListItemText
+                            primary="Autor"
+                            secondary={author}
+                            primaryTypographyProps={{ variant: 'caption', color: 'text.secondary' }}
+                            sx={{
+                                flex: 1,
+                                ...(!isEditModeEnabled
+                                    ? { '& .MuiInput-root:before': { borderBottom: 0 } }
+                                    : {}),
+                            }}
+                        />
+                        <ListItemText
+                            sx={{ flex: 0.6, alignSelf: 'flex-end' }}
+                            primary="Datum vytvoření"
+                            primaryTypographyProps={{ variant: 'caption', color: 'text.secondary' }}
+                            secondary={format(getDateWithCorrectOffset(created_at), 'dd-MM-yyyy')}
+                        />
+                    </Box>
                     <FormInput
                         name="description"
                         control={control}

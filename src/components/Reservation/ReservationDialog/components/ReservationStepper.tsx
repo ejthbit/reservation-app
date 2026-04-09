@@ -1,7 +1,6 @@
 import { Step, StepContent, StepLabel, Stepper } from '@mui/material'
 import { CheckCircle } from '@mui/icons-material'
 import { Box } from '@mui/system'
-import { reject } from 'ramda'
 import { useMemo } from 'react'
 import isNilOrEmpty from '../../../../utils/isNilOrEmpty'
 import DEFAULT_STEPS from '../constants/defaultSteps'
@@ -40,7 +39,7 @@ export const ReservationStepper = ({ stepsConfiguration }: { stepsConfiguration:
     } = useReservation()
 
     const steps = useMemo(
-        () => reject(isNilOrEmpty, getStepsConfiguration(stepsConfiguration, isLoading, errors, completed)),
+        () => getStepsConfiguration(stepsConfiguration, isLoading, errors, completed).filter((s) => !isNilOrEmpty(s)),
         [stepsConfiguration, isLoading, errors, completed],
     )
     return (

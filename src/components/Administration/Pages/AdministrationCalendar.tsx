@@ -6,7 +6,7 @@ import { format, getDay, parse, startOfWeek } from 'date-fns'
 import cs from 'date-fns/locale/cs'
 import './css/custom-calendar.css'
 
-import useCalendar from '../../../hooks/useCalendar'
+import { CalendarProvider, useCalendarContext } from '../../../context/Calendar/CalendarProvider'
 import { Box, CircularProgress, Fade, useTheme } from '@mui/material'
 import {
     AdministrationCalendarToolbar,
@@ -57,7 +57,7 @@ const customSlotPropGetter = () => {
         },
     }
 }
-const AdministrationCalendar = () => {
+const AdministrationCalendarInner = () => {
     const {
         newAppointmentDate,
         openEventDialogEvent,
@@ -69,9 +69,9 @@ const AdministrationCalendar = () => {
         onSelectEvent,
         onDropFromOutside,
         onSelectSlot,
-        handleOpenEventDialog,
+        handleCloseEventDialog,
         handleToggleCreationModal,
-    } = useCalendar()
+    } = useCalendarContext()
     const theme = useTheme()
     return (
         <Fade in timeout={{ enter: 1000 }}>
@@ -98,6 +98,12 @@ const AdministrationCalendar = () => {
                             style: {
                                 backgroundColor: theme.palette.primary.main,
                                 color: '#fff',
+                                ...(event?.resource?.doctorService && {
+                                    backgroundColor: '#fff',
+                                    color: '#333',
+                                    border: 'none',
+                                    opacity: 1,
+                                }),
                                 ...(event?.resource?.blocked && {
                                     backgroundColor: 'grey',
                                     color: 'linen',
@@ -122,6 +128,8 @@ const AdministrationCalendar = () => {
                         header: AdministrationCalendarHeader,
                         toolbar: AdministrationCalendarToolbar,
                         event: AdministrationCalendarEvent,
+                        work_week: { header: AdministrationCalendarHeader },
+                        day: { header: AdministrationCalendarHeader },
                     }}
                     step={import.meta.env.VITE_APPOINTMENT_DURATION}
                     endAccessor="end"
@@ -145,12 +153,18 @@ const AdministrationCalendar = () => {
                 {openEventDialogEvent && (
                     <AdministrationEventDetail
                         event={openEventDialogEvent}
-                        handleClose={() => handleOpenEventDialog(openEventDialogEvent)}
+                        handleClose={handleCloseEventDialog}
                     />
                 )}
             </Box>
         </Fade>
     )
 }
+
+const AdministrationCalendar = () => (
+    <CalendarProvider>
+        <AdministrationCalendarInner />
+    </CalendarProvider>
+)
 
 export default AdministrationCalendar

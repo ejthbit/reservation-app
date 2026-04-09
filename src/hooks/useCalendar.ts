@@ -1,5 +1,4 @@
 import { addMinutes } from 'date-fns'
-import { equals } from 'ramda'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SlotInfo } from 'react-big-calendar'
 import { useGetBookings, useUpdateBooking } from '../context/Administration/AdministrationBookingsHooks'
@@ -12,8 +11,10 @@ import {
 } from '../utils'
 import { BookingEvent } from '../utils/makeCalendarEventsFromBookings'
 import { useDoctorServices } from './useDoctorServices'
-import { useReservation } from '../context/Reservation'
+import { getDoctorsForSelectedAmbulanceFetcher } from '../context/Reservation/ReservationFetchers'
 import { DoctorService } from '../types/AmbulanceService'
+import { Doctor } from '../types/Doctor'
+import useSWRMutation from 'swr/mutation'
 type Intervals = {
     start: string
     end: string
@@ -86,7 +87,6 @@ const removeContainedEntries = (array1: Intervals, array2: Intervals) => {
         })
     })
 }
-
 const useCalendar = () => {
     const [draggedEvent, setDraggedEvent] = useState<BookingEvent | null>(null)
     const [openEventDialogEvent, setOpenEventDialogEvent] = useState<BookingEvent | null>(null)
@@ -101,6 +101,7 @@ const useCalendar = () => {
         isMutating: isLoadingEventsForSelectedView,
     } = useGetBookings()
 
+    // useSWR('bookings', () => getBookings({ from, to, workplace: selectedWorkspace }))
     const {
         api: { fetchDoctorServicesByRange },
         servicesDays = [],
@@ -108,23 +109,23 @@ const useCalendar = () => {
     } = useDoctorServices()
 
     const {
-        api: { getDoctorsForSelectedAmbulance },
-        doctorsForSelectedAmbulance,
-    } = useReservation()
+        data: doctorsData,
+        trigger: getDoctorsForSelectedAmbulance,
+        isMutating: isLoadingDoctors,
+    } = useSWRMutation<Doctor[], Error, string, number>('calendar/getDoctors', (key, { arg }) =>
+        getDoctorsForSelectedAmbulanceFetcher(arg),
+    )
 
     const doctors: DoctorsIdsWithNames = useMemo(
         () =>
-            doctorsForSelectedAmbulance?.data?.reduce<DoctorsIdsWithNames>(
-                (obj, item) => {
-                    obj[item.doctor_id] = item.name
-                    return obj
-                },
-                {} as DoctorsIdsWithNames, // Ensure the accumulator is typed as DoctorsIdsWithNames
-            ) || {}, // Provide a fallback value of empty object if data is undefined
-        [doctorsForSelectedAmbulance],
+            doctorsData?.reduce<DoctorsIdsWithNames>((obj, item) => {
+                obj[item.doctor_id] = item.name
+                return obj
+            }, {}) || {},
+        [doctorsData],
     )
 
-    const events = useMemo(() => makeCalendarEventsFromBookings(bookings), [selectedViewDateRange, bookings])
+    const events = useMemo(() => makeCalendarEventsFromBookings(bookings), [bookings])
 
     const blockedEvents = useMemo(() => {
         const timesToBlock = removeContainedEntries(
@@ -132,17 +133,18 @@ const useCalendar = () => {
             flattenedIntervals(servicesDays),
         )
         return makeCalendarEventsFromBookings(timesToBlock, true)
-    }, [selectedViewDateRange, servicesDays])
+    }, [from, to, servicesDays])
 
     const handleOpenEventDialog = (existingEvent: BookingEvent) =>
         !existingEvent?.resource?.blocked && setOpenEventDialogEvent(existingEvent)
+    const handleCloseEventDialog = () => setOpenEventDialogEvent(null)
     const handleToggleCreationModal = () => setNewAppointmentDate(null)
 
     const onSelectEvent = (event: BookingEvent) => handleOpenEventDialog(event)
 
     const onSelectSlot = ({ action, slots }: SlotInfo) => {
         const timeSlotStart = slots[0]! // start date/time of the event
-        if (equals(action, 'click'))
+        if (action === 'click')
             setNewAppointmentDate({
                 start: getISODateStringWithCorrectOffset(timeSlotStart),
                 end: getISODateStringWithCorrectOffset(
@@ -152,8 +154,7 @@ const useCalendar = () => {
     }
     const handleDragStart = (event: BookingEvent) => setDraggedEvent(event)
 
-    //Fix me
-    const dragFromOutsideItem = useCallback((draggedEvent: BookingEvent) => draggedEvent!, [draggedEvent])
+    const dragFromOutsideItem = useCallback(() => draggedEvent, [draggedEvent])
 
     const moveEvent = ({
         event,
@@ -164,9 +165,11 @@ const useCalendar = () => {
         start: string | Date
         end: string | Date
     }) => {
-        const { email, phone, category, birthdate, name, workplace } = event?.resource!
+        if (!event?.resource) return
+
+        const { email, phone, category, birthdate, name, workplace } = event.resource
         updateBooking({
-            id: event?.id!,
+            id: event.id!,
             start: typeof start === 'string' ? start : getISODateStringWithCorrectOffset(start),
             end: typeof end === 'string' ? end : getISODateStringWithCorrectOffset(end),
             contact: { email, phone },
@@ -191,19 +194,24 @@ const useCalendar = () => {
     }
 
     useEffect(() => {
-        if (!from && !to) {
+        if (from && to) {
             getBookings({ from, to, workplace: selectedWorkspace })
             fetchDoctorServicesByRange({ start: from, end: to, workplace: parseInt(selectedWorkspace) })
         }
-        getDoctorsForSelectedAmbulance && getDoctorsForSelectedAmbulance(parseInt(selectedWorkspace))
-    }, [selectedViewDateRange, selectedWorkspace])
+    }, [selectedWorkspace, from, to])
+
+    useEffect(() => {
+        getDoctorsForSelectedAmbulance(parseInt(selectedWorkspace))
+    }, [selectedWorkspace])
+
+    const allEvents = useMemo(() => [...events, ...blockedEvents], [events, blockedEvents])
 
     return {
         openEventDialogEvent,
         newAppointmentDate,
         isLoadingEventsForSelectedView:
-            isLoadingEventsForSelectedView && isLoadingServicesDays && doctorsForSelectedAmbulance?.isLoading,
-        events: [...events, ...blockedEvents],
+            isLoadingEventsForSelectedView || isLoadingServicesDays || isLoadingDoctors,
+        events: allEvents,
         draggedEvent,
         moveEvent,
         handleDragStart,
@@ -212,8 +220,13 @@ const useCalendar = () => {
         onDropFromOutside,
         onSelectSlot,
         handleOpenEventDialog,
+        handleCloseEventDialog,
         handleToggleCreationModal,
+        refetchBookings: () => {
+            if (from && to) getBookings({ from, to, workplace: selectedWorkspace })
+        },
         doctors,
+        servicesDays,
     }
 }
 export default useCalendar

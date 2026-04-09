@@ -37,5 +37,5 @@ export const useGetCategories = (selectedDoctorId?: string | null) => {
         ? `configuration/getBookingCategories/${selectedDoctorId}`
         : `configuration/getBookingCategories`
 
-    return useSWR(url, fetcher, { revalidateOnFocus: false, errorRetryCount: 2 })
+    return useSWR(url, fetcher, { revalidateOnFocus: false, dedupingInterval: 60000, errorRetryCount: 2 })
 }

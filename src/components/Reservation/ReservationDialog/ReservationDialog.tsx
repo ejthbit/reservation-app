@@ -1,5 +1,4 @@
 import { Box, Dialog, DialogContent, Divider } from '@mui/material'
-import { withTheme } from '../../../hoc'
 import defaultStepsConfiguration from '../defaultStepsConfiguration'
 import {
     ReservationBackdropMessage,
@@ -12,7 +11,7 @@ import { ReservationProvider } from '../../../context/Reservation'
 type ReservationDialogProps = {
     isOpen: boolean
     onClose: () => void
-    stepsConfiguration: {
+    stepsConfiguration?: {
         label: string
         component: JSX.Element
         step: string
@@ -48,4 +47,4 @@ const ReservationDialog = ({
     )
 }
 
-export default withTheme(ReservationDialog)
+export default ReservationDialog

@@ -1,7 +1,5 @@
-// @ts-nocheck
-import { Box, Button, ButtonGroup, CircularProgress } from '@mui/material'
+import { Box, Button, CircularProgress } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import { includes } from 'ramda'
 import { isMobile } from '../../../../../utils'
 import { StepsConfiguration } from '../../helpers/getReservationContentByStep'
 import { useReservation } from '../../../../../context/Reservation'
@@ -9,6 +7,7 @@ import { useReservation } from '../../../../../context/Reservation'
 const StyledButton = styled(Button)(({ theme }) => ({
     marginTop: theme.spacing(2),
     minHeight: isMobile ? theme.spacing(7.5) : theme.spacing(4),
+    background: `linear-gradient(to right, #6A11CB, #2575FC)`,
     boxShadow: 'none',
     textTransform: 'none',
 }))
@@ -29,7 +28,7 @@ const ReservationStepperControls = ({ steps }: { steps: StepsConfiguration }) =>
     const handleConfirmAppointment = () => bookAnAppointment()
 
     return (
-        !includes(activeStep, ['COMPLETED', 'ERROR', 'LOADING']) && (
+        !['COMPLETED', 'ERROR', 'LOADING'].includes(activeStep) && (
             <Box
                 sx={(theme) => ({
                     marginBottom: theme.spacing(2),
@@ -42,7 +41,7 @@ const ReservationStepperControls = ({ steps }: { steps: StepsConfiguration }) =>
                         variant="outlined"
                         color="inherit"
                         onClick={() =>
-                            handleChangeStep(steps[getIndexOfActiveStep(steps, activeStep) - 1].step)
+                            handleChangeStep(steps[getIndexOfActiveStep(steps, activeStep) - 1]?.step ?? '')
                         }
                     >
                         Vratit se zpět
@@ -55,7 +54,7 @@ const ReservationStepperControls = ({ steps }: { steps: StepsConfiguration }) =>
                     onClick={() =>
                         activeStep === 'READY'
                             ? handleConfirmAppointment()
-                            : handleChangeStep(steps[getIndexOfActiveStep(steps, activeStep) + 1].step)
+                            : handleChangeStep(steps[getIndexOfActiveStep(steps, activeStep) + 1]?.step ?? '')
                     }
                     disabled={isReservationBtnDisabled}
                 >

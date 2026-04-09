@@ -1,10 +1,10 @@
-import { yupResolver } from '@hookform/resolvers/yup'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, CircularProgress, Typography, Link } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2/Grid2'
 import { useState } from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { useForm } from 'react-hook-form'
-import * as yup from 'yup'
+import { z } from 'zod'
 import { isSuccess as isSuccessUtil } from '../../../utils'
 import FormInput from '../../common/Form/FormInput'
 import { validationMessages } from '../../../constants'
@@ -21,17 +21,15 @@ const RegistrationPage = ({ logo, onLoginClick }: { logo: React.ReactNode; onLog
     } = useForm({
         mode: 'onChange',
         reValidateMode: 'onChange',
-        resolver: yupResolver(
-            yup
-                .object({
-                    name: yup.string().required(validationMessages.IS_REQUIRED_FIELD),
-                    email: yup
-                        .string()
-                        .email(validationMessages.IS_NOT_CORRECT_FORMAT)
-                        .required(validationMessages.IS_REQUIRED_FIELD),
-                    password: yup.string().required(validationMessages.IS_REQUIRED_FIELD),
-                })
-                .required(),
+        resolver: zodResolver(
+            z.object({
+                name: z.string().min(1, validationMessages.IS_REQUIRED_FIELD),
+                email: z
+                    .string()
+                    .min(1, validationMessages.IS_REQUIRED_FIELD)
+                    .email(validationMessages.IS_NOT_CORRECT_FORMAT),
+                password: z.string().min(8, 'Heslo musí mít alespoň 8 znaků.'),
+            }),
         ),
         defaultValues: { name: '', email: '', password: '' },
     })
@@ -40,7 +38,6 @@ const RegistrationPage = ({ logo, onLoginClick }: { logo: React.ReactNode; onLog
         // TODO signUp hook
         // const res = await signUp(formValues).unwrap()
         // if (isSuccessUtil(res)) reset()
-        return console.log(formValues)
     }
     return (
         <Grid

@@ -1,4 +1,3 @@
-import { equals } from 'ramda'
 import { useEffect } from 'react'
 import { isNilOrEmpty } from '../utils'
 import { useReservation } from '../context/Reservation'
@@ -21,7 +20,7 @@ const useReservationButton = ({
     } = useReservation()
 
     useEffect(() => {
-        if (equals(activeStep, step) && isRequired) {
+        if (activeStep === step && isRequired) {
             if (dependency.some(isNilOrEmpty) && !isReservationBtnDisabled && isValid)
                 setReservationBtnDisabled(true)
             else if (!dependency.some(isNilOrEmpty)) setReservationBtnDisabled(false)

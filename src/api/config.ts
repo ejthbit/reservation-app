@@ -12,16 +12,26 @@ const axiosGynInstance = axios.create({
 
 axiosGynInstance.interceptors.request.use(
     (config) => {
-        const user = localStorage.getItem('user')
-        if (user) {
-            config.headers = {
-                Authorization: authHeader(),
-                'Content-Type': 'application/json',
-            } as AxiosRequestHeaders
+        const token = authHeader()
+        if (token) {
+            config.headers.set('Authorization', token)
         }
+        config.headers.set('Content-Type', 'application/json')
         return config
     },
     (error) => Promise.reject(error),
+)
+
+axiosGynInstance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        const sanitizedError = {
+            message: error.response?.data?.message ?? error.message,
+            status: error.response?.status,
+            code: error.code,
+        }
+        return Promise.reject(sanitizedError)
+    },
 )
 
 export default axiosGynInstance

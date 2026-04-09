@@ -1,9 +1,12 @@
-//@ts-nocheck
 import DEFAULT_STEPS from '../constants/defaultSteps'
 
 export type StepsConfiguration = { label?: string; component?: JSX.Element; step?: string }[]
+
 const remapToObjectsByStepName = (stepsConfiguration: StepsConfiguration) =>
-    stepsConfiguration.reduce((acc, { component, step }) => (acc = { ...acc, [step]: component }), {})
+    stepsConfiguration.reduce<Record<string, JSX.Element | undefined>>(
+        (acc, { component, step }) => ({ ...acc, ...(step ? { [step]: component } : {}) }),
+        {},
+    )
 
 /**
  * It returns the content for the current step of the reservation process
@@ -13,7 +16,7 @@ const remapToObjectsByStepName = (stepsConfiguration: StepsConfiguration) =>
  * @returns The content of the step
  */
 const getReservationContentByStep = (step: string, stepsConfiguration: StepsConfiguration) => {
-    const content = {
+    const content: Record<string, JSX.Element | undefined> = {
         ...remapToObjectsByStepName(stepsConfiguration),
         READY: DEFAULT_STEPS.ready.component,
         COMPLETED: DEFAULT_STEPS.completed.component,

@@ -14,7 +14,6 @@ import {
 import { MobileDateTimePicker } from '@mui/x-date-pickers'
 import { addMinutes } from 'date-fns'
 import PropTypes from 'prop-types'
-import { map } from 'ramda'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
@@ -171,18 +170,17 @@ const AdministrationEventDetail = ({
                     fullWidth
                 >
                     {!isLoadingCategories &&
-                        map(
+                        makeArrayOfLabelValue('name', 'category_id', categories ?? []).map(
                             ({ label, value }) => (
                                 <MenuItem key={label} value={value}>
                                     {label}
                                 </MenuItem>
                             ),
-                            makeArrayOfLabelValue('name', 'category_id', categories ?? []),
                         )}
                 </FormSelectInput>
                 <FormInput
-                    label="Preferovaný doktor"
-                    placeholder="Preferovaný doktor"
+                    label="Preferovaný zaměstnanec"
+                    placeholder="Preferovaný zaměstnanec"
                     control={control}
                     name="selectedDoctorId"
                     disabled

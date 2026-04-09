@@ -2,7 +2,6 @@ import { Grid, Typography } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { cs } from 'date-fns/locale'
-import { equals, forEach, propEq } from 'ramda'
 import { useEffect, useMemo, useState } from 'react'
 import {
     makeAvailableTimeSlotsWithTimeOnly,
@@ -28,7 +27,6 @@ const ReservationTermPicker = ({ step }: { step: string }) => {
     } = useReservation()
 
     const [isDoctorServing, setIsDoctorServing] = useState<any>(undefined)
-    console.log({ isDoctorServing })
     const availableTimeSlotsWithTimeOnly = useMemo(
         () => (availableTimeSlots.slots ? makeAvailableTimeSlotsWithTimeOnly(availableTimeSlots.slots) : {}),
         [availableTimeSlots, selectedDate],
@@ -59,12 +57,12 @@ const ReservationTermPicker = ({ step }: { step: string }) => {
     useEffect(() => {
         const servesItem = doctorServicesBySelectedDoctorIdAndMonth.find((serviceItem) => {
             if (!isNilOrEmpty(serviceItem?.doctors)) {
-                return equals(serviceItem.date, selectedDate)
+                return serviceItem.date === selectedDate
             }
             return undefined
         })
         const servingDoctor = !isNilOrEmpty(selectedDoctor)
-            ? servesItem?.doctors.find(propEq('doctorId', selectedDoctor))
+            ? servesItem?.doctors.find((d) => d.doctorId === selectedDoctor)
             : servesItem?.doctors
 
         if (!isNilOrEmpty(servingDoctor)) {
@@ -87,14 +85,12 @@ const ReservationTermPicker = ({ step }: { step: string }) => {
                       to: isDoctorServing?.end,
                       workplace: selectedAmbulanceId.toString(),
                   })
-                : forEach(
-                      ({ start, end }) =>
+                : isDoctorServing.forEach(({ start, end }: { start: string; end: string }) =>
                           fetchAvailableTimeSlots({
                               from: start,
                               to: end,
                               workplace: selectedAmbulanceId.toString(),
                           }),
-                      isDoctorServing,
                   )
         }
     }, [isDoctorServing])
@@ -126,7 +122,7 @@ const ReservationTermPicker = ({ step }: { step: string }) => {
                 ) : !isNilOrEmpty(isDoctorServing) ? (
                     <Typography>Omlouváme se ale na tento den již nejsou volné termíny</Typography>
                 ) : (
-                    <Typography>Omlouváme se ale tento den vámi vybranný doktor neordinuje</Typography>
+                    <Typography>Omlouváme se ale tento den vámi vybranný zaměstnanec nepracuje</Typography>
                 )}
             </Grid>
         </LocalizationProvider>

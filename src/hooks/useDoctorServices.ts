@@ -1,5 +1,6 @@
+import useSWR from 'swr'
 import useSWRMutation from 'swr/mutation'
-import { AmbulanceService, DoctorService } from '../types/AmbulanceService'
+import { AmbulanceService, AmbulanceServiceDay, DoctorService } from '../types/AmbulanceService'
 import axiosGynInstance from '../api/config'
 
 type GetDoctorServicesByRangeFetcherProps = {
@@ -9,18 +10,44 @@ type GetDoctorServicesByRangeFetcherProps = {
 }
 
 type GetDoctorServicesForMonthFetcherProps = { month: string; workplace: number }
+
+type CreateServiceForMonthProps = {
+    month: string
+    days: AmbulanceServiceDay[]
+    workplace: string | number
+}
+
+type UpdateServiceForMonthProps = {
+    month: string
+    workplace: string | number
+    days: AmbulanceServiceDay[]
+}
 const getDoctorServicesByRangeFetcher = async ({
     start,
     end,
     workplace,
 }: GetDoctorServicesByRangeFetcherProps) =>
-    (await axiosGynInstance.get(`/bookings/getDoctorServicesByRange/${start}/${end}/${workplace}`)).data.data
+    (await axiosGynInstance.get(`/bookings/getDoctorServicesByRange/${start}/${end}/${workplace}`)).data
 
 const getDoctorServicesForMonthFetcher = async ({
     month,
     workplace,
 }: GetDoctorServicesForMonthFetcherProps) =>
     (await axiosGynInstance.get(`/bookings/getDoctorServicesForMonth/${month}/${workplace}`)).data
+
+const createServiceForMonthFetcher = async (data: CreateServiceForMonthProps) =>
+    (await axiosGynInstance.post(`/administration/doctorService`, data)).data
+
+const updateServiceForMonthFetcher = async ({ month, workplace, days }: UpdateServiceForMonthProps) =>
+    (await axiosGynInstance.put(`/administration/doctorService/${month}/${workplace}`, { days })).data
+
+export const useGetDoctorServicesByRange = (params: GetDoctorServicesByRangeFetcherProps | null) => {
+    const { data, error, isLoading } = useSWR<DoctorService[]>(
+        params ? ['bookings/getDoctorServicesByRange', params.start, params.end, params.workplace] : null,
+        () => getDoctorServicesByRangeFetcher(params!),
+    )
+    return { data: data ?? [], error, isLoading }
+}
 
 export const useDoctorServices = () => {
     const {
@@ -45,6 +72,22 @@ export const useDoctorServices = () => {
         (key, { arg }) => getDoctorServicesForMonthFetcher(arg),
     )
 
+    const {
+        trigger: createServiceForMonth,
+        isMutating: isCreatingService,
+    } = useSWRMutation<AmbulanceService, Error, string, CreateServiceForMonthProps>(
+        'administration/createDoctorService',
+        (key, { arg }) => createServiceForMonthFetcher(arg),
+    )
+
+    const {
+        trigger: updateServiceForMonth,
+        isMutating: isUpdatingService,
+    } = useSWRMutation<AmbulanceService, Error, string, UpdateServiceForMonthProps>(
+        'administration/updateDoctorService',
+        (key, { arg }) => updateServiceForMonthFetcher(arg),
+    )
+
     return {
         servicesDays,
         doctorsServicesForSelectedAmbulance,
@@ -52,11 +95,15 @@ export const useDoctorServices = () => {
         doctorsServicesForSelectedAmbulanceError,
         isLoadingServicesDays,
         isLoadingDoctorsServicesForSelectedAmbulance,
+        isCreatingService,
+        isUpdatingService,
         api: {
             fetchDoctorServicesByRange,
             fetchDoctorServicesForSelectedMonth,
             clearDoctorServicesByRange,
             clearDoctorServicesForSelectedMonth,
+            createServiceForMonth,
+            updateServiceForMonth,
         },
     }
 }

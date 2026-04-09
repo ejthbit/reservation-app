@@ -24,10 +24,6 @@ const ReservationDoctorSelect = ({ step }: { step: string }) => {
             getDoctorsForSelectedAmbulance(selectedAmbulance)
     }, [])
 
-    if (doctorsForSelectedAmbulance) {
-        console.log(makeArrayOfLabelValue('name', 'doctor_id', doctorsForSelectedAmbulance))
-    }
-
     return doctorsForSelectedAmbulance ? (
         <Dropdown
             value={selectedDoctor}

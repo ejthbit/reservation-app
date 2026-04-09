@@ -1,5 +1,4 @@
 import { CircularProgress, InputLabel, MenuItem, Select, type SelectProps } from '@mui/material'
-import { map } from 'ramda'
 
 export type DropdownProps = {
     value?: string | number
@@ -43,14 +42,11 @@ const Dropdown = ({
                 {notSelectedLabel ? notSelectedLabel : 'Nevybráno'}
             </MenuItem>
             {!isLoading ? (
-                map(
-                    ({ value, label }) => (
+                options.map(({ value, label }) => (
                         <MenuItem key={value} value={value}>
                             {label}
                         </MenuItem>
-                    ),
-                    options,
-                )
+                    ))
             ) : (
                 <MenuItem key="loading" value="loading" disabled>
                     <CircularProgress size={20} />

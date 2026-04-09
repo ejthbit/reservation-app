@@ -55,7 +55,13 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         onSuccess: (data) => localStorage.setItem('user', JSON.stringify(data)),
     })
     const storedUserItem = localStorage.getItem('user')
-    const storedUser = storedUserItem ? JSON.parse(storedUserItem) : undefined
+    let storedUser: UserData | undefined
+    try {
+        storedUser = storedUserItem ? JSON.parse(storedUserItem) : undefined
+    } catch {
+        localStorage.removeItem('user')
+        storedUser = undefined
+    }
 
     const isLoggedIn = storedUser?.success ?? userData?.success ?? false
     const id = storedUser?.user?.id ?? userData?.user?.id
@@ -78,7 +84,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         logIn,
         logOut: () => {
             reset()
-            localStorage.clear()
+            localStorage.removeItem('user')
         },
         logOutAutomatically: () => logOutAutomatically((state) => !state),
     }

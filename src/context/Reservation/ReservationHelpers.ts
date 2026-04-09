@@ -1,4 +1,3 @@
-import { equals, filter, find, isEmpty, map, propEq } from 'ramda'
 import { isNilOrEmpty } from '../../utils'
 import { TimeSlot } from './types'
 import { AmbulanceService, DoctorService } from '../../types/AmbulanceService'
@@ -28,30 +27,22 @@ export const makeAppointmentDate = (appointmentDate: string, appointmentTime: st
     `${appointmentDate} ${appointmentTime}`
 
 export const makeAvailableTimeSlotsWithTimeOnly = (timeSlots: TimeSlot[]) =>
-    map(({ timeSlotStart, timeSlotEnd }) => {
-        return {
-            timeSlotStart: timeSlotStart.slice(11, 19),
-            timeSlotEnd: timeSlotEnd.slice(11, 19),
-        }
-    }, timeSlots)
+    timeSlots.map(({ timeSlotStart, timeSlotEnd }) => ({
+        timeSlotStart: timeSlotStart.slice(11, 19),
+        timeSlotEnd: timeSlotEnd.slice(11, 19),
+    }))
 
 export const makeServicesForSelectedMonth = (
     services: AmbulanceService[],
     month: string,
     selectedWorkplace: number,
-) =>
-    filter(
-        (service) => Boolean(equals(service.month, month) && equals(service.workplace, selectedWorkplace)),
-        services ?? [],
-    )
+) => (services ?? []).filter((service) => service.month === month && service.workplace === selectedWorkplace)
 
 export const makeDoctorServicesByDoctorId = (service: AmbulanceService, doctorId: string) => {
     const getDayDoctorsBySelectedId = (doctors: DoctorService[], doctorId: string) =>
-        find(propEq('doctorId', doctorId), doctors)
+        doctors.find((d) => d.doctorId === doctorId)
 
-    return isEmpty(doctorId)
-        ? filter((day) => isNilOrEmpty(getDayDoctorsBySelectedId(day.doctors, doctorId)), service?.days ?? [])
-        : filter((d) => {
-              return d.doctors.some((c) => [doctorId].includes(c.doctorId))
-          }, service?.days ?? [])
+    return isNilOrEmpty(doctorId)
+        ? (service?.days ?? []).filter((day) => isNilOrEmpty(getDayDoctorsBySelectedId(day.doctors, doctorId)))
+        : (service?.days ?? []).filter((d) => d.doctors.some((c) => c.doctorId === doctorId))
 }

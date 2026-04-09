@@ -1,5 +1,4 @@
 import { Box, MenuItem } from '@mui/material'
-import { map } from 'ramda'
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { makeArrayOfLabelValue } from '../../../context/Reservation/ReservationHelpers'
@@ -50,18 +49,15 @@ const UserSettings = () => {
                     fullWidth
                     disabled={userRole !== 0}
                 >
-                    {map(
-                        ({ label, value }) => (
-                            <MenuItem key={label} value={value} disabled={userRole !== 0}>
-                                {label}
-                            </MenuItem>
-                        ),
-                        [
+                    {[
                             { label: 'Admin', value: 0 },
                             { label: 'Sestra', value: 1 },
                             { label: 'Doktor', value: 2 },
-                        ],
-                    )}
+                        ].map(({ label, value }) => (
+                            <MenuItem key={label} value={value} disabled={userRole !== 0}>
+                                {label}
+                            </MenuItem>
+                        ))}
                 </FormSelectInput>
                 <FormInput
                     label="E-mail"
@@ -80,13 +76,12 @@ const UserSettings = () => {
                     disabled
                 >
                     {!isLoadingAmbulances &&
-                        map(
+                        makeArrayOfLabelValue('name', 'workplace_id', ambulances ?? []).map(
                             ({ label, value }) => (
                                 <MenuItem key={label} value={value}>
                                     {label}
                                 </MenuItem>
                             ),
-                            makeArrayOfLabelValue('name', 'workplace_id', ambulances ?? []),
                         )}
                 </FormSelectInput>
             </Box>

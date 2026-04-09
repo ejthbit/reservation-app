@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
     plugins: [
         react(),
         eslint(),
@@ -24,29 +24,17 @@ export default defineConfig({
         },
     },
     build: {
-        manifest: true,
         minify: false,
         reportCompressedSize: true,
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
-            name: '@ejthbit/reservation-app',
-            fileName: (format) => `index.${format}.js`,
+            fileName: 'index',
+            formats: ['es'],
         },
         rollupOptions: {
-            // make sure to externalize deps that shouldn't be bundled
-            // into your library
-            external: ['react', 'react-dom'],
-            output: {
-                generatedCode: 'es2015',
-                // Provide global variables to use in the UMD build
-                // for externalized deps
-                globals: {
-                    react: 'React',
-                    'react-dom': 'ReactDOM',
-                },
-            },
+            external: ['react', 'react-dom', 'react/jsx-runtime'],
         },
-        sourcemap: true,
+        sourcemap: mode === 'development',
         // Clears the output directory before building.
         emptyOutDir: true,
     },
@@ -54,4 +42,4 @@ export default defineConfig({
         port: 3003,
         host: 'localhost',
     },
-})
+}))

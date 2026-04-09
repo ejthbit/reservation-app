@@ -6,12 +6,17 @@ import { Middleware, SWRHook } from 'swr'
 const checkTokenExpirationMiddleware: Middleware = (useSWRNext: SWRHook) => (key, fetcher, config) => {
     const { logOut, logOutAutomatically } = useUser()
     const storedUser = localStorage.getItem('user')
-    const tokenExp = storedUser && JSON.parse(storedUser)['exp']
+    let tokenExp: number | undefined
+    try {
+        tokenExp = storedUser ? JSON.parse(storedUser)['exp'] : undefined
+    } catch {
+        localStorage.removeItem('user')
+    }
 
-    if (!isNilOrEmpty(tokenExp) && tokenExp < Date.now()) {
+    if (!isNilOrEmpty(tokenExp) && tokenExp! < Date.now()) {
         logOutAutomatically()
         setTimeout(() => {
-            localStorage.clear()
+            localStorage.removeItem('user')
             logOut()
         }, 30000)
     }

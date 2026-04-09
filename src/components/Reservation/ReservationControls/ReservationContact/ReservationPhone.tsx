@@ -1,7 +1,7 @@
 import { Phone } from '@mui/icons-material'
 import { InputAdornment, TextField } from '@mui/material'
 import { useState } from 'react'
-import { string } from 'yup'
+import { z } from 'zod'
 import { useDebounce } from '../../../../hooks'
 import useReservationButton from '../../../../hooks/useReservationButton'
 import VALIDATION_PATTERNS from '../../../../utils/validationPatterns'
@@ -23,10 +23,9 @@ const ReservationPhone = ({ step, isRequired }: { step: string; isRequired?: boo
 
     useReservationButton({ dependency: [nonDebounceValue], step, isRequired, isValid })
 
-    const checkIfPhoneIsValid = async (value: string) => {
-        const phoneValidation = string().matches(VALIDATION_PATTERNS.TEL).min(9)
-        const res = await phoneValidation.isValid(value)
-        return setIsValid(!!res)
+    const checkIfPhoneIsValid = (value: string) => {
+        const result = z.string().min(9).regex(VALIDATION_PATTERNS.TEL).safeParse(value)
+        return setIsValid(result.success)
     }
 
     return (

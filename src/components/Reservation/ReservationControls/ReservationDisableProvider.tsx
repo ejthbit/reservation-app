@@ -1,4 +1,3 @@
-import { reject } from 'ramda'
 import { PropsWithChildren, useMemo } from 'react'
 import { useReservationButton } from '../../../hooks'
 import { useReservation } from '../../../context/Reservation'
@@ -34,10 +33,7 @@ const ReservationContactInformationDisableProvider = ({
     )
 
     useReservationButton({
-        dependency: reject(
-            (value) => value === undefined,
-            Object.values(collection).map((value) => value),
-        ),
+        dependency: Object.values(collection).filter((value) => value !== undefined),
         step,
         isRequired: true,
     })

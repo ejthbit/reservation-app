@@ -1,5 +1,4 @@
-//@ts-ignore
-import { yupResolver } from '@hookform/resolvers/yup'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
     Box,
     Button,
@@ -17,12 +16,14 @@ import { format } from 'date-fns'
 import { useSnackbar } from 'notistack'
 import { useEffect } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
-import * as yup from 'yup'
+import { z } from 'zod'
 
-import { isNilOrEmpty, isSuccess } from '../../../../utils'
+import { isNilOrEmpty } from '../../../../utils'
 import { checkArrayStartEndValues } from '../utils/Services/validations'
 import AdministrationServicesTableDoctorAssign from './AdministrationServicesTableDoctorAssign'
 import { AmbulanceServiceDay } from '../../../../types/AmbulanceService'
+import { useDoctorServices, useGetDoctorsForSelectedAmbulance } from '../../../../hooks'
+import { useAdministration } from '../../../../context/Administration/AdministrationProvider'
 
 export const StyledCell = styled(TableCell)(() => ({
     borderBottom: 'none',
@@ -34,47 +35,70 @@ export const StyledHeaderCell = styled(TableCell)(() => ({
     fontWeight: 'bold',
 }))
 
-const validationSchema = yup.object().shape({
-    data: yup.array(
-        yup.object().shape({
-            doctors: yup.array(
-                yup.lazy(() =>
-                    yup.object().shape({
-                        start: yup
-                            .string()
-                            .test('start-required', 'Zadaná hodnota musí být vyplněna!', function (value) {
-                                return this.parent.end ? this.parent.end && value : true
-                            })
-                            .test(
-                                'start',
-                                'Zadaná hodnota musí být menší než hodnota `Do`!',
-                                function (value) {
-                                    if (!value) return true
-                                    const endDate = new Date(this.parent.end)
-                                    const startDate = new Date(value)
-                                    return !isNilOrEmpty(this.parent.end) ? startDate < endDate : true
-                                },
-                            )
-                            .test(
-                                'isGreater',
-                                'Hodnota musí být vetší než hodnota `Do` předchozího záznamu.',
-                                checkArrayStartEndValues,
-                            ),
-                        end: yup
-                            .string()
-                            .test('end-required', 'Zadaná hodnota musí být vyplněna!', function (value) {
-                                return this.parent.start ? this.parent.start && value : true
-                            })
-                            .test('end', 'Zadaná hodnota musí být vetší než hodnota`Od`!', function (value) {
-                                if (!value) return true
-                                const endDate = new Date(value)
-                                const startDate = new Date(this.parent.start)
-                                return !isNilOrEmpty(this.parent.start) ? startDate < endDate : true
-                            }),
-                        note: yup.string().notRequired(),
-                    }),
-                ),
-            ),
+const doctorSchema = z.object({
+    doctorId: z.string().optional(),
+    start: z.string().optional().default(''),
+    end: z.string().optional().default(''),
+    note: z.string().optional().default(''),
+    id: z.string().optional(),
+})
+
+const doctorsArraySchema = z.array(doctorSchema).superRefine((doctors, ctx) => {
+    doctors.forEach((doctor, index) => {
+        // start required if end is set
+        if (doctor.end && !doctor.start) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'Zadaná hodnota musí být vyplněna!',
+                path: [index, 'start'],
+            })
+        }
+        // end required if start is set
+        if (doctor.start && !doctor.end) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'Zadaná hodnota musí být vyplněna!',
+                path: [index, 'end'],
+            })
+        }
+        // start must be before end
+        if (doctor.start && doctor.end && !isNilOrEmpty(doctor.end)) {
+            if (new Date(doctor.start) >= new Date(doctor.end)) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: 'Zadaná hodnota musí být menší než hodnota `Do`!',
+                    path: [index, 'start'],
+                })
+            }
+        }
+        if (doctor.end && doctor.start && !isNilOrEmpty(doctor.start)) {
+            if (new Date(doctor.end) <= new Date(doctor.start)) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: 'Zadaná hodnota musí být vetší než hodnota`Od`!',
+                    path: [index, 'end'],
+                })
+            }
+        }
+        // start must be greater than previous doctor's end
+        if (index >= 1 && !isNilOrEmpty(doctor.start)) {
+            const prev = doctors[index - 1]!
+            if (doctor.start < prev.end) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: 'Hodnota musí být vetší než hodnota `Do` předchozího záznamu.',
+                    path: [index, 'start'],
+                })
+            }
+        }
+    })
+})
+
+const validationSchema = z.object({
+    data: z.array(
+        z.object({
+            date: z.string().optional(),
+            doctors: doctorsArraySchema,
         }),
     ),
 })
@@ -90,8 +114,20 @@ const ServicesTable = ({
     isEditingServices,
     selectedWorkplaceId,
 }: ServicesTableProps) => {
-    // const [createService] = useCreateServiceForMonthMutation()
-    // const [updateService] = useUpdateServiceForMonthMutation()
+    const {
+        api: { createServiceForMonth, updateServiceForMonth },
+    } = useDoctorServices()
+
+    const { selectedWorkspace: selectedAmbulanceId } = useAdministration()
+    const {
+        doctorsForSelectedAmbulance,
+        isLoadingDoctorsForSelectedAmbulance: isLoadingDoctors,
+        api: { getDoctorsForSelectedAmbulance },
+    } = useGetDoctorsForSelectedAmbulance()
+
+    useEffect(() => {
+        getDoctorsForSelectedAmbulance(parseInt(selectedAmbulanceId))
+    }, [selectedAmbulanceId])
 
     const {
         handleSubmit,
@@ -102,7 +138,7 @@ const ServicesTable = ({
         formState: { isValid },
     } = useForm({
         mode: 'onChange',
-        resolver: yupResolver(validationSchema),
+        resolver: zodResolver(validationSchema),
         reValidateMode: 'onChange',
         defaultValues: { data },
     })
@@ -118,10 +154,10 @@ const ServicesTable = ({
             workplace: selectedWorkplaceId,
         }
         try {
-            const res = !isEditingServices ? console.log(apiData) : console.log(apiData)
-            // if (isSuccess(res)) {
-            //     enqueueSnackbar('Rozpis byl úspěšně uložen.', { variant: 'success' })
-            // }
+            !isEditingServices
+                ? await createServiceForMonth(apiData)
+                : await updateServiceForMonth(apiData)
+            enqueueSnackbar('Rozpis byl úspěšně uložen.', { variant: 'success' })
         } catch (err) {
             enqueueSnackbar('Nastala chyba při ukládání.', { variant: 'error' })
         }
@@ -132,6 +168,8 @@ const ServicesTable = ({
         trigger()
     }, [data])
 
+    if (isLoadingDoctors || !doctorsForSelectedAmbulance) return null
+
     return (
         <Fade in timeout={{ enter: 500 }}>
             <TableContainer
@@ -140,7 +178,6 @@ const ServicesTable = ({
                     width: '100%',
                     marginTop: 2,
                     marginBottom: 2,
-                    borderRadius: 6,
                     boxShadow: 0,
                     bgcolor: '#F9F9FB',
                 }}
@@ -149,8 +186,7 @@ const ServicesTable = ({
                     <TableHead
                         sx={(theme) => ({
                             color: 'white',
-                            backgroundColor: theme.palette.primary.main,
-                            borderRadius: 6,
+                            background: `linear-gradient(to right, #6A11CB, #2575FC)`,
                             padding: theme.spacing(2),
                             fontWeight: 600,
                         })}
@@ -203,6 +239,8 @@ const ServicesTable = ({
                                                 setValue={setValue}
                                                 idx={idx}
                                                 trigger={trigger}
+                                                doctors={doctorsForSelectedAmbulance}
+                                                isLoadingDoctors={isLoadingDoctors}
                                             />
                                         </TableBody>
                                     </Table>
@@ -217,7 +255,9 @@ const ServicesTable = ({
                         variant="contained"
                         onClick={handleSubmit(onSubmit)}
                         disabled={!isValid}
-                        sx={{ borderRadius: 6 }}
+                        sx={{
+                            background: `linear-gradient(to right, #6A11CB, #2575FC)`,
+                        }}
                     >
                         Uložit
                     </Button>

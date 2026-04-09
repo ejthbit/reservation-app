@@ -10,7 +10,6 @@ import {
     Typography,
 } from '@mui/material'
 import { addMinutes, format, subMinutes } from 'date-fns'
-import { equals, map, prop, sortBy } from 'ramda'
 import { useEffect } from 'react'
 import { useGetBookings } from '../../../../context/Administration/AdministrationBookingsHooks'
 import { useAdministration } from '../../../../context/Administration/AdministrationProvider'
@@ -48,7 +47,9 @@ const AdministrationDashboardTodayPatients = () => {
                     width: '100%',
                     bgcolor: '#F9F9FB',
                     borderRadius: 6,
-                    height: '65vh',
+                    maxHeight: '40vh',
+                    overflow: 'auto',
+                    padding: 2,
                 }}
             >
                 <Typography align="center" sx={{ mb: 1, ml: 3, mt: 1, fontSize: '1rem' }} fontWeight="600">
@@ -60,8 +61,9 @@ const AdministrationDashboardTodayPatients = () => {
                     </Box>
                 )}
                 {todayBookings
-                    ? map(
-                          ({ name, birthdate, start, id }) => (
+                    ? [...todayBookings]
+                          .sort((a, b) => a.start.localeCompare(b.start))
+                          .map(({ name, birthdate, start, id }) => (
                               <ListItem key={id} sx={{ bgcolor: '#F9F9FB' }}>
                                   <ListItemAvatar>
                                       <Avatar>
@@ -72,16 +74,14 @@ const AdministrationDashboardTodayPatients = () => {
                                       sx={{ width: '30%' }}
                                       primary={name}
                                       secondary={
-                                          equals(format(new Date(), 'yyyy-MM-dd'), birthdate) ? '' : birthdate
+                                          format(new Date(), 'yyyy-MM-dd') === birthdate ? '' : birthdate
                                       }
                                   />
                                   <Typography sx={{ fontWeight: 600, fontSize: '2rem' }} color="primary">
                                       {format(getDateWithCorrectOffset(start), 'HH:mm')}
                                   </Typography>
                               </ListItem>
-                          ),
-                          sortBy(prop('start'))(todayBookings),
-                      )
+                          ))
                     : isFetching && (
                           <Fade in timeout={{ enter: 1000 }}>
                               <Box display="flex" alignItems="center" justifyContent="center">

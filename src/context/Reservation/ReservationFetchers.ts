@@ -8,7 +8,6 @@ import { Booking } from '../../types'
 export type TimeSlotRequestData = { from: string; to: string; workplace: string }
 
 const APPOINTMENT_DURATION = import.meta.env.VITE_APPOINTMENT_DURATION
-console.log(APPOINTMENT_DURATION)
 export const getAvailableTimeSlotsFetcher = async ({ from, to, workplace }: TimeSlotRequestData) =>
     (
         await axiosGynInstance.get<TimeSlot[]>(

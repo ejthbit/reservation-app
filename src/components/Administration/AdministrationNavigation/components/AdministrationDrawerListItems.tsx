@@ -1,5 +1,4 @@
 import { Hidden, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import { equals, map } from 'ramda'
 import { ReactNode } from 'react'
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom'
 import { isNilOrEmpty } from '../../../../utils'
@@ -16,20 +15,17 @@ interface AdminToolbarItems {
 type AdministrationDrawerListItemsProps = {
     isOpen: boolean
     selectedItem: number
-    setSelectedItem: (id: number) => void
     arrayOfItems: AdminToolbarItems[]
 }
 const AdministrationDrawerListItems = ({
     arrayOfItems,
     selectedItem,
     isOpen,
-    setSelectedItem,
 }: AdministrationDrawerListItemsProps) => {
     const navigate = useNavigate()
     return (
-        <List>
-            {map(
-                ({ id, icon, text, link, disabled, onClick, hiddenMobile = false }) => (
+        <List disablePadding>
+            {arrayOfItems.map(({ id, icon, text, link, disabled, onClick, hiddenMobile = false }) => (
                     <ListItem key={text} disablePadding title={text}>
                         <Hidden smDown={hiddenMobile}>
                             <ListItemButton
@@ -37,11 +33,13 @@ const AdministrationDrawerListItems = ({
                                     minHeight: 48,
                                     justifyContent: isOpen ? 'initial' : 'center',
                                     px: 2.5,
+                                    '&:hover, &.Mui-selected, &.Mui-selected:hover': {
+                                        backgroundColor: 'black',
+                                    },
                                 }}
                                 disabled={disabled}
-                                selected={equals(id, selectedItem)}
+                                selected={id === selectedItem}
                                 onClick={() => {
-                                    setSelectedItem(id)
                                     onClick && onClick(navigate)
                                 }}
                                 {...(!isNilOrEmpty(link) && { to: link, component: Link })}
@@ -64,16 +62,14 @@ const AdministrationDrawerListItems = ({
                                     <ListItemText
                                         primary={text}
                                         sx={{
-                                            fontWeight: equals(id, selectedItem) ? '700' : '400',
+                                            fontWeight: id === selectedItem ? '700' : '400',
                                         }}
                                     />
                                 )}
                             </ListItemButton>
                         </Hidden>
                     </ListItem>
-                ),
-                arrayOfItems,
-            )}
+                ))}
         </List>
     )
 }

@@ -1,27 +1,29 @@
 import { ArrowBack, ArrowForward } from '@mui/icons-material'
 import { Box, Button, Grid, Typography, styled } from '@mui/material'
 import { addDays, addWeeks, endOfDay, parse, startOfDay } from 'date-fns'
-import { equals } from 'ramda'
 import { useEffect, useState } from 'react'
 import { ToolbarProps } from 'react-big-calendar'
+import { BookingEvent, BookingEventResource } from '../../../../utils/makeCalendarEventsFromBookings'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { useAdministration } from '../../../../context/Administration/AdministrationProvider'
-import { withTheme } from '../../../../hoc'
-import useCalendar from '../../../../hooks/useCalendar'
+import { useCalendarContext } from '../../../../context/Calendar/CalendarProvider'
 import { isMobile } from '../../../../utils'
 
 const StyledButton = styled(Button)(({ theme, variant }) => ({
-    borderRadius: theme.spacing(1),
     height: '40px',
-    color: variant === 'outlined' ? theme.palette.primary.main : theme.palette.common.white,
+    background:
+        variant !== 'outlined'
+            ? `linear-gradient(to right, #6A11CB, #2575FC)`
+            : `linear-gradient(to right, #1E1E2E, #111)`,
+    color: theme.palette.common.white,
 }))
 const VIEW_TRANSLATIONS = {
     day: 'dnešní den',
     work_week: 'aktuální pracovní týden',
 }
-const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }: ToolbarProps) => {
+const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }: ToolbarProps<BookingEvent, BookingEventResource>) => {
     const [viewState, setViewState] = useState<'day' | 'work_week'>(isMobile ? 'day' : 'work_week')
-    const { events } = useCalendar()
+    const { events } = useCalendarContext()
 
     const { selectViewDateRange } = useAdministration()
     const goToDayView = () => {
@@ -69,7 +71,7 @@ const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }: Tool
                 <Grid container item xs={12} justifyContent="space-between" spacing={2}>
                     <Grid item xs={12} md={6}>
                         <Typography variant="body1" align="left">
-                            {`Počet objednaných pacientek na ${VIEW_TRANSLATIONS[viewState]}: ${
+                            {`Počet objednávek na ${VIEW_TRANSLATIONS[viewState]}: ${
                                 events.filter(
                                     ({ resource }) => !resource?.blocked && !resource?.doctorService,
                                 ).length
@@ -102,7 +104,7 @@ const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }: Tool
                 <Grid container item xs={12} md={6} spacing={1}>
                     <Grid item xs={8} md={6}>
                         <StyledButton
-                            variant={equals(viewState, 'work_week') ? 'contained' : 'outlined'}
+                            variant={viewState === 'work_week' ? 'contained' : 'outlined'}
                             color="primary"
                             onClick={goToWeekView}
                             fullWidth
@@ -112,7 +114,7 @@ const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }: Tool
                     </Grid>
                     <Grid item xs={4} md={6}>
                         <StyledButton
-                            variant={equals(viewState, 'day') ? 'contained' : 'outlined'}
+                            variant={viewState === 'day' ? 'contained' : 'outlined'}
                             color="primary"
                             onClick={goToDayView}
                             fullWidth
@@ -126,4 +128,4 @@ const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }: Tool
     )
 }
 
-export default withTheme(AdministrationCalendarToolbar)
+export default AdministrationCalendarToolbar

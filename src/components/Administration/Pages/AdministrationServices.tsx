@@ -3,7 +3,6 @@ import { Box, Button, CircularProgress, Fade, Grid, TextField, Typography, useTh
 import { MobileDatePicker } from '@mui/x-date-pickers'
 import { format, getMonth, getYear } from 'date-fns'
 import { useSnackbar } from 'notistack'
-import { equals, includes } from 'ramda'
 import { useEffect, useState } from 'react'
 import { isNilOrEmpty } from '../../../utils'
 import { getWorkDaysInMonth } from '../../../utils/getDaysUtil'
@@ -41,9 +40,9 @@ const AdministrationServices = () => {
                 month: format(date, 'yyyy-MM'),
                 workplace: parseInt(selectedAmbulanceId),
             })
-            if (equals(selectedAction, 2) && payload.days) {
+            if (selectedAction === 2 && payload.days) {
                 setDates(payload.days)
-            } else if (equals(selectedAction, 1) && payload.days) {
+            } else if (selectedAction === 1 && payload.days) {
                 setDates([])
                 enqueueSnackbar('Na daný měsíc již existuje rozpis.', { variant: 'warning' })
             }
@@ -51,7 +50,7 @@ const AdministrationServices = () => {
             const err = error as { code?: string }
             if (err.code === 'ERR_BAD_REQUEST') {
                 enqueueSnackbar('Pro zadaný měsíc zatím neexistuje rozpis služeb', { variant: 'warning' })
-                if (equals(selectedAction, 1)) {
+                if (selectedAction === 1) {
                     const workingDates = getWorkDaysInMonth(getMonth(date), getYear(date))
                     setDates(
                         workingDates.map((date, index) => ({
@@ -73,7 +72,8 @@ const AdministrationServices = () => {
     }
 
     useEffect(() => {
-        if (!equals(selectedAction, 0)) handleGenerateDataForTable(selectedMonth)
+        setDates([])
+        if (selectedAction !== 0) handleGenerateDataForTable(selectedMonth)
     }, [selectedAmbulanceId, selectedAction])
 
     return (
@@ -83,7 +83,7 @@ const AdministrationServices = () => {
                     width: '100%',
                 }}
             >
-                {includes(selectedAction, [1, 2]) ? (
+                {[1, 2].includes(selectedAction) ? (
                     <Grid container>
                         <Grid container sx={{ marginBottom: 2 }}>
                             <Grid item>
@@ -93,7 +93,11 @@ const AdministrationServices = () => {
                         <Grid container gap={2}>
                             <Grid item>
                                 <Button
-                                    sx={{ height: 56, textTransform: 'initial', borderRadius: 6 }}
+                                    sx={{
+                                        height: 56,
+                                        textTransform: 'initial',
+                                        background: `linear-gradient(to right, #6A11CB, #2575FC)`,
+                                    }}
                                     variant="contained"
                                     color="primary"
                                     onClick={handleClearActionsWorkflow}
@@ -159,12 +163,12 @@ const AdministrationServices = () => {
                         <AdministrationServicesTable
                             data={dates}
                             selectedMonth={format(selectedMonth, 'yyyy-MM')}
-                            isEditingServices={equals(selectedAction, 2)}
+                            isEditingServices={selectedAction === 2}
                             selectedWorkplaceId={selectedAmbulanceId}
                         />
                     </Grid>
                 ) : (
-                    includes(selectedAction, [1, 2]) && (
+                    [1, 2].includes(selectedAction) && (
                         <Box
                             display="flex"
                             flexDirection="column"

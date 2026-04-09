@@ -1,7 +1,20 @@
-import { Box, CircularProgress, Fade, Hidden, List, Typography } from '@mui/material'
-import { endOfToday, getDay, isWeekend, startOfToday, subDays } from 'date-fns'
+import { DateRange, Event, Newspaper, Schedule } from '@mui/icons-material'
+import { Box, Button, CircularProgress, Fade, List, Typography } from '@mui/material'
+import {
+    endOfMonth,
+    endOfToday,
+    format,
+    getDay,
+    getDaysInMonth,
+    isToday,
+    isWeekend,
+    startOfMonth,
+    startOfToday,
+    subDays,
+} from 'date-fns'
+import { cs } from 'date-fns/locale'
 import { useMemo } from 'react'
-import imgLogo from '../../../assets/stetoscope.svg'
+import { useNavigate } from 'react-router-dom'
 import { useGetCategories } from '../../../hooks/useGetCategories'
 import { getCategoryNameById, getISODateStringWithCorrectOffset, isMobile } from '../../../utils'
 import AdministrationDashboardTodayPatients from './components/AdministrationDashboardTodayPatients'
@@ -74,10 +87,10 @@ const RootBarChart = ({
                 sx={(theme) => ({
                     py: 3,
                     '& .MuiBarElement-root': {
-                        fill: theme.palette.primary.main,
+                        fill: '#4825A8',
                     },
                     '& .MuiChartsLegend-mark': {
-                        fill: theme.palette.primary.main,
+                        fill: '#4825A8',
                     },
                 })}
                 series={[
@@ -105,7 +118,93 @@ const RootBarChart = ({
         )
     else return null
 }
+const getBookingsPerDay = (bookings: Booking[] | undefined) => {
+    const counts: Record<string, number> = {}
+    if (!bookings) return counts
+    bookings.forEach((b) => {
+        const day = new Date(b.start).getDate()
+        counts[day] = (counts[day] || 0) + 1
+    })
+    return counts
+}
+
+const MonthlyCalendar = ({ bookingsPerDay }: { bookingsPerDay: Record<string, number> }) => {
+    const today = new Date()
+    const daysInMonth = getDaysInMonth(today)
+    const firstDayOfMonth = startOfMonth(today)
+    // getDay returns 0=Sun, we want Mon=0
+    const startOffset = (getDay(firstDayOfMonth) + 6) % 7
+    const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne']
+
+    return (
+        <Box sx={{ bgcolor: '#F9F9FB', borderRadius: 6, p: 3 }}>
+            <Typography fontWeight="600" align="center" sx={{ fontSize: '1rem' }}>
+                Počet objednávek na daný den
+            </Typography>
+            <Typography variant="caption" color="text.secondary" align="center" display="block" mb={2}>
+                {format(today, 'LLLL yyyy', { locale: cs }).replace(/^./, (c) => c.toUpperCase())}
+            </Typography>
+            <Box display="grid" gridTemplateColumns="repeat(7, 1fr)" gap={0.5} textAlign="center">
+                {weekdays.map((d) => (
+                    <Typography key={d} variant="caption" fontWeight="600" color="text.secondary">
+                        {d}
+                    </Typography>
+                ))}
+                {Array.from({ length: startOffset }).map((_, i) => (
+                    <Box key={`empty-${i}`} />
+                ))}
+                {Array.from({ length: daysInMonth }).map((_, i) => {
+                    const day = i + 1
+                    const date = new Date(today.getFullYear(), today.getMonth(), day)
+                    const count = bookingsPerDay[day] || 0
+                    const isTodayDate = isToday(date)
+                    const isWeekendDate = isWeekend(date)
+
+                    return (
+                        <Box
+                            key={day}
+                            sx={{
+                                py: 1,
+                                borderRadius: 2,
+                                ...(isTodayDate && {
+                                    bgcolor: '#4825A8',
+                                    color: 'white',
+                                }),
+                                ...(isWeekendDate &&
+                                    !isTodayDate && {
+                                        color: 'text.disabled',
+                                    }),
+                            }}
+                        >
+                            <Typography variant="body2" fontWeight={isTodayDate ? 700 : 400}>
+                                {day}
+                            </Typography>
+                            {count > 0 && (
+                                <Typography
+                                    variant="caption"
+                                    fontWeight="600"
+                                    sx={{ color: isTodayDate ? 'white' : '#4825A8' }}
+                                >
+                                    {count}
+                                </Typography>
+                            )}
+                        </Box>
+                    )
+                })}
+            </Box>
+        </Box>
+    )
+}
+
+const quickActions = [
+    { icon: <Event />, label: 'Objednávky', link: '/admin/orders' },
+    { icon: <Schedule />, label: 'Rozpis směn', link: '/admin/services' },
+    { icon: <DateRange />, label: 'Kalendář', link: '/admin/calendar' },
+    { icon: <Newspaper />, label: 'Oznámení', link: '/admin/announcements' },
+]
+
 const AdministrationWelcome = () => {
+    const navigate = useNavigate()
     const { name } = useUser()
     const { data: categories } = useGetCategories()
     const { selectedWorkspace } = useAdministration()
@@ -120,6 +219,14 @@ const AdministrationWelcome = () => {
         to: getISODateStringWithCorrectOffset(startOfToday()),
         workplace: selectedWorkspace,
     })
+
+    const { data: currentMonthBookings } = useGetImmediateBookings({
+        from: getISODateStringWithCorrectOffset(startOfMonth(new Date())),
+        to: getISODateStringWithCorrectOffset(endOfMonth(new Date())),
+        workplace: selectedWorkspace,
+    })
+
+    const bookingsPerDay = useMemo(() => getBookingsPerDay(currentMonthBookings), [currentMonthBookings])
 
     const categoryCounts = useMemo(
         () => getCategoryCounts(bookingsInLastMonth, categories),
@@ -140,8 +247,7 @@ const AdministrationWelcome = () => {
                     justifyContent="space-between"
                     alignItems="center"
                     gap={8}
-                    mb={5}
-                    height={'20vh'}
+                    mb={2}
                     sx={(theme) => ({
                         [theme.breakpoints.down('md')]: {
                             mt: 10,
@@ -153,7 +259,7 @@ const AdministrationWelcome = () => {
                         <Typography
                             variant="h3"
                             sx={(theme) => ({
-                                color: theme.palette.primary.main,
+                                color: '#4825A8',
                                 display: 'flex',
                                 flexDirection: 'column',
                             })}
@@ -163,14 +269,37 @@ const AdministrationWelcome = () => {
                             </span>
                         </Typography>
                         <Typography>
-                            Na dnešní den je objednáno <strong>{todayBookings?.length} </strong> pacientů!
+                            Na dnešní den je <strong>{todayBookings?.length} </strong> objednávek!
                             <br />
-                            Před vývoláním zkontrolujte kartu pacienta.
+                            Před vývoláním zkontrolujte informace.
                         </Typography>
                     </Box>
-                    <Hidden smDown>
-                        <img src={imgLogo} alt="Welcome logo" height={175} />
-                    </Hidden>
+                </Box>
+                <Box display="flex" gap={2} mb={4} flexWrap="wrap">
+                    {quickActions.map(({ icon, label, link }) => (
+                        <Button
+                            key={link}
+                            variant="outlined"
+                            startIcon={icon}
+                            onClick={() => navigate(link)}
+                            sx={{
+                                borderColor: '#4825A8',
+                                color: '#4825A8',
+                                borderRadius: 3,
+                                px: 3,
+                                py: 1.5,
+                                textTransform: 'none',
+                                fontWeight: 500,
+                                '&:hover': {
+                                    backgroundColor: '#4825A8',
+                                    color: 'white',
+                                    borderColor: '#4825A8',
+                                },
+                            }}
+                        >
+                            {label}
+                        </Button>
+                    ))}
                 </Box>
                 <Box
                     display="flex"
@@ -182,32 +311,35 @@ const AdministrationWelcome = () => {
                         },
                     })}
                 >
-                    <AdministrationDashboardTodayPatients />
+                    <Box display="flex" flexDirection="column" gap={3} sx={{ minWidth: 0 }}>
+                        <AdministrationDashboardTodayPatients />
+                        <MonthlyCalendar bookingsPerDay={bookingsPerDay} />
+                    </Box>
                     {!isMobile && (
                         <Box
-                            width={{
-                                md: '66.6vw',
-                                sm: '100%',
+                            sx={{
+                                flex: 1,
+                                minWidth: 0,
                                 display: 'flex',
                                 flexDirection: 'column',
-                                gap: '3vw',
+                                gap: 3,
                             }}
                         >
                             <List
-                                sx={(theme) => ({
+                                sx={{
                                     width: '100%',
                                     bgcolor: '#F9F9FB',
                                     borderRadius: 6,
                                     height: '30vh',
                                     padding: 2,
-                                })}
+                                }}
                             >
                                 <Typography
                                     align="center"
                                     sx={{ mb: 1, ml: 3, mt: 1, fontSize: '1rem' }}
                                     fontWeight="600"
                                 >
-                                    Počet pacientu dle kategorie za posledních 30 dnů
+                                    Počet objednávek dle kategorie za posledních 30 dnů
                                 </Typography>
                                 {isLoadingBookingsInLastMonth ? (
                                     <CircularProgress />
@@ -216,19 +348,19 @@ const AdministrationWelcome = () => {
                                 )}
                             </List>
                             <List
-                                sx={() => ({
+                                sx={{
                                     width: '100%',
                                     bgcolor: '#F9F9FB',
                                     borderRadius: 6,
                                     height: '30vh',
-                                })}
+                                }}
                             >
                                 <Typography
                                     align="center"
                                     sx={{ mb: 1, ml: 3, mt: 1, fontSize: '1rem' }}
                                     fontWeight="600"
                                 >
-                                    Průměrný počet pacientu dle dnů za posledních 30 dnů
+                                    Průměrný počet objednávek dle dnů za posledních 30 dnů
                                 </Typography>
                                 <Box display="flex" alignItems="center" justifyContent="center" height="80%">
                                     {isLoadingBookingsInLastMonth ? (

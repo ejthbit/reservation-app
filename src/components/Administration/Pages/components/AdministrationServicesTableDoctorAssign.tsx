@@ -1,15 +1,12 @@
 import { MenuItem, TableRow, useTheme } from '@mui/material'
-import { map, values } from 'ramda'
 import { Control, useFieldArray, UseFormSetValue, UseFormTrigger } from 'react-hook-form'
 import { getHalfHourTimeIncrements } from '../../../../utils'
 import { FormInput, FormSelectInput } from '../../../common'
 import { getTimeValuesToFilterOut } from '../utils/Services/utils'
 import AdministrationServicesEntryMenu from './AdministrationServicesEntryMenu'
 import { StyledCell } from './AdministrationServicesTable'
-import { useAdministration } from '../../../../context/Administration/AdministrationProvider'
-import { useReservation } from '../../../../context/Reservation'
-import { useEffect } from 'react'
 import { AmbulanceServiceDay, DoctorService } from '../../../../types/AmbulanceService'
+import { Doctor } from '../../../../types/Doctor'
 
 type AdministrationServicesTableDoctorAssignProps = {
     idx: number
@@ -26,6 +23,8 @@ type AdministrationServicesTableDoctorAssignProps = {
     trigger: UseFormTrigger<{
         data: AmbulanceServiceDay[]
     }>
+    doctors?: Doctor[]
+    isLoadingDoctors: boolean
 }
 
 const openingHours = getHalfHourTimeIncrements('07:00', '19:00') // TODO: use env variable
@@ -35,18 +34,10 @@ const AdministrationServicesTableDoctorAssign = ({
     setValue,
     date,
     trigger,
+    doctors: doctorsForSelectedAmbulance,
+    isLoadingDoctors: isLoading,
 }: AdministrationServicesTableDoctorAssignProps) => {
     const theme = useTheme()
-    const { selectedWorkspace: selectedAmbulanceId } = useAdministration()
-
-    const {
-        doctorsForSelectedAmbulance: { data: doctorsForSelectedAmbulance, isLoading },
-        api: { getDoctorsForSelectedAmbulance },
-    } = useReservation()
-
-    useEffect(() => {
-        if (getDoctorsForSelectedAmbulance) getDoctorsForSelectedAmbulance(parseInt(selectedAmbulanceId))
-    }, [selectedAmbulanceId])
 
     const { fields, append, remove, update } = useFieldArray({
         control,
@@ -118,8 +109,10 @@ const AdministrationServicesTableDoctorAssign = ({
                             fullWidth
                             required
                         >
-                            {map(
-                                (entry) => (
+                            {(fields.length > 1 && start == ''
+                                    ? getTimeValuesToFilterOut(fields, openingHours)
+                                    : openingHours
+                            ).map((entry) => (
                                     <MenuItem
                                         key={entry}
                                         value={`${date}T${entry}:00.000Z`}
@@ -134,11 +127,7 @@ const AdministrationServicesTableDoctorAssign = ({
                                     >
                                         {entry}
                                     </MenuItem>
-                                ),
-                                fields.length > 1 && start == ''
-                                    ? getTimeValuesToFilterOut(fields, openingHours)
-                                    : openingHours,
-                            )}
+                                ))}
                         </FormSelectInput>
                     </StyledCell>
                     <StyledCell sx={{ width: '10%' }}>
@@ -148,8 +137,7 @@ const AdministrationServicesTableDoctorAssign = ({
                             fullWidth
                             required
                         >
-                            {map(
-                                (entry) => (
+                            {openingHours.map((entry) => (
                                     <MenuItem
                                         key={entry}
                                         value={`${date}T${entry}:00.000Z`}
@@ -164,9 +152,7 @@ const AdministrationServicesTableDoctorAssign = ({
                                     >
                                         {entry}
                                     </MenuItem>
-                                ),
-                                openingHours,
-                            )}
+                                ))}
                         </FormSelectInput>
                     </StyledCell>
                     <StyledCell sx={{ width: '30%' }}>

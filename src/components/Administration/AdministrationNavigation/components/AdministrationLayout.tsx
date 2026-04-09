@@ -2,7 +2,6 @@ import { Box } from '@mui/material'
 import { Outlet } from 'react-router-dom'
 import { drawerWidth } from '../../../common'
 import AutomaticLogoutDialog from '../../../common/AutomaticLogOutDialog'
-import AdministrationPathBreadcrumbs from './AdministrationPathBreadcrumbs'
 
 const AdministrationLayout = ({ isDrawerOpen }: { isDrawerOpen: boolean }) => {
     return (
@@ -28,19 +27,7 @@ const AdministrationLayout = ({ isDrawerOpen }: { isDrawerOpen: boolean }) => {
                       }),
             })}
         >
-            <Box
-                display="flex"
-                mb={3}
-                alignItems="center"
-                sx={(theme) => ({
-                    backgroundColor: theme.palette.primary.main,
-                    borderRadius: 2,
-                    padding: 2,
-                })}
-            >
-                <AdministrationPathBreadcrumbs />
-                <AutomaticLogoutDialog />
-            </Box>
+            <AutomaticLogoutDialog />
             <Outlet />
         </Box>
     )

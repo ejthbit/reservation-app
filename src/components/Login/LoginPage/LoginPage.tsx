@@ -1,10 +1,10 @@
-import { yupResolver } from '@hookform/resolvers/yup'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Mail, Password } from '@mui/icons-material'
 import { Box, Button, CircularProgress, InputAdornment, Typography, styled } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2/Grid2'
 import { useForm } from 'react-hook-form'
 
-import * as yup from 'yup'
+import { z } from 'zod'
 import { isMobile } from '../../../utils'
 import FormInput from '../../common/Form/FormInput'
 import { useUser } from '../../../context/User/UserProvider'
@@ -19,7 +19,7 @@ const StyledRoot = styled(Box)(({ theme }) => ({
           }
         : {
               color: 'white',
-              backgroundColor: theme.palette.primary.main,
+              background: `linear-gradient(to bottom, #5A2EC4, #311B92)`,
               borderRadius: 12,
               height: '60vh',
               width: '60vw',
@@ -27,6 +27,11 @@ const StyledRoot = styled(Box)(({ theme }) => ({
           }),
     transition: 'all 0.6s ease-in-out',
 }))
+
+const loginSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(1),
+})
 
 const LoginPage = ({
     logo = <></>,
@@ -43,12 +48,7 @@ const LoginPage = ({
     const { handleSubmit, control, formState } = useForm({
         mode: 'onSubmit',
         reValidateMode: 'onChange',
-        resolver: yupResolver(
-            yup.object().shape({
-                email: yup.string().email().required(),
-                password: yup.string().required(),
-            }),
-        ),
+        resolver: zodResolver(loginSchema),
         defaultValues: { email: '', password: '' },
     })
 

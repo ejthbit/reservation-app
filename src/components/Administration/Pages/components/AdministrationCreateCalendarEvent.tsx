@@ -1,4 +1,4 @@
-import { yupResolver } from '@hookform/resolvers/yup'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
     Box,
     Dialog,
@@ -12,13 +12,13 @@ import {
 } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers'
 import { format } from 'date-fns'
-import { map } from 'ramda'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import * as yup from 'yup'
+import { z } from 'zod'
 import VALIDATION_MESSAGES from '../../../../constants/validationMessages'
 import { useFastBooking } from '../../../../context/Administration/AdministrationBookingsHooks'
 import { useAdministration } from '../../../../context/Administration/AdministrationProvider'
+import { useCalendarContext } from '../../../../context/Calendar/CalendarProvider'
 import { makeArrayOfLabelValue } from '../../../../context/Reservation/ReservationHelpers'
 import { useGetCategories } from '../../../../hooks/useGetCategories'
 import { Category } from '../../../../types'
@@ -27,25 +27,21 @@ import VALIDATION_PATTERNS from '../../../../utils/validationPatterns'
 import { DialogButtons, FormInput, FormSelectInput } from '../../../common'
 import { ReservationProcessData } from '../../../Reservation/ReservationDialog/helpers/prepareReservationForCreation'
 
-const formValidationSchema = yup.object({
-    name: yup.string().required(VALIDATION_MESSAGES.IS_REQUIRED_FIELD),
-    category: yup.number().required(VALIDATION_MESSAGES.IS_REQUIRED_FIELD),
-    contact: yup
-        .object({
-            email: yup.string().email(VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT).notRequired().nullable(),
-            phone: yup.string().when('$exists', {
-                is: (exists: boolean) => exists,
-                then: yup
-                    .string()
-                    .matches(VALIDATION_PATTERNS.TEL, {
-                        message: VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT,
-                        excludeEmptyString: true,
-                    })
-                    .min(9, 'Hodnota musí mít minimálně 9 číslic.'),
-                otherwise: yup.string().nullable().notRequired(),
-            }),
-        })
-        .notRequired(),
+const formValidationSchema = z.object({
+    contactInformation: z.object({
+        name: z.string().min(1, VALIDATION_MESSAGES.IS_REQUIRED_FIELD),
+        email: z.string().email(VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT).nullable().optional().or(z.literal('')),
+        phone: z
+            .string()
+            .regex(VALIDATION_PATTERNS.TEL, VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT)
+            .min(9, 'Hodnota musí mít minimálně 9 číslic.')
+            .nullable()
+            .optional()
+            .or(z.literal('')),
+        birthdate: z.string().optional(),
+    }),
+    selectedCategory: z.union([z.number(), z.string()]).refine((val) => val !== '', VALIDATION_MESSAGES.IS_REQUIRED_FIELD),
+    note: z.string().optional(),
 })
 const AdministrationCreateCalendarEventDialog = ({
     open = false,
@@ -62,6 +58,7 @@ const AdministrationCreateCalendarEventDialog = ({
     const { data: categories, isLoading: isLoadingCategories } = useGetCategories()
     const { trigger: createFastBooking, isMutating: isCreatingBooking } = useFastBooking()
     const { selectedWorkspace } = useAdministration()
+    const { refetchBookings } = useCalendarContext()
     const {
         handleSubmit,
         control,
@@ -71,7 +68,7 @@ const AdministrationCreateCalendarEventDialog = ({
     } = useForm({
         mode: 'onSubmit',
         reValidateMode: 'onChange',
-        resolver: yupResolver(formValidationSchema),
+        resolver: zodResolver(formValidationSchema),
         defaultValues: {
             contactInformation: {
                 name: '',
@@ -97,11 +94,16 @@ const AdministrationCreateCalendarEventDialog = ({
         await createFastBooking({
             selectedCategory,
             contactInformation,
-            selectedTime: getDateWithCorrectOffset(start).getTime().toString(),
-            selectedDate: getDateWithCorrectOffset(start).getDate().toLocaleString(),
+            selectedTime: start.slice(11, 19),
+            selectedDate: start.slice(0, 10),
             selectedAmbulanceId: parseInt(selectedWorkspace),
             selectedDoctor: '',
-        }).then((payload) => payload && onClose())
+        }).then((payload) => {
+            if (payload) {
+                refetchBookings()
+                onClose()
+            }
+        })
     }
 
     return (
@@ -133,17 +135,16 @@ const AdministrationCreateCalendarEventDialog = ({
                     >
                         {!isLoadingCategories &&
                             categories &&
-                            map(
+                            makeArrayOfLabelValue<Category[]>('name', 'category_id', categories).map(
                                 ({ label, value }) => (
                                     <MenuItem key={label} value={value}>
                                         {label}
                                     </MenuItem>
                                 ),
-                                makeArrayOfLabelValue<Category[]>('name', 'category_id', categories),
                             )}
                     </FormSelectInput>
                     <Controller
-                        name="contactInformation.name"
+                        name="contactInformation.birthdate"
                         control={control}
                         render={({ field }) => (
                             <DatePicker
