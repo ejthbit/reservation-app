@@ -132,7 +132,6 @@ const MonthlyCalendar = ({ bookingsPerDay }: { bookingsPerDay: Record<string, nu
     const today = new Date()
     const daysInMonth = getDaysInMonth(today)
     const firstDayOfMonth = startOfMonth(today)
-    // getDay returns 0=Sun, we want Mon=0
     const startOffset = (getDay(firstDayOfMonth) + 6) % 7
     const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne']
 

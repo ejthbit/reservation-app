@@ -48,7 +48,7 @@ const doctorsArraySchema = z.array(doctorSchema).superRefine((doctors, ctx) => {
         // start required if end is set
         if (doctor.end && !doctor.start) {
             ctx.addIssue({
-                code: z.ZodIssueCode.custom,
+                code: 'custom',
                 message: 'Zadaná hodnota musí být vyplněna!',
                 path: [index, 'start'],
             })
@@ -56,7 +56,7 @@ const doctorsArraySchema = z.array(doctorSchema).superRefine((doctors, ctx) => {
         // end required if start is set
         if (doctor.start && !doctor.end) {
             ctx.addIssue({
-                code: z.ZodIssueCode.custom,
+                code: 'custom',
                 message: 'Zadaná hodnota musí být vyplněna!',
                 path: [index, 'end'],
             })
@@ -65,7 +65,7 @@ const doctorsArraySchema = z.array(doctorSchema).superRefine((doctors, ctx) => {
         if (doctor.start && doctor.end && !isNilOrEmpty(doctor.end)) {
             if (new Date(doctor.start) >= new Date(doctor.end)) {
                 ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
+                    code: 'custom',
                     message: 'Zadaná hodnota musí být menší než hodnota `Do`!',
                     path: [index, 'start'],
                 })
@@ -74,7 +74,7 @@ const doctorsArraySchema = z.array(doctorSchema).superRefine((doctors, ctx) => {
         if (doctor.end && doctor.start && !isNilOrEmpty(doctor.start)) {
             if (new Date(doctor.end) <= new Date(doctor.start)) {
                 ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
+                    code: 'custom',
                     message: 'Zadaná hodnota musí být vetší než hodnota`Od`!',
                     path: [index, 'end'],
                 })
@@ -85,7 +85,7 @@ const doctorsArraySchema = z.array(doctorSchema).superRefine((doctors, ctx) => {
             const prev = doctors[index - 1]!
             if (doctor.start < prev.end) {
                 ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
+                    code: 'custom',
                     message: 'Hodnota musí být vetší než hodnota `Do` předchozího záznamu.',
                     path: [index, 'start'],
                 })
@@ -154,9 +154,7 @@ const ServicesTable = ({
             workplace: selectedWorkplaceId,
         }
         try {
-            !isEditingServices
-                ? await createServiceForMonth(apiData)
-                : await updateServiceForMonth(apiData)
+            !isEditingServices ? await createServiceForMonth(apiData) : await updateServiceForMonth(apiData)
             enqueueSnackbar('Rozpis byl úspěšně uložen.', { variant: 'success' })
         } catch (err) {
             enqueueSnackbar('Nastala chyba při ukládání.', { variant: 'error' })

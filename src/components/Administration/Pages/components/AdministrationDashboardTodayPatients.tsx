@@ -10,35 +10,29 @@ import {
     Typography,
 } from '@mui/material'
 import { addMinutes, format, subMinutes } from 'date-fns'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useGetBookings } from '../../../../context/Administration/AdministrationBookingsHooks'
 import { useAdministration } from '../../../../context/Administration/AdministrationProvider'
 import { getDateWithCorrectOffset, getISODateStringWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
 
-const from = getISODateStringWithCorrectOffset(
-    subMinutes(new Date(), import.meta.env.VITE_APPOINTMENT_DURATION ?? 10),
-)
-const to = getISODateStringWithCorrectOffset(
-    addMinutes(new Date(), import.meta.env.VITE_APPOINTMENT_DURATION ?? 10 * 4),
-)
+const duration = Number(import.meta.env.VITE_APPOINTMENT_DURATION) || 10
 
 const AdministrationDashboardTodayPatients = () => {
     const { selectedWorkspace: workplace } = useAdministration()
     const { data: todayBookings, isMutating: isFetching, trigger: getBookings } = useGetBookings()
 
-    // FIXME: Call with actual time
-    useEffect(() => {
+    const fetchBookings = useCallback(() => {
+        const now = new Date()
+        const from = getISODateStringWithCorrectOffset(subMinutes(now, duration))
+        const to = getISODateStringWithCorrectOffset(addMinutes(now, duration * 4))
         getBookings({ from, to, workplace })
-        const interval = setInterval(() => {
-            getBookings({
-                from,
-                to,
-                workplace,
-            })
-        }, 60000)
+    }, [getBookings, workplace])
 
+    useEffect(() => {
+        fetchBookings()
+        const interval = setInterval(fetchBookings, 150000)
         return () => clearInterval(interval)
-    }, [workplace])
+    }, [fetchBookings])
 
     return (
         <Box width={{ md: '33.3vw', sm: '100%' }}>

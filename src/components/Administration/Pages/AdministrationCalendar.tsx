@@ -79,7 +79,7 @@ const AdministrationCalendarInner = () => {
                 <DragAndDropCalendar
                     formats={calendarFormats}
                     onEventDrop={moveEvent}
-                    // dragFromOutsideItem={(event: BookingEvent) => dragFromOutsideItem(event)}
+                    dragFromOutsideItem={dragFromOutsideItem as unknown as () => keyof BookingEvent}
                     onDropFromOutside={onDropFromOutside}
                     handleDragStart={handleDragStart}
                     min={new Date(0, 0, 0, 7, 0, 0)}

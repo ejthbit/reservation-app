@@ -5,7 +5,6 @@ import { useSnackbar } from 'notistack'
 import { User } from '../../types'
 import axiosGynInstance from '../../api/config'
 
-// Define the type for user data
 interface UserData {
     success?: boolean
     token: string
@@ -13,7 +12,6 @@ interface UserData {
     user?: User
 }
 
-// Define the type for the context value
 interface UserContextType extends Omit<User, 'default_workspace'> {
     userError: Error | undefined
     isLoadingUser: boolean
@@ -67,7 +65,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const id = storedUser?.user?.id ?? userData?.user?.id
     const email = storedUser?.user?.email ?? userData?.user?.email
     const name = storedUser?.user?.name ?? userData?.user?.name
-    // TODO: Rename me to camelCase
     const defaultWorkplace = storedUser?.user?.default_workplace ?? userData?.user?.default_workplace ?? '1'
     const userRole = storedUser?.user?.user_role ?? userData?.user?.user_role ?? 1
 
