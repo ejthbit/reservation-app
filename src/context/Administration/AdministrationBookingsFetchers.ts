@@ -11,11 +11,9 @@ export const fetchBookings = async ({
 }: {
     from: string
     to: string
-    workplace?: string
+    workplace: string
 }) => {
-    const URL = `bookings/getBookings/${from}/${to}`
-    const endpoint = workplace ? `${URL}/${workplace}` : URL
-    const { data } = await axiosGynInstance.get<Booking[]>(endpoint)
+    const { data } = await axiosGynInstance.get<Booking[]>(`bookings/getBookings/${from}/${to}/${workplace}`)
     return data
 }
 

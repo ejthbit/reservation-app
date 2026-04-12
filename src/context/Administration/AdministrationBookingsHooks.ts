@@ -11,11 +11,11 @@ export const useGetImmediateBookings = ({
 }: {
     from: string
     to: string
-    workplace?: string
+    workplace: string
 }) => {
     const { data, error, isLoading, isValidating } = useSWR(
         ['administration/bookings', { from, to, workplace }],
-        ([_, arg]) => fetchBookings(arg), // Fetcher function gets `arg` from the key
+        ([_, arg]) => fetchBookings(arg),
     )
 
     return { data, error, isLoading, isValidating }
@@ -26,8 +26,8 @@ export const useGetBookings = () => {
         'administration/bookings',
         (
             key,
-            { arg }: { arg: { from: string; to: string; workplace?: string } }, // The key for cache
-        ) => fetchBookings({ ...arg }), // The fetcher function
+            { arg }: { arg: { from: string; to: string; workplace: string } },
+        ) => fetchBookings(arg),
     )
 
     return { data, error, isMutating, trigger }

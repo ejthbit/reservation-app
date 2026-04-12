@@ -11,9 +11,9 @@ interface AdministrationNewsListItemProps {
     id?: string
     created_at?: string
     name: string
-    description: string
+    description?: string
     enabled: boolean
-    author: string
+    author?: string
     index: number
     onDelete: () => void
     onUpdate: (

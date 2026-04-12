@@ -5,4 +5,5 @@ export type Doctor = {
     name: string
     workplace_id: string[]
     preferred_service_start: string
+    categories?: string[]
 }

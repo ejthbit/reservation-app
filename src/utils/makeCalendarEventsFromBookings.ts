@@ -13,7 +13,7 @@ export type BookingEventResource = {
     name: string
     note?: string | null
     phone?: string
-    selectedDoctorId?: string | null
+    selected_doctor_id?: string | null
     workplace: number
 }
 

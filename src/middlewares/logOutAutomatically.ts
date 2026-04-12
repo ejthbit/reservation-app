@@ -13,17 +13,14 @@ const checkTokenExpirationMiddleware: Middleware = (useSWRNext: SWRHook) => (key
         localStorage.removeItem('user')
     }
 
-    if (!isNilOrEmpty(tokenExp) && tokenExp! < Date.now()) {
+    if (!isNilOrEmpty(tokenExp) && tokenExp! * 1000 < Date.now()) {
+        localStorage.removeItem('user')
         logOutAutomatically()
-        setTimeout(() => {
-            localStorage.removeItem('user')
-            logOut()
-        }, 30000)
+        setTimeout(() => logOut(), 30000)
+        return useSWRNext(key, null, config)
     }
 
-    const swr = useSWRNext(key, fetcher, config)
-
-    return swr
+    return useSWRNext(key, fetcher, config)
 }
 
 export default checkTokenExpirationMiddleware

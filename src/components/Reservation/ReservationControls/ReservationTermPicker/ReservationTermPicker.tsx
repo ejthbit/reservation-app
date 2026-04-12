@@ -11,6 +11,7 @@ import {
 import { useDoctorServices } from '../../../../hooks'
 import { AmbulanceServiceDay } from '../../../../types/AmbulanceService'
 import { isNilOrEmpty } from '../../../../utils'
+import { DoctorService } from '../../../../types/AmbulanceService'
 import ReservationCategorySelect from '../ReservationCategorySelect'
 import { ReservationTime, TermPicker } from './components'
 
@@ -26,7 +27,9 @@ const ReservationTermPicker = ({ step }: { step: string }) => {
         setters: { setSelectedCategory, setSelectedTime, setReservationBtnDisabled },
     } = useReservation()
 
-    const [isDoctorServing, setIsDoctorServing] = useState<any>(undefined)
+    const [isDoctorServing, setIsDoctorServing] = useState<DoctorService | DoctorService[] | undefined>(
+        undefined,
+    )
     const availableTimeSlotsWithTimeOnly = useMemo(
         () => (availableTimeSlots.slots ? makeAvailableTimeSlotsWithTimeOnly(availableTimeSlots.slots) : {}),
         [availableTimeSlots, selectedDate],
@@ -62,7 +65,7 @@ const ReservationTermPicker = ({ step }: { step: string }) => {
             return undefined
         })
         const servingDoctor = !isNilOrEmpty(selectedDoctor)
-            ? servesItem?.doctors.find((d) => d.doctorId === selectedDoctor)
+            ? servesItem?.doctors.find((d) => d.doctorId === selectedDoctor.toString())
             : servesItem?.doctors
 
         if (!isNilOrEmpty(servingDoctor)) {
@@ -86,11 +89,11 @@ const ReservationTermPicker = ({ step }: { step: string }) => {
                       workplace: selectedAmbulanceId.toString(),
                   })
                 : isDoctorServing.forEach(({ start, end }: { start: string; end: string }) =>
-                          fetchAvailableTimeSlots({
-                              from: start,
-                              to: end,
-                              workplace: selectedAmbulanceId.toString(),
-                          }),
+                      fetchAvailableTimeSlots({
+                          from: start,
+                          to: end,
+                          workplace: selectedAmbulanceId.toString(),
+                      }),
                   )
         }
     }, [isDoctorServing])

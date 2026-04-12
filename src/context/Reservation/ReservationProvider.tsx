@@ -95,7 +95,7 @@ export const ReservationProvider = ({ children }: PropsWithChildren) => {
         error: doctorsForSelectedAmbulanceError,
         reset: clearDoctorsForSelectedAmbulance,
         isMutating: isLoadingDoctorsForSelectedAmbulance,
-    } = useSWRMutation<Doctor[], Error, string, number>('bookings/booking', (key, { arg }) =>
+    } = useSWRMutation<Doctor[], Error, string, number>('configuration/getDoctors', (key, { arg }) =>
         getDoctorsForSelectedAmbulanceFetcher(arg),
     )
 

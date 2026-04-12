@@ -10,7 +10,7 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import { DatePicker } from '@mui/x-date-pickers'
+import { MobileDatePicker } from '@mui/x-date-pickers'
 import { format } from 'date-fns'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -30,7 +30,7 @@ import { ReservationProcessData } from '../../../Reservation/ReservationDialog/h
 const formValidationSchema = z.object({
     contactInformation: z.object({
         name: z.string().min(1, VALIDATION_MESSAGES.IS_REQUIRED_FIELD),
-        email: z.string().email(VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT).nullable().optional().or(z.literal('')),
+        email: z.email(VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT).nullable().optional().or(z.literal('')),
         phone: z
             .string()
             .regex(VALIDATION_PATTERNS.TEL, VALIDATION_MESSAGES.IS_NOT_CORRECT_FORMAT)
@@ -40,7 +40,9 @@ const formValidationSchema = z.object({
             .or(z.literal('')),
         birthdate: z.string().optional(),
     }),
-    selectedCategory: z.union([z.number(), z.string()]).refine((val) => val !== '', VALIDATION_MESSAGES.IS_REQUIRED_FIELD),
+    selectedCategory: z
+        .union([z.number(), z.string()])
+        .refine((val) => val !== '', VALIDATION_MESSAGES.IS_REQUIRED_FIELD),
     note: z.string().optional(),
 })
 const AdministrationCreateCalendarEventDialog = ({
@@ -143,11 +145,12 @@ const AdministrationCreateCalendarEventDialog = ({
                                 ),
                             )}
                     </FormSelectInput>
+
                     <Controller
                         name="contactInformation.birthdate"
                         control={control}
                         render={({ field }) => (
-                            <DatePicker
+                            <MobileDatePicker
                                 disableFuture
                                 label="Datum narození"
                                 openTo="year"

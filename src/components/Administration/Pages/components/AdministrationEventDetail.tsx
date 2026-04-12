@@ -13,7 +13,6 @@ import {
 } from '@mui/material'
 import { MobileDateTimePicker } from '@mui/x-date-pickers'
 import { addMinutes } from 'date-fns'
-import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
@@ -26,6 +25,8 @@ import { UpdatedBooking } from '../../../../types'
 import { getISODateStringWithCorrectOffset, isNilOrEmpty } from '../../../../utils'
 import { BookingEvent } from '../../../../utils/makeCalendarEventsFromBookings'
 import { DialogButtons, FormInput, FormSelectInput } from '../../../common'
+import { TermPickerinput } from '../../../Reservation/ReservationControls/ReservationTermPicker/components'
+import { useCalendarContext } from '../../../../context/Calendar/CalendarProvider'
 
 const AdministrationEventDetail = ({
     event,
@@ -38,12 +39,13 @@ const AdministrationEventDetail = ({
     const [completedValue, setCompletedValue] = useState(false)
     const { trigger: updateBooking, isMutating: updatingBooking } = useUpdateBooking()
     const { trigger: deleteBooking, isMutating: deletingBooking } = useDeleteBooking()
+    const { refetchBookings } = useCalendarContext()
 
     const {
         control,
         handleSubmit,
         reset,
-        formState: { isDirty },
+        formState: { isDirty, errors },
         setValue,
     } = useForm({
         defaultValues: {
@@ -63,7 +65,6 @@ const AdministrationEventDetail = ({
     if (!event.id) {
         return null
     }
-
     const handlePatchBooking = async (updatedBooking: Omit<UpdatedBooking, 'id' | 'workplace'>) => {
         if (event.id) {
             await updateBooking({
@@ -74,13 +75,24 @@ const AdministrationEventDetail = ({
                     new Date(updatedBooking.start),
                     import.meta.env.VITE_APPOINTMENT_DURATION,
                 ).toISOString(),
-            }).then((payload) => payload && handleClose())
+            }).then((payload) => {
+                if (payload) {
+                    refetchBookings()
+                    handleClose()
+                }
+            })
         }
     }
+
     const handleDeleteBooking = async () => {
         const confirmDelete = window.confirm('Jste si jisti, že chcete zrušit tuto rezervaci? ')
         if (confirmDelete && event.id) {
-            await deleteBooking(event.id.toString()).then((payload) => payload && handleClose())
+            await deleteBooking(event.id.toString()).then((payload) => {
+                if (payload) {
+                    refetchBookings()
+                    handleClose()
+                }
+            })
         }
     }
 
@@ -101,7 +113,7 @@ const AdministrationEventDetail = ({
                 completed: resource?.completed,
                 category: resource?.category,
                 note: resource?.note ?? '',
-                selectedDoctorId: resource?.selectedDoctorId ?? '',
+                selectedDoctorId: resource?.selected_doctor_id ?? '',
             })
         }
     }, [event, reset])
@@ -117,13 +129,15 @@ const AdministrationEventDetail = ({
                         <MobileDateTimePicker
                             key="start"
                             label="Začátek rezervace"
-                            // variant="dialog"
                             format="dd-MM-yyyy HH:mm"
                             value={startValue}
                             sx={{
                                 '& .MuiPickersToolbar-penIconButton': {
                                     display: 'none',
                                 },
+                            }}
+                            slots={{
+                                textField: (props) => <TermPickerinput ref={props.inputRef} {...props} />,
                             }}
                             onChange={(date: Date | null) => {
                                 field.onChange(date)
@@ -135,6 +149,7 @@ const AdministrationEventDetail = ({
                             }}
                             ampm={false}
                             minutesStep={Number(import.meta.env.VITE_APPOINTMENT_DURATION)}
+                            disablePast
                         />
                     )}
                 />
@@ -231,11 +246,6 @@ const AdministrationEventDetail = ({
             )}
         </Dialog>
     )
-}
-
-AdministrationEventDetail.propTypes = {
-    event: PropTypes.object,
-    handleClose: PropTypes.func,
 }
 
 export default AdministrationEventDetail

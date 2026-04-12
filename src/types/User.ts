@@ -1,5 +1,5 @@
 export type User = {
-    user_role?: number
+    role?: string
     id?: number
     email?: string
     name?: string

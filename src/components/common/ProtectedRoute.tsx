@@ -1,5 +1,4 @@
-import { useEffect } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { useUser } from '../../context/User/UserProvider'
 
 type ProtectedRouteProps = {
@@ -10,22 +9,13 @@ type ProtectedRouteProps = {
 
 const ProtectedRoute = ({ children, shouldLogin = false, loginPath }: ProtectedRouteProps) => {
     const { isLoggedIn } = useUser()
-    const navigate = useNavigate()
-
-    useEffect(() => {
-        if (!isLoggedIn) {
-            if (shouldLogin) navigate(loginPath)
-            else navigate('/')
-        }
-    }, [isLoggedIn])
 
     if (isLoggedIn) return children
-    return isLoggedIn ? (
-        children
-    ) : shouldLogin ? (
-        <Navigate to={{ pathname: loginPath }} />
+
+    return shouldLogin ? (
+        <Navigate to={{ pathname: loginPath }} replace />
     ) : (
-        <Navigate to={{ pathname: '/' }} />
+        <Navigate to={{ pathname: '/' }} replace />
     )
 }
 

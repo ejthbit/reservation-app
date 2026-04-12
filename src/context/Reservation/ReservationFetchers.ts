@@ -16,10 +16,10 @@ export const getAvailableTimeSlotsFetcher = async ({ from, to, workplace }: Time
     ).data
 
 export const createBookingFetcher = async (reservationData: ReservationProcessData) =>
-    (await axiosGynInstance.post(
+    (await axiosGynInstance.post<Booking>(
         `bookings/booking`,
         prepareReservationForCreation(reservationData),
-    )) as Booking
+    )).data
 
 export const getDoctorsForSelectedAmbulanceFetcher = async (ambulanceId: number) =>
     (await axiosGynInstance.get(`configuration/getDoctors/${ambulanceId}`)).data.data

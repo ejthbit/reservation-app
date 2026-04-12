@@ -2,7 +2,7 @@ export type Announcement = {
     id?: string
     created_at?: string
     name: string
-    description: string
+    description?: string
     enabled: boolean
-    author: string
+    author?: string
 }

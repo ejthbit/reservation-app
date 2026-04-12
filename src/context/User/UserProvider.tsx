@@ -1,4 +1,4 @@
-import { PropsWithChildren, createContext, useContext, useState } from 'react'
+import { PropsWithChildren, createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { Key } from 'swr'
 import useSWRMutation from 'swr/mutation'
 import { useSnackbar } from 'notistack'
@@ -12,12 +12,12 @@ interface UserData {
     user?: User
 }
 
-interface UserContextType extends Omit<User, 'default_workspace'> {
+interface UserContextType extends Omit<User, 'default_workplace' | 'role'> {
     userError: Error | undefined
     isLoadingUser: boolean
     isLoggedIn: boolean
     automaticallyLoggedOut: boolean
-    userRole: number
+    userRole: string
     defaultWorkplace: string
     logIn: (data: { email: string; password: string }) => void
     logOut: () => void
@@ -43,6 +43,16 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
     const [automaticallyLoggedOut, logOutAutomatically] = useState(false)
 
+    const [storedUser, setStoredUser] = useState<UserData | undefined>(() => {
+        try {
+            const item = localStorage.getItem('user')
+            return item ? JSON.parse(item) : undefined
+        } catch {
+            localStorage.removeItem('user')
+            return undefined
+        }
+    })
+
     const {
         data: userData,
         error: userError,
@@ -50,25 +60,26 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         trigger: logIn,
         reset,
     } = useSWRMutation<UserData, Error, string, { email: string; password: string }>('api/user', signIn, {
-        onSuccess: (data) => localStorage.setItem('user', JSON.stringify(data)),
+        onSuccess: (data) => {
+            localStorage.setItem('user', JSON.stringify(data))
+            setStoredUser(data)
+        },
     })
-    const storedUserItem = localStorage.getItem('user')
-    let storedUser: UserData | undefined
-    try {
-        storedUser = storedUserItem ? JSON.parse(storedUserItem) : undefined
-    } catch {
-        localStorage.removeItem('user')
-        storedUser = undefined
-    }
 
     const isLoggedIn = storedUser?.success ?? userData?.success ?? false
     const id = storedUser?.user?.id ?? userData?.user?.id
     const email = storedUser?.user?.email ?? userData?.user?.email
     const name = storedUser?.user?.name ?? userData?.user?.name
     const defaultWorkplace = storedUser?.user?.default_workplace ?? userData?.user?.default_workplace ?? '1'
-    const userRole = storedUser?.user?.user_role ?? userData?.user?.user_role ?? 1
+    const userRole = storedUser?.user?.role ?? userData?.user?.role ?? 'user'
 
-    const value: UserContextType = {
+    useEffect(() => {
+        if (userError) {
+            enqueueSnackbar('Příhlášení nebylo úspěšné, prosím zkuste to později.', { variant: 'error' })
+        }
+    }, [userError, enqueueSnackbar])
+
+    const value: UserContextType = useMemo(() => ({
         userError,
         isLoadingUser,
         isLoggedIn,
@@ -77,18 +88,15 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         email,
         name,
         defaultWorkplace,
-        userRole: userRole,
+        userRole,
         logIn,
         logOut: () => {
             reset()
             localStorage.removeItem('user')
+            setStoredUser(undefined)
         },
         logOutAutomatically: () => logOutAutomatically((state) => !state),
-    }
-
-    if (userError) {
-        enqueueSnackbar('Příhlášení nebylo úspěšné, prosím zkuste to později.', { variant: 'error' })
-    }
+    }), [userError, isLoadingUser, isLoggedIn, automaticallyLoggedOut, id, email, name, defaultWorkplace, userRole, logIn, reset])
 
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>
 }

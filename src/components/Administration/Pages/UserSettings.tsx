@@ -17,7 +17,7 @@ const UserSettings = () => {
         formState: { isDirty },
     } = useForm({
         defaultValues: {
-            userRole: 1,
+            userRole: 'user',
             id: 0,
             email: '',
             name: '',
@@ -47,14 +47,13 @@ const UserSettings = () => {
                     name="userRole"
                     control={control}
                     fullWidth
-                    disabled={userRole !== 0}
+                    disabled={userRole !== 'admin'}
                 >
                     {[
-                            { label: 'Admin', value: 0 },
-                            { label: 'Sestra', value: 1 },
-                            { label: 'Doktor', value: 2 },
+                            { label: 'Admin', value: 'admin' },
+                            { label: 'Uživatel', value: 'user' },
                         ].map(({ label, value }) => (
-                            <MenuItem key={label} value={value} disabled={userRole !== 0}>
+                            <MenuItem key={label} value={value} disabled={userRole !== 'admin'}>
                                 {label}
                             </MenuItem>
                         ))}
