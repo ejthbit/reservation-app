@@ -119,7 +119,7 @@ const AdministrationOrders = () => {
                         />
                     </Grid>
                     {controlButtons.map(({ label, onClick }) => (
-                        <Grid item xs={12} sm={2}>
+                        <Grid key={label} item xs={12} sm={2}>
                             <Button variant="outlined" color="primary" onClick={onClick} fullWidth>
                                 {label}
                             </Button>
