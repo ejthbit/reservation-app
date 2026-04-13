@@ -39,7 +39,7 @@ export const AdministrationProvider = ({ children }: PropsWithChildren) => {
                 enqueueSnackbar(`Pracoviště bylo úspěšně změněno na ${workspace}`, { variant: 'success' })
             },
         }),
-        [selectedWorkspace, selectedViewDateRange],
+        [selectedWorkspace, selectedViewDateRange, enqueueSnackbar],
     )
 
     return (

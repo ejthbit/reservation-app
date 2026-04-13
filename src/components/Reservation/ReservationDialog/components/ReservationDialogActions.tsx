@@ -1,5 +1,4 @@
 import { DialogActions, Typography } from '@mui/material'
-import PropTypes from 'prop-types'
 
 const ReservationDialogActions = ({ onClose }: { onClose: () => void }) => {
     return (
@@ -29,10 +28,6 @@ const ReservationDialogActions = ({ onClose }: { onClose: () => void }) => {
             </Typography>
         </DialogActions>
     )
-}
-
-ReservationDialogActions.propTypes = {
-    onClose: PropTypes.func.isRequired,
 }
 
 export default ReservationDialogActions

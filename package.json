@@ -31,7 +31,8 @@
         "build:dev": "vite build --mode development",
         "preview": "vite preview",
         "run:mfe": "pnpm build:dev && vite preview",
-        "lint": "eslint src/",
+        "lint": "eslint .",
+        "typecheck": "tsc --noEmit",
         "prepublishOnly": "pnpm build"
     },
     "dependencies": {

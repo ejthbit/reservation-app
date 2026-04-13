@@ -9,9 +9,8 @@ import {
     useReservation,
 } from '../../../../context/Reservation'
 import { useDoctorServices } from '../../../../hooks'
-import { AmbulanceServiceDay } from '../../../../types/AmbulanceService'
+import { AmbulanceServiceDay, DoctorService } from '../../../../types/AmbulanceService'
 import { isNilOrEmpty } from '../../../../utils'
-import { DoctorService } from '../../../../types/AmbulanceService'
 import ReservationCategorySelect from '../ReservationCategorySelect'
 import { ReservationTime, TermPicker } from './components'
 
@@ -81,20 +80,14 @@ const ReservationTermPicker = ({ step }: { step: string }) => {
     }, [selectedDate, doctorServicesBySelectedDoctorIdAndMonth])
 
     useEffect(() => {
-        if (!isNilOrEmpty(isDoctorServing) && fetchAvailableTimeSlots && selectedAmbulanceId) {
-            !Array.isArray(isDoctorServing)
-                ? fetchAvailableTimeSlots({
-                      from: isDoctorServing?.start,
-                      to: isDoctorServing?.end,
-                      workplace: selectedAmbulanceId.toString(),
-                  })
-                : isDoctorServing.forEach(({ start, end }: { start: string; end: string }) =>
-                      fetchAvailableTimeSlots({
-                          from: start,
-                          to: end,
-                          workplace: selectedAmbulanceId.toString(),
-                      }),
-                  )
+        if (!isDoctorServing || !fetchAvailableTimeSlots || !selectedAmbulanceId) return
+        const workplace = selectedAmbulanceId.toString()
+        if (Array.isArray(isDoctorServing)) {
+            isDoctorServing.forEach(({ start, end }) =>
+                fetchAvailableTimeSlots({ from: start, to: end, workplace }),
+            )
+        } else {
+            fetchAvailableTimeSlots({ from: isDoctorServing.start, to: isDoctorServing.end, workplace })
         }
     }, [isDoctorServing])
 

@@ -1,5 +1,4 @@
 import { Step, StepContent, StepLabel, Stepper } from '@mui/material'
-import { CheckCircle } from '@mui/icons-material'
 import { Box } from '@mui/system'
 import { useMemo } from 'react'
 import isNilOrEmpty from '../../../../utils/isNilOrEmpty'
@@ -39,7 +38,10 @@ export const ReservationStepper = ({ stepsConfiguration }: { stepsConfiguration:
     } = useReservation()
 
     const steps = useMemo(
-        () => getStepsConfiguration(stepsConfiguration, isLoading, errors, completed).filter((s) => !isNilOrEmpty(s)),
+        () =>
+            getStepsConfiguration(stepsConfiguration, isLoading, errors, completed).filter(
+                (s) => !isNilOrEmpty(s),
+            ),
         [stepsConfiguration, isLoading, errors, completed],
     )
     return (

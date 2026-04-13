@@ -9,7 +9,6 @@ import {
     FormControlLabel,
     LinearProgress,
     MenuItem,
-    TextField,
 } from '@mui/material'
 import { MobileDateTimePicker } from '@mui/x-date-pickers'
 import { addMinutes } from 'date-fns'
@@ -45,7 +44,7 @@ const AdministrationEventDetail = ({
         control,
         handleSubmit,
         reset,
-        formState: { isDirty, errors },
+        formState: { isDirty },
         setValue,
     } = useForm({
         defaultValues: {
@@ -103,7 +102,6 @@ const AdministrationEventDetail = ({
             const { start, title: name, resource } = event
             setStartValue(start)
             setCompletedValue(resource?.completed ?? false)
-            // setPrecautionaryInspectionValue(equals(resource?.category, 2))
             reset({
                 start: getISODateStringWithCorrectOffset(start),
                 name: name?.split(' - ')[0],
@@ -113,7 +111,7 @@ const AdministrationEventDetail = ({
                 completed: resource?.completed,
                 category: resource?.category,
                 note: resource?.note ?? '',
-                selectedDoctorId: resource?.selected_doctor_id ?? '',
+                selectedDoctorId: String(resource?.selected_doctor_id ?? ''),
             })
         }
     }, [event, reset])

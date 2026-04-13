@@ -2,7 +2,9 @@ import js from '@eslint/js'
 import reactRecommendedPlugin from 'eslint-plugin-react'
 import hooksPlugin from 'eslint-plugin-react-hooks'
 
+/** @type {import('eslint').Linter.Config[]} */
 export default [
+    { ignores: ['**/node_modules/**', 'dist/'] },
     js.configs.recommended,
     {
         plugins: { react: reactRecommendedPlugin, 'react-hooks': hooksPlugin },

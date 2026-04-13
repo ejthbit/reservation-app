@@ -12,7 +12,7 @@ export type Booking = {
     category: number
     completed: boolean
     note?: string | null
-    selected_doctor_id?: number | null
+    selected_doctor_id?: number | string | null
 }
 
 export type UpdatedBooking = {

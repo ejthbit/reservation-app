@@ -99,7 +99,7 @@ export const ReservationProvider = ({ children }: PropsWithChildren) => {
         getDoctorsForSelectedAmbulanceFetcher(arg),
     )
 
-    const [selectedDate, setSelectedDatee] = useState(reservationProcessInitialState.selectedDate)
+    const [selectedDate, setSelectedDateRaw] = useState(reservationProcessInitialState.selectedDate)
     const [selectedTime, setSelectedTime] = useState(reservationProcessInitialState.selectedTime)
     const [selectedCategory, setSelectedCategory] = useState(reservationProcessInitialState.selectedCategory)
     const [selectedAmbulance, setSelectedAmbulance] = useState(
@@ -114,7 +114,7 @@ export const ReservationProvider = ({ children }: PropsWithChildren) => {
     )
     const setContactInfo = (payload: Record<string, string | null>) =>
         setContactInformation((prevState) => ({ ...prevState, ...payload }))
-    const setSelectedDate = (date: Date) => setSelectedDatee(format(date, 'yyyy-MM-dd'))
+    const setSelectedDate = (date: Date) => setSelectedDateRaw(format(date, 'yyyy-MM-dd'))
     const clearReservation = () => {
         setActiveStep(reservationProcessInitialState.activeStep)
         setSelectedDate(getDateWithCorrectOffset(reservationProcessInitialState.selectedDate))
