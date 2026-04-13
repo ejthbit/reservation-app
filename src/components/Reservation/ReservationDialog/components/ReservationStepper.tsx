@@ -1,5 +1,4 @@
-import { Step, StepContent, StepLabel, Stepper } from '@mui/material'
-import { Box } from '@mui/system'
+import { Box, Step, StepContent, StepLabel, Stepper, Theme } from '@mui/material'
 import { useMemo } from 'react'
 import isNilOrEmpty from '../../../../utils/isNilOrEmpty'
 import DEFAULT_STEPS from '../constants/defaultSteps'
@@ -46,7 +45,7 @@ export const ReservationStepper = ({ stepsConfiguration }: { stepsConfiguration:
     )
     return (
         <Box
-            sx={(theme) => ({
+            sx={(theme: Theme) => ({
                 width: '100%',
                 '& .MuiPaper-root': {
                     backgroundColor: 'transparent',

@@ -1,5 +1,4 @@
 import { SelectChangeEvent } from '@mui/material'
-import PropTypes from 'prop-types'
 import { useEffect } from 'react'
 import useReservationButton from '../../../hooks/useReservationButton'
 import { isNilOrEmpty } from '../../../utils'
@@ -39,7 +38,4 @@ const ReservationDoctorSelect = ({ step }: { step: string }) => {
     ) : null
 }
 
-ReservationDoctorSelect.propTypes = {
-    step: PropTypes.string.isRequired,
-}
 export default ReservationDoctorSelect
