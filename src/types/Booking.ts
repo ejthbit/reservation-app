@@ -23,6 +23,7 @@ export type UpdatedBooking = {
     category: number
     contact?: Contact
     note?: string
+    completed?: boolean
     workplace: number
     birthdate: string
 }

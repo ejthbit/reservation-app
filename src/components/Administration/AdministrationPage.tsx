@@ -8,6 +8,8 @@ import { AdministrationTopbar } from './AdministrationNavigation/components'
 import {
     AdministrationWelcome,
     AdministrationCalendar,
+    AdministrationEmployees,
+    AdministrationUsers,
     AdministrationServices,
     AdministrationNews,
     AdministrationOrders,
@@ -18,7 +20,7 @@ import { AdministrationProvider } from '../../context/Administration/Administrat
 import checkTokenExpirationMiddleware from '../../middlewares/logOutAutomatically'
 
 const AdministrationPage = () => (
-    <SWRConfig value={{ use: [checkTokenExpirationMiddleware] }}>
+    <SWRConfig value={{ use: [checkTokenExpirationMiddleware], revalidateOnFocus: false }}>
         <AdministrationProvider>
             <LocalizationProvider
                 dateAdapter={AdapterDateFns}
@@ -33,6 +35,8 @@ const AdministrationPage = () => (
                             <Route path="/services" element={<AdministrationServices />} />
                             <Route path="/calendar" element={<AdministrationCalendar />} />
                             <Route path="/announcements" element={<AdministrationNews />} />
+                            <Route path="/employees" element={<AdministrationEmployees />} />
+                            <Route path="/users" element={<AdministrationUsers />} />
                             <Route path="/settings" element={<UserSettings />} />
                             <Route path="*" element={<NotMatch />} />
                         </Route>

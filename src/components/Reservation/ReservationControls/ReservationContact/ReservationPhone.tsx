@@ -31,6 +31,8 @@ const ReservationPhone = ({ step, isRequired }: { step: string; isRequired?: boo
     return (
         <TextField
             id="phone"
+            autoComplete="tel"
+            type="tel"
             label="Telefonní číslo"
             variant="standard"
             required={isRequired}

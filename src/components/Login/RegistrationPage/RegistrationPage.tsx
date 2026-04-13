@@ -1,43 +1,56 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Button, CircularProgress, Typography, Link } from '@mui/material'
+import { Button, CircularProgress, Typography, Link, SelectChangeEvent } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2/Grid2'
 import { useState } from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
+import useSWRMutation from 'swr/mutation'
 import { z } from 'zod'
-import { isSuccess as isSuccessUtil } from '../../../utils'
+import axiosGynInstance from '../../../api/config'
 import FormInput from '../../common/Form/FormInput'
+import AmbulanceSelect from '../../common/AmbulanceSelect'
 import { validationMessages } from '../../../constants'
-import { useUser } from '../../../context/User/UserProvider'
+
+const signUpSchema = z.object({
+    name: z.string().min(1, validationMessages.IS_REQUIRED_FIELD),
+    email: z.email().min(1, validationMessages.IS_REQUIRED_FIELD),
+    password: z.string().min(8, 'Heslo musí mít alespoň 8 znaků.'),
+    default_workplace: z.string().optional(),
+})
+
+type SignUpFormValues = z.infer<typeof signUpSchema>
+
+const signUpFetcher = async (key: string, { arg }: { arg: SignUpFormValues }) =>
+    (await axiosGynInstance.post(key, arg)).data
 
 const RegistrationPage = ({ logo, onLoginClick }: { logo: React.ReactNode; onLoginClick: () => void }) => {
     const [recaptcha, setRecaptcha] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
+    const [isSuccess, setIsSuccess] = useState(false)
+
+    const {
+        trigger: signUp,
+        isMutating: isLoading,
+        error,
+    } = useSWRMutation('administration/signUp', signUpFetcher)
+
     const {
         handleSubmit,
         control,
-        formState: { isValid, submitCount, errors },
+        formState: { isValid, submitCount },
         reset,
-    } = useForm({
+    } = useForm<SignUpFormValues>({
         mode: 'onChange',
         reValidateMode: 'onChange',
-        resolver: zodResolver(
-            z.object({
-                name: z.string().min(1, validationMessages.IS_REQUIRED_FIELD),
-                email: z
-                    .string()
-                    .min(1, validationMessages.IS_REQUIRED_FIELD)
-                    .email(validationMessages.IS_NOT_CORRECT_FORMAT),
-                password: z.string().min(8, 'Heslo musí mít alespoň 8 znaků.'),
-            }),
-        ),
-        defaultValues: { name: '', email: '', password: '' },
+        resolver: zodResolver(signUpSchema),
+        defaultValues: { name: '', email: '', password: '', default_workplace: '' },
     })
 
-    const onSubmit = async (formValues: { name: string; email: string; password: string }) => {
-        // TODO signUp hook
-        // const res = await signUp(formValues).unwrap()
-        // if (isSuccessUtil(res)) reset()
+    const onSubmit = async (formValues: SignUpFormValues) => {
+        const payload = { ...formValues }
+        if (!payload.default_workplace) delete payload.default_workplace
+        await signUp(payload)
+        setIsSuccess(true)
+        reset()
     }
     return (
         <Grid
@@ -88,6 +101,21 @@ const RegistrationPage = ({ logo, onLoginClick }: { logo: React.ReactNode; onLog
                         fullWidth
                     />
                 </Grid>
+                <Grid>
+                    <Controller
+                        name="default_workplace"
+                        control={control}
+                        render={({ field }) => (
+                            <AmbulanceSelect
+                                showLabel
+                                selectedValueId={field.value ?? ''}
+                                onAmbulanceSelect={(e: SelectChangeEvent<unknown>) =>
+                                    field.onChange(e.target.value as string)
+                                }
+                            />
+                        )}
+                    />
+                </Grid>
                 {import.meta.env.PROD && (
                     <Grid>
                         <ReCAPTCHA
@@ -111,11 +139,11 @@ const RegistrationPage = ({ logo, onLoginClick }: { logo: React.ReactNode; onLog
                         {!isLoading ? 'Registrovat se' : <CircularProgress size={22} />}
                     </Button>
                 </Grid>
-                {/* {isSuccess && (
+                {isSuccess && (
                     <Grid>
                         <Typography color="green">Účet byl úspěšně vytvořen.</Typography>
                     </Grid>
-                )} */}
+                )}
                 <Grid sx={{ textAlign: 'center' }}>
                     <Link
                         underline="hover"
@@ -131,13 +159,13 @@ const RegistrationPage = ({ logo, onLoginClick }: { logo: React.ReactNode; onLog
                     </Link>
                 </Grid>
             </form>
-            {/* {error && (
+            {error && (
                 <Grid>
                     <Typography variant="body1" color="error">
                         {error?.message}
                     </Typography>
                 </Grid>
-            )} */}
+            )}
         </Grid>
     )
 }

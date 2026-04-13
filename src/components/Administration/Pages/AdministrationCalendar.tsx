@@ -75,8 +75,17 @@ const AdministrationCalendarInner = () => {
     const theme = useTheme()
     return (
         <Fade in timeout={{ enter: 1000 }}>
-            <Box sx={{ zIndex: '1000', width: '100%' }}>
+            <Box
+                sx={{
+                    zIndex: '1000',
+                    width: '100%',
+                    height: 'calc(100vh - 90px)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                }}
+            >
                 <DragAndDropCalendar
+                    style={{ flex: 1, minHeight: 0 }}
                     formats={calendarFormats}
                     onEventDrop={moveEvent}
                     dragFromOutsideItem={dragFromOutsideItem as unknown as () => keyof BookingEvent}

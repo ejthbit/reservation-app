@@ -167,7 +167,7 @@ const useCalendar = () => {
     }) => {
         if (!event?.resource) return
 
-        const { email, phone, category, birthdate, name, workplace } = event.resource
+        const { email, phone, category, birthdate, name, workplace, completed } = event.resource
         updateBooking({
             id: event.id!,
             start: typeof start === 'string' ? start : getISODateStringWithCorrectOffset(start),
@@ -177,6 +177,10 @@ const useCalendar = () => {
             category: category ?? 0,
             name,
             workplace,
+        }).then((payload) => {
+            if (payload) {
+                if (from && to) getBookings({ from, to, workplace: selectedWorkspace })
+            }
         })
     }
 

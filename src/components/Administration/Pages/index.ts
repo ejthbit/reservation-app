@@ -1,4 +1,6 @@
 export { default as AdministrationCalendar } from './AdministrationCalendar'
+export { default as AdministrationUsers } from './AdministrationUsers'
+export { default as AdministrationEmployees } from './AdministrationEmployees'
 export { default as AdministrationNews } from './AdministrationNews'
 export { default as AdministrationOrders } from './AdministrationOrders'
 export { default as AdministrationServices } from './AdministrationServices'

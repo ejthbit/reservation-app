@@ -5,6 +5,7 @@ import {
     KeyboardArrowLeft,
     KeyboardArrowRight,
     Logout,
+    ManageAccounts,
     Newspaper,
     People,
     Schedule,
@@ -13,7 +14,6 @@ import {
 import { Box, Fade, Typography } from '@mui/material'
 import { useState } from 'react'
 import packageJson from '../../../../../package.json'
-import { isMobile } from '../../../../utils'
 import { Drawer } from '../../../common'
 import AmbulanceSelect from '../../../common/AmbulanceSelect'
 import AdministrationDrawerListItems from './AdministrationDrawerListItems'
@@ -31,11 +31,11 @@ type GetAdminToolbarToolset = {
 
 const adminToolbarLinks = [
     { id: 0, icon: <Home />, text: 'Přehled', link: '/admin' },
-    { id: 1, icon: <Event />, text: 'Objednávky', link: '/admin/orders' },
-    { id: 2, icon: <Schedule />, text: 'Rozpis směn', link: '/admin/services' },
     { id: 3, icon: <DateRange />, text: 'Kalendař', link: '/admin/calendar' },
+    { id: 2, icon: <Schedule />, text: 'Rozpis směn', link: '/admin/services' },
     { id: 4, icon: <Newspaper />, text: 'Oznámení', link: '/admin/announcements' },
-    { id: 5, icon: <People />, text: 'Zaměstnanci', link: '/admin/employees', disabled: true },
+    { id: 1, icon: <Event />, text: 'Objednávky', link: '/admin/orders' },
+    { id: 5, icon: <People />, text: 'Zaměstnanci', link: '/admin/employees' },
 ]
 
 const getAdminToolbarToolset = ({ isDrawerOpen, onClose, onLogOut }: GetAdminToolbarToolset) => [
@@ -66,13 +66,20 @@ const getAdminToolbarToolset = ({ isDrawerOpen, onClose, onLogOut }: GetAdminToo
 ]
 
 const AdministrationDrawer = () => {
-    const { name, logOut } = useUser()
+    const { name, logOut, userRole } = useUser()
     const { selectWorkspace, selectedWorkspace } = useAdministration()
     const [isDrawerOpen, toggleDrawer] = useState(false)
     const location = useLocation()
 
-    const allItems = [
+    const navLinks = [
         ...adminToolbarLinks,
+        ...(userRole === 'admin'
+            ? [{ id: 10, icon: <ManageAccounts />, text: 'Uživatelé', link: '/admin/users' }]
+            : []),
+    ]
+
+    const allItems = [
+        ...navLinks,
         ...getAdminToolbarToolset({
             isDrawerOpen,
             onClose: () => toggleDrawer((prevState) => !prevState),
@@ -125,7 +132,7 @@ const AdministrationDrawer = () => {
                         }}
                     >
                         <AdministrationDrawerListItems
-                            arrayOfItems={adminToolbarLinks}
+                            arrayOfItems={navLinks}
                             isOpen={isDrawerOpen}
                             selectedItem={selectedItem}
                         />

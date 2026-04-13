@@ -1,6 +1,6 @@
 import { ArrowBack, ArrowForward } from '@mui/icons-material'
 import { Box, Button, Grid, Typography, styled } from '@mui/material'
-import { addDays, addWeeks, endOfDay, parse, startOfDay } from 'date-fns'
+import { endOfDay, parse, startOfDay } from 'date-fns'
 import { useEffect, useState } from 'react'
 import { ToolbarProps } from 'react-big-calendar'
 import { BookingEvent, BookingEventResource } from '../../../../utils/makeCalendarEventsFromBookings'
@@ -35,15 +35,8 @@ const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }: Tool
         setViewState('work_week')
     }
 
-    const goToBack = () => {
-        if (viewState === 'work_week') onNavigate('PREV', addWeeks(date, -1))
-        else onNavigate('PREV', addDays(date, -1))
-    }
-
-    const goToNext = () => {
-        if (viewState === 'work_week') onNavigate('NEXT', addWeeks(date, +1))
-        else onNavigate('NEXT', addDays(date, +1))
-    }
+    const goToBack = () => onNavigate('PREV')
+    const goToNext = () => onNavigate('NEXT')
 
     const goToToday = () => {
         const now = new Date()

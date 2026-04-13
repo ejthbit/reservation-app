@@ -35,6 +35,7 @@ export const updateBooking = async ({
     note = undefined,
     workplace,
     birthdate,
+    completed,
 }: UpdatedBooking) => {
     const updatedBooking: UpdatedBooking = {
         id,
@@ -45,6 +46,7 @@ export const updateBooking = async ({
         workplace,
         contact,
         category,
+        completed,
         ...(note && { note }),
     }
     const { data } = await axiosGynInstance.put(`bookings/booking/${updatedBooking.id}`, updatedBooking)

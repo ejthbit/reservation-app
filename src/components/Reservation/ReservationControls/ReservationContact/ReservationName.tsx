@@ -19,6 +19,7 @@ const ReservationName = ({ step, isRequired }: { step: string; isRequired?: bool
     return (
         <TextField
             id="name"
+            autoComplete="name"
             label="Jméno a přijmení"
             variant="standard"
             required={isRequired}

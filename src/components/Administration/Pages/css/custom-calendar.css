@@ -21,7 +21,7 @@
 }
 
 .rbc-event slot {
-    border-radius: 10px;
+    /* border-radius: 10px; */
 }
 
 .rbc-time-header.rbc-overflowing {
@@ -35,7 +35,7 @@
 
 .rbc-time-content {
     border-top: none;
-    border-radius: 6px;
+    /* border-radius: 6px; */
 }
 
 .rbc-today {
@@ -47,17 +47,18 @@
 }
 
 .rbc-time-view {
-    border-left: none;
-    border-top: none;
-    border: 1px solid #eaeaea;
-    box-shadow:
+    /* border: none; */
+    /* border-left: none; */
+    /* border-top: none; */
+    /* border: 1px solid #eaeaea; */
+    /* box-shadow:
         -2px 4px 6px rgba(0, 0, 0, 0.08),
-        0px 2px 4px rgba(199, 199, 199, 0.25);
-    border-radius: 8px;
+        0px 2px 4px rgba(199, 199, 199, 0.25); */
+    /* border-radius: 8px; */
     background-color: #f9f9fb;
     padding-right: 0 !important;
     padding-left: 0.6rem;
-    display: contents;
+    overflow: hidden;
 }
 
 .rbc-timeslot-group {

@@ -6,7 +6,7 @@
     "license": "MIT",
     "description": "eReservation library which includes most of stuff needed to manage ambulance.",
     "type": "module",
-    "version": "2.1.4",
+    "version": "3.0.0",
     "sideEffects": [
         "*.css"
     ],

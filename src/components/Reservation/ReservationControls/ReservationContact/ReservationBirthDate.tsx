@@ -16,15 +16,15 @@ const BirthDateTextField = forwardRef((props: TextFieldProps, ref: React.Ref<HTM
         placeholder="Zadejte prosím své datum narození"
         variant="standard"
         fullWidth
-        inputProps={{
-            ...props.inputProps,
+        {...props}
+        InputProps={{
+            ...props.InputProps,
             endAdornment: (
-                <InputAdornment sx={{ cursor: 'pointer' }} position="end">
+                <InputAdornment position="end">
                     <Today />
                 </InputAdornment>
             ),
         }}
-        {...props}
     />
 ))
 
