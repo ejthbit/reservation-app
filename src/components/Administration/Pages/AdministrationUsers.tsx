@@ -65,7 +65,7 @@ const AdministrationUsers = () => {
     const [editForm, setEditForm] = useState<EditUserForm>({ name: '', email: '', default_workplace: '', role: 'user' })
 
     const { data: users, isLoading, mutate: refetchUsers } = useSWR<UserRow[]>(
-        'administration/users',
+        'administration/users?limit=100',
         usersFetcher,
         { revalidateOnFocus: false },
     )
