@@ -1,4 +1,4 @@
-import { DateRange, Event, Newspaper, Schedule } from '@mui/icons-material'
+import { BeachAccess, DateRange, Newspaper, Schedule } from '@mui/icons-material'
 import { Box, Button, CircularProgress, Fade, List, Typography } from '@mui/material'
 import {
     endOfMonth,
@@ -87,10 +87,10 @@ const RootBarChart = ({
                 sx={(theme) => ({
                     py: 3,
                     '& .MuiBarElement-root': {
-                        fill: '#4825A8',
+                        fill: theme.palette.primary.main,
                     },
                     '& .MuiChartsLegend-mark': {
-                        fill: '#4825A8',
+                        fill: theme.palette.primary.main,
                     },
                 })}
                 series={[
@@ -162,18 +162,18 @@ const MonthlyCalendar = ({ bookingsPerDay }: { bookingsPerDay: Record<string, nu
                     return (
                         <Box
                             key={day}
-                            sx={{
+                            sx={(theme) => ({
                                 py: 1,
                                 borderRadius: 2,
                                 ...(isTodayDate && {
-                                    bgcolor: '#4825A8',
+                                    bgcolor: theme.palette.primary.main,
                                     color: 'white',
                                 }),
                                 ...(isWeekendDate &&
                                     !isTodayDate && {
                                         color: 'text.disabled',
                                     }),
-                            }}
+                            })}
                         >
                             <Typography variant="body2" fontWeight={isTodayDate ? 700 : 400}>
                                 {day}
@@ -181,8 +181,10 @@ const MonthlyCalendar = ({ bookingsPerDay }: { bookingsPerDay: Record<string, nu
                             {count > 0 && (
                                 <Typography
                                     variant="caption"
-                                    fontWeight="600"
-                                    sx={{ color: isTodayDate ? 'white' : '#4825A8' }}
+                                    fontWeight="700"
+                                    sx={(theme) => ({
+                                        color: isTodayDate ? 'white' : theme.palette.primary.main,
+                                    })}
                                 >
                                     {count}
                                 </Typography>
@@ -196,10 +198,10 @@ const MonthlyCalendar = ({ bookingsPerDay }: { bookingsPerDay: Record<string, nu
 }
 
 const quickActions = [
-    { icon: <Event />, label: 'Objednávky', link: '/admin/orders' },
     { icon: <Schedule />, label: 'Rozpis směn', link: '/admin/services' },
     { icon: <DateRange />, label: 'Kalendář', link: '/admin/calendar' },
     { icon: <Newspaper />, label: 'Oznámení', link: '/admin/announcements' },
+    { icon: <BeachAccess />, label: 'Dovolená', link: '/admin/vacation' },
 ]
 
 const AdministrationWelcome = () => {
@@ -258,7 +260,7 @@ const AdministrationWelcome = () => {
                         <Typography
                             variant="h3"
                             sx={(theme) => ({
-                                color: '#4825A8',
+                                color: theme.palette.secondary.main,
                                 display: 'flex',
                                 flexDirection: 'column',
                             })}
@@ -281,20 +283,20 @@ const AdministrationWelcome = () => {
                             variant="outlined"
                             startIcon={icon}
                             onClick={() => navigate(link)}
-                            sx={{
-                                borderColor: '#4825A8',
-                                color: '#4825A8',
+                            sx={(theme) => ({
+                                borderColor: theme.palette.secondary.main,
+                                color: theme.palette.secondary.main,
                                 borderRadius: 3,
                                 px: 3,
                                 py: 1.5,
                                 textTransform: 'none',
                                 fontWeight: 500,
                                 '&:hover': {
-                                    backgroundColor: '#4825A8',
+                                    backgroundColor: theme.palette.secondary.main,
                                     color: 'white',
-                                    borderColor: '#4825A8',
+                                    borderColor: theme.palette.secondary.main,
                                 },
-                            }}
+                            })}
                         >
                             {label}
                         </Button>

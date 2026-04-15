@@ -68,8 +68,8 @@ const AdministrationVacation = () => {
 
     const fetchAll = () => {
         const now = new Date()
-        const from = new Date(now.getFullYear(), 0, 1).toISOString()
-        const to = new Date(now.getFullYear(), 11, 31).toISOString()
+        const from = new Date(now.getFullYear() - 1, 0, 1).toISOString()
+        const to = new Date(now.getFullYear() + 1, 11, 31).toISOString()
         getVacations({ from, to, workplace: selectedWorkspace })
     }
 
@@ -82,7 +82,7 @@ const AdministrationVacation = () => {
         return {
             start: startOfDay(form.start).toISOString(),
             end: endOfDay(form.end).toISOString(),
-            workplace: parseInt(selectedWorkspace),
+            workplace: parseInt(selectedWorkspace, 10),
             ...(form.note.trim() && { note: form.note.trim() }),
         }
     }
@@ -210,12 +210,7 @@ const AdministrationVacation = () => {
             <Box sx={{ width: '100%' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                     <Typography variant="h6">Dovolená</Typography>
-                    <Button
-                        variant="contained"
-                        startIcon={<Add />}
-                        onClick={openAdd}
-                        sx={{ background: 'linear-gradient(to right, #6A11CB, #2575FC)' }}
-                    >
+                    <Button variant="contained" startIcon={<Add />} onClick={openAdd}>
                         Přidat dovolenou
                     </Button>
                 </Box>
@@ -239,7 +234,9 @@ const AdministrationVacation = () => {
                             <TableBody>
                                 {sortedVacations.map((vacation) => (
                                     <TableRow key={vacation.id} hover>
-                                        <TableCell>{format(parseISO(vacation.start), 'dd.MM.yyyy')}</TableCell>
+                                        <TableCell>
+                                            {format(parseISO(vacation.start), 'dd.MM.yyyy')}
+                                        </TableCell>
                                         <TableCell>{format(parseISO(vacation.end), 'dd.MM.yyyy')}</TableCell>
                                         <TableCell>{vacation.note ?? '—'}</TableCell>
                                         <TableCell>{vacation.created_by}</TableCell>
@@ -250,7 +247,10 @@ const AdministrationVacation = () => {
                                                 </IconButton>
                                             </Tooltip>
                                             <Tooltip title="Smazat">
-                                                <IconButton color="error" onClick={() => setDeleteTarget(vacation)}>
+                                                <IconButton
+                                                    color="error"
+                                                    onClick={() => setDeleteTarget(vacation)}
+                                                >
                                                     <Delete />
                                                 </IconButton>
                                             </Tooltip>
@@ -282,9 +282,15 @@ const AdministrationVacation = () => {
                                 variant="contained"
                                 color="warning"
                                 onClick={handleConfirmWithWarning}
-                                disabled={isSubmitting}
+                                disabled={!isFormValid || isSubmitting}
                             >
-                                {isSubmitting ? <CircularProgress size={20} /> : editTarget ? 'Uložit přesto' : 'Vytvořit přesto'}
+                                {isSubmitting ? (
+                                    <CircularProgress size={20} />
+                                ) : editTarget ? (
+                                    'Uložit přesto'
+                                ) : (
+                                    'Vytvořit přesto'
+                                )}
                             </Button>
                         ) : (
                             <Button
@@ -292,7 +298,13 @@ const AdministrationVacation = () => {
                                 onClick={() => checkBookingsAndProceed(editTarget ? 'edit' : 'create')}
                                 disabled={!isFormValid || isSubmitting}
                             >
-                                {isSubmitting ? <CircularProgress size={20} /> : editTarget ? 'Uložit' : 'Přidat'}
+                                {isSubmitting ? (
+                                    <CircularProgress size={20} />
+                                ) : editTarget ? (
+                                    'Uložit'
+                                ) : (
+                                    'Přidat'
+                                )}
                             </Button>
                         )}
                     </DialogActions>

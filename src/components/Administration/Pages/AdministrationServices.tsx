@@ -83,6 +83,9 @@ const AdministrationServices = () => {
                     width: '100%',
                 }}
             >
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                    Rozpis směn
+                </Typography>
                 {[1, 2].includes(selectedAction) ? (
                     <Grid container>
                         <Grid container sx={{ marginBottom: 2 }}>
@@ -96,7 +99,6 @@ const AdministrationServices = () => {
                                     sx={{
                                         height: 56,
                                         textTransform: 'initial',
-                                        background: `linear-gradient(to right, #6A11CB, #2575FC)`,
                                     }}
                                     variant="contained"
                                     color="primary"
@@ -140,7 +142,7 @@ const AdministrationServices = () => {
                                 icon={AddBox}
                                 title={actionLabel[1] as string}
                                 description={
-                                    'Zjednodušuje proces vytváření a správy měsíčního plánu pro vybranou ambulanci. Zjednodušuje úkol přiřazení lékařů ke každému dni a umožňuje snadnou úpravu plánu podle potřeby. Tato funkce šetří čas a zvyšuje efektivitu procesu plánování, což zajišťuje, že poskytované služby fungují hladce a efektivně.'
+                                    'Zjednodušuje proces vytváření a správy měsíčního plánu pro vybranou ambulanci. Zjednodušuje úkol přiřazení zaměstnanců ke každému dni a umožňuje snadnou úpravu plánu podle potřeby. Tato funkce šetří čas a zvyšuje efektivitu procesu plánování, což zajišťuje, že poskytované služby fungují hladce a efektivně.'
                                 }
                                 onClick={() => handleSetActionWorkflow(1)}
                             />
@@ -151,7 +153,7 @@ const AdministrationServices = () => {
                                 icon={Edit}
                                 title={actionLabel[2] as string}
                                 description={
-                                    'Zjednodušuje proces úprav měsíčního plánu pro vybranou ambulanci. Zjednodušuje úkol úpravy pracovního plánu lékařů a umožňuje snadné upravování plánu podle potřeby. Tato funkce šetří čas a zvyšuje efektivitu procesu plánování, což zajišťuje, že poskytované služby fungují hladce a efektivně.'
+                                    'Zjednodušuje proces úprav měsíčního plánu pro vybranou ambulanci. Zjednodušuje úkol úpravy pracovního plánu zaměstnanců a umožňuje snadné upravování plánu podle potřeby. Tato funkce šetří čas a zvyšuje efektivitu procesu plánování, což zajišťuje, že poskytované služby fungují hladce a efektivně.'
                                 }
                                 onClick={() => handleSetActionWorkflow(2)}
                             />

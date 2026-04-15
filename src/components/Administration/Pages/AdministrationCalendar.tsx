@@ -7,7 +7,7 @@ import cs from 'date-fns/locale/cs'
 import './css/custom-calendar.css'
 
 import { CalendarProvider, useCalendarContext } from '../../../context/Calendar/CalendarProvider'
-import { Box, CircularProgress, Fade, useTheme } from '@mui/material'
+import { Box, CircularProgress, Fade, Typography, useTheme } from '@mui/material'
 import {
     AdministrationCalendarToolbar,
     AdministrationCalendarEvent,
@@ -84,6 +84,9 @@ const AdministrationCalendarInner = () => {
                     flexDirection: 'column',
                 }}
             >
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                    Kalendář
+                </Typography>
                 <DragAndDropCalendar
                     style={{ flex: 1, minHeight: 0 }}
                     formats={calendarFormats}
@@ -122,6 +125,14 @@ const AdministrationCalendarInner = () => {
                                     backgroundColor: 'green',
                                     color: 'linen',
                                     opacity: 0.7,
+                                }),
+                                ...(event?.resource?.vacation && {
+                                    backgroundColor: '#FF8F00',
+                                    color: '#fff',
+                                    opacity: 0.7,
+                                    pointerEvents: 'none' as const,
+                                    cursor: 'default',
+                                    border: 'none',
                                 }),
                                 borderRadius: 0,
                             },

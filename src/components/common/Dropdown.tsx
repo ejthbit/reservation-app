@@ -15,6 +15,7 @@ export type DropdownProps = {
 } & SelectProps
 
 const Dropdown = ({
+    variant = 'standard',
     value,
     options = [],
     onChange,
@@ -30,7 +31,7 @@ const Dropdown = ({
 
     const SelectWithoutLabel = () => (
         <Select
-            variant="standard"
+            variant={variant}
             value={isSelectedValuePartOfOptions ? value : defaultValue}
             onChange={onChange}
             displayEmpty
@@ -43,10 +44,10 @@ const Dropdown = ({
             </MenuItem>
             {!isLoading ? (
                 options.map(({ value, label }) => (
-                        <MenuItem key={value} value={value}>
-                            {label}
-                        </MenuItem>
-                    ))
+                    <MenuItem key={value} value={value}>
+                        {label}
+                    </MenuItem>
+                ))
             ) : (
                 <MenuItem key="loading" value="loading" disabled>
                     <CircularProgress size={20} />

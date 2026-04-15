@@ -184,7 +184,7 @@ const ServicesTable = ({
                     <TableHead
                         sx={(theme) => ({
                             color: 'white',
-                            background: `linear-gradient(to right, #6A11CB, #2575FC)`,
+                            background: theme.palette.primary.main,
                             padding: theme.spacing(2),
                             fontWeight: 600,
                         })}
@@ -253,9 +253,6 @@ const ServicesTable = ({
                         variant="contained"
                         onClick={handleSubmit(onSubmit)}
                         disabled={!isValid}
-                        sx={{
-                            background: `linear-gradient(to right, #6A11CB, #2575FC)`,
-                        }}
                     >
                         Uložit
                     </Button>

@@ -1,5 +1,5 @@
 import { ArrowBack, ArrowForward } from '@mui/icons-material'
-import { Box, Button, Grid, Typography, styled } from '@mui/material'
+import { Box, Button, Grid, Typography, styled, useTheme } from '@mui/material'
 import { endOfDay, parse, startOfDay } from 'date-fns'
 import { useEffect, useState } from 'react'
 import { ToolbarProps } from 'react-big-calendar'
@@ -12,17 +12,24 @@ import { isMobile } from '../../../../utils'
 const StyledButton = styled(Button)(({ theme, variant }) => ({
     height: '40px',
     background:
+        variant !== 'outlined' ? theme.palette.primary.main : `linear-gradient(to right, #1E1E2E, #111)`,
+    color:
         variant !== 'outlined'
-            ? `linear-gradient(to right, #6A11CB, #2575FC)`
-            : `linear-gradient(to right, #1E1E2E, #111)`,
-    color: theme.palette.common.white,
+            ? theme.palette.getContrastText(theme.palette.primary.main)
+            : theme.palette.getContrastText(theme.palette.secondary.main),
 }))
 const VIEW_TRANSLATIONS = {
     day: 'dnešní den',
     work_week: 'aktuální pracovní týden',
 }
-const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }: ToolbarProps<BookingEvent, BookingEventResource>) => {
+const AdministrationCalendarToolbar = ({
+    label,
+    date,
+    onNavigate,
+    onView,
+}: ToolbarProps<BookingEvent, BookingEventResource>) => {
     const [viewState, setViewState] = useState<'day' | 'work_week'>(isMobile ? 'day' : 'work_week')
+    const theme = useTheme()
     const { events } = useCalendarContext()
 
     const { selectViewDateRange } = useAdministration()
@@ -66,7 +73,8 @@ const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }: Tool
                         <Typography variant="body1" align="left">
                             {`Počet objednávek na ${VIEW_TRANSLATIONS[viewState]}: ${
                                 events.filter(
-                                    ({ resource }) => !resource?.blocked && !resource?.doctorService,
+                                    ({ resource }) =>
+                                        !resource?.blocked && !resource?.doctorService && !resource?.vacation,
                                 ).length
                             } `}
                         </Typography>
@@ -115,6 +123,31 @@ const AdministrationCalendarToolbar = ({ label, date, onNavigate, onView }: Tool
                             Den
                         </StyledButton>
                     </Grid>
+                </Grid>
+                <Grid container item xs={12} justifyContent="flex-start" spacing={2} mt={0.5}>
+                    {[
+                        { color: '#fff', label: 'Volno', border: '1px solid #ccc' },
+                        { color: theme.palette.primary.main, label: 'Objednávka' },
+                        { color: 'green', label: 'Odbaveno' },
+                        { color: 'grey', label: 'Zavřeno' },
+                        { color: '#FF8F00', label: 'Dovolená' },
+                        { color: 'red', label: 'Dnes' },
+                    ].map(({ color, label: text, border }) => (
+                        <Grid item key={text} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <Box
+                                sx={{
+                                    width: 14,
+                                    height: 14,
+                                    borderRadius: '2px',
+                                    backgroundColor: color,
+                                    ...(border && { border }),
+                                }}
+                            />
+                            <Typography variant="caption" color="text.secondary">
+                                {text}
+                            </Typography>
+                        </Grid>
+                    ))}
                 </Grid>
             </Grid>
         </Box>

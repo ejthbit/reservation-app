@@ -1,9 +1,10 @@
-import { Box, SelectChangeEvent, type SxProps, type Theme, Typography } from '@mui/material'
+import { Box, SelectChangeEvent, SelectVariants, type SxProps, type Theme, Typography } from '@mui/material'
 import { makeArrayOfLabelValue } from '../../context/Reservation/ReservationHelpers'
 import { useGetAmbulances } from '../../hooks/useGetAmbulances'
 import Dropdown from './Dropdown'
 
 type AmbulanceSelectProps = {
+    variant?: SelectVariants
     showLabel?: boolean
     selectedValueId: number | string
     onAmbulanceSelect: (event: SelectChangeEvent<unknown>, child: React.ReactNode) => void
@@ -12,6 +13,7 @@ type AmbulanceSelectProps = {
 }
 const AmbulanceSelect = ({
     showLabel = false,
+    variant = 'standard',
     selectedValueId = '',
     onAmbulanceSelect,
     defaultValue,
@@ -26,6 +28,7 @@ const AmbulanceSelect = ({
                 </Box>
             )}
             <Dropdown
+                variant={variant}
                 defaultValue={defaultValue}
                 isLoading={isLoading}
                 options={makeArrayOfLabelValue('name', 'workplace_id', ambulances ?? [])}

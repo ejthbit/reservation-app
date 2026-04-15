@@ -13,6 +13,7 @@ import {
     AdministrationServices,
     AdministrationNews,
     AdministrationOrders,
+    AdministrationVacation,
     UserSettings,
 } from './Pages'
 import { SWRConfig } from 'swr'
@@ -31,13 +32,12 @@ const AdministrationPage = () => (
                     <Routes>
                         <Route path="/" element={<AdministrationTopbar />}>
                             <Route path="/" element={<AdministrationWelcome />} />
-                            <Route path="/orders" element={<AdministrationOrders />} />
                             <Route path="/services" element={<AdministrationServices />} />
                             <Route path="/calendar" element={<AdministrationCalendar />} />
                             <Route path="/announcements" element={<AdministrationNews />} />
                             <Route path="/employees" element={<AdministrationEmployees />} />
+                            <Route path="/vacation" element={<AdministrationVacation />} />
                             <Route path="/users" element={<AdministrationUsers />} />
-                            <Route path="/settings" element={<UserSettings />} />
                             <Route path="*" element={<NotMatch />} />
                         </Route>
                     </Routes>

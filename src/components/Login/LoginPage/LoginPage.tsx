@@ -19,7 +19,7 @@ const StyledRoot = styled(Box)(({ theme }) => ({
           }
         : {
               color: 'white',
-              background: `linear-gradient(to bottom, #5A2EC4, #311B92)`,
+              background: theme.palette.primary.main,
               borderRadius: 12,
               height: '60vh',
               width: '60vw',

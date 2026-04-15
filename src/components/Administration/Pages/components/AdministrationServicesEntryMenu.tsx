@@ -55,11 +55,11 @@ const AdministrationServicesEntryMenu = ({
             >
                 <MenuItem onClick={onDelete} disableRipple disabled={disabled}>
                     <Delete />
-                    Smazat lékaře
+                    Smazat zaměstnance
                 </MenuItem>
                 <MenuItem onClick={onAssign} disableRipple disabled={disabledAdd}>
                     <Add />
-                    Přidat lékaře
+                    Přidat zaměstnance
                 </MenuItem>
             </Menu>
         </div>

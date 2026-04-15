@@ -28,7 +28,7 @@ const AdministrationServiceCardButton = ({
     return (
         <Card
             sx={(theme) => ({
-                background: `linear-gradient(to right, #6A11CB, #2575FC)`,
+                background: theme.palette.primary.main,
                 color: theme.palette.getContrastText(color),
                 width: 300,
                 textAlign: 'center',

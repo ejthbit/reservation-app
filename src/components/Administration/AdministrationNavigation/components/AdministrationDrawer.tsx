@@ -1,6 +1,6 @@
 import {
+    BeachAccess,
     DateRange,
-    Event,
     Home,
     KeyboardArrowLeft,
     KeyboardArrowRight,
@@ -9,9 +9,8 @@ import {
     Newspaper,
     People,
     Schedule,
-    Settings,
 } from '@mui/icons-material'
-import { Box, Fade, Typography } from '@mui/material'
+import { Box, Fade } from '@mui/material'
 import { useState } from 'react'
 import packageJson from '../../../../../package.json'
 import { Drawer } from '../../../common'
@@ -33,13 +32,12 @@ const adminToolbarLinks = [
     { id: 0, icon: <Home />, text: 'Přehled', link: '/admin' },
     { id: 3, icon: <DateRange />, text: 'Kalendař', link: '/admin/calendar' },
     { id: 2, icon: <Schedule />, text: 'Rozpis směn', link: '/admin/services' },
+    { id: 11, icon: <BeachAccess />, text: 'Dovolená', link: '/admin/vacation' },
     { id: 4, icon: <Newspaper />, text: 'Oznámení', link: '/admin/announcements' },
-    { id: 1, icon: <Event />, text: 'Objednávky', link: '/admin/orders' },
     { id: 5, icon: <People />, text: 'Zaměstnanci', link: '/admin/employees' },
 ]
 
 const getAdminToolbarToolset = ({ isDrawerOpen, onClose, onLogOut }: GetAdminToolbarToolset) => [
-    { id: 6, icon: <Settings />, text: 'Nastavení', link: '/admin/settings' },
     {
         id: 7,
         icon: isDrawerOpen ? <KeyboardArrowLeft /> : <KeyboardArrowRight />,
@@ -66,9 +64,9 @@ const getAdminToolbarToolset = ({ isDrawerOpen, onClose, onLogOut }: GetAdminToo
 ]
 
 const AdministrationDrawer = () => {
-    const { name, logOut, userRole } = useUser()
+    const { logOut, userRole } = useUser()
     const { selectWorkspace, selectedWorkspace } = useAdministration()
-    const [isDrawerOpen, toggleDrawer] = useState(false)
+    const [isDrawerOpen, toggleDrawer] = useState(true)
     const location = useLocation()
 
     const navLinks = [
@@ -87,42 +85,28 @@ const AdministrationDrawer = () => {
         }),
     ]
     const selectedItem =
-        allItems.find(({ link }) => link && location.pathname === link)?.id ??
-        allItems.find(({ link }) => link && link !== '/admin' && location.pathname.startsWith(link))?.id ??
+        allItems.find((item) => 'link' in item && item.link && location.pathname === item.link)?.id ??
+        allItems.find((item) => 'link' in item && item.link && item.link !== '/admin' && location.pathname.startsWith(item.link))?.id ??
         0
 
     return (
-        <>
-            <Box
-                sx={{
-                    background: `#5A2EC4`,
-                    color: 'white',
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: (theme) => theme.zIndex.drawer + 1,
-                }}
-                component="div"
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                padding={2}
-                gap={2}
-            >
-                <Typography ml={2}>
-                    Vítejte, <span style={{ fontWeight: 600 }}>{name}</span>
-                </Typography>
-                <AmbulanceSelect
-                    selectedValueId={selectedWorkspace}
-                    onAmbulanceSelect={(e) => selectWorkspace(e.target.value as string)}
-                    sx={{
-                        color: 'white',
-                        '& .MuiSelect-icon': { color: 'white' },
-                        '&::before, &::after': { borderColor: 'white' },
-                    }}
-                />
-            </Box>
+        <Box sx={{ backgroundColor: '#f9fafb' }}>
             <Fade in timeout={{ enter: 400 }}>
                 <Drawer variant="permanent" open={isDrawerOpen} anchor="left">
+                    {isDrawerOpen && (
+                        <Box padding={2}>
+                            <AmbulanceSelect
+                                variant="outlined"
+                                selectedValueId={selectedWorkspace}
+                                onAmbulanceSelect={(e) => selectWorkspace(e.target.value as string)}
+                                sx={(theme) => ({
+                                    color: theme.palette.secondary.main,
+                                    '& .MuiSelect-icon': { color: theme.palette.secondary.main },
+                                    '&::before, &::after': { borderColor: theme.palette.secondary.main },
+                                })}
+                            />
+                        </Box>
+                    )}
                     <Box
                         sx={{
                             height: '100%',
@@ -149,7 +133,7 @@ const AdministrationDrawer = () => {
                 </Drawer>
             </Fade>
             <AdministrationLayout isDrawerOpen={isDrawerOpen} />
-        </>
+        </Box>
     )
 }
 

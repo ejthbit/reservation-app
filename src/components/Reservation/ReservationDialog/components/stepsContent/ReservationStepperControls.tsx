@@ -7,7 +7,7 @@ import { useReservation } from '../../../../../context/Reservation'
 const StyledButton = styled(Button)(({ theme }) => ({
     marginTop: theme.spacing(2),
     minHeight: isMobile ? theme.spacing(7.5) : theme.spacing(4),
-    background: `linear-gradient(to right, #6A11CB, #2575FC)`,
+    background: theme.palette.primary.main,
     boxShadow: 'none',
     textTransform: 'none',
 }))

@@ -1,4 +1,4 @@
-import { addMinutes } from 'date-fns'
+import { addMinutes, startOfDay } from 'date-fns'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SlotInfo } from 'react-big-calendar'
 import { useGetBookings, useUpdateBooking } from '../context/Administration/AdministrationBookingsHooks'
@@ -12,8 +12,10 @@ import {
 import { BookingEvent } from '../utils/makeCalendarEventsFromBookings'
 import { useDoctorServices } from './useDoctorServices'
 import { getDoctorsForSelectedAmbulanceFetcher } from '../context/Reservation/ReservationFetchers'
+import { fetchVacations } from '../context/Administration/AdministrationVacationFetchers'
 import { DoctorService } from '../types/AmbulanceService'
 import { Doctor } from '../types/Doctor'
+import { Vacation } from '../types'
 import useSWRMutation from 'swr/mutation'
 type Intervals = {
     start: string
@@ -116,6 +118,14 @@ const useCalendar = () => {
         getDoctorsForSelectedAmbulanceFetcher(arg),
     )
 
+    const {
+        data: vacationsData,
+        trigger: getVacations,
+    } = useSWRMutation<Vacation[], Error, string, { from: string; to: string; workplace: string }>(
+        'calendar/getVacations',
+        (key, { arg }) => fetchVacations(arg),
+    )
+
     const doctors: DoctorsIdsWithNames = useMemo(
         () =>
             doctorsData?.reduce<DoctorsIdsWithNames>((obj, item) => {
@@ -135,16 +145,48 @@ const useCalendar = () => {
         return makeCalendarEventsFromBookings(timesToBlock, true)
     }, [from, to, servicesDays])
 
+    const vacationEvents: BookingEvent[] = useMemo(() => {
+        if (!vacationsData?.length) return []
+        return vacationsData.flatMap((vacation) => {
+            const start = new Date(vacation.start)
+            const end = new Date(vacation.end)
+            const events: BookingEvent[] = []
+            const current = startOfDay(start)
+            const endDay = startOfDay(end)
+            while (current <= endDay) {
+                events.push({
+                    start: new Date(current.getFullYear(), current.getMonth(), current.getDate(), 7, 0),
+                    end: new Date(current.getFullYear(), current.getMonth(), current.getDate(), 19, 0),
+                    title: vacation.note ? `Dovolená — ${vacation.note}` : 'Dovolená',
+                    resource: {
+                        name: 'Dovolená',
+                        booked: false,
+                        birthdate: '',
+                        blocked: false,
+                        completed: false,
+                        vacation: true,
+                        workplace: vacation.workplace,
+                    },
+                })
+                current.setDate(current.getDate() + 1)
+            }
+            return events
+        })
+    }, [vacationsData])
+
     const handleOpenEventDialog = (existingEvent: BookingEvent) =>
-        !existingEvent?.resource?.blocked && setOpenEventDialogEvent(existingEvent)
+        !existingEvent?.resource?.blocked && !existingEvent?.resource?.vacation && setOpenEventDialogEvent(existingEvent)
     const handleCloseEventDialog = () => setOpenEventDialogEvent(null)
     const handleToggleCreationModal = () => setNewAppointmentDate(null)
 
     const onSelectEvent = (event: BookingEvent) => handleOpenEventDialog(event)
 
+    const isVacationDay = (date: Date) =>
+        vacationEvents.some((v) => date >= v.start && date < v.end)
+
     const onSelectSlot = ({ action, slots }: SlotInfo) => {
         const timeSlotStart = slots[0]! // start date/time of the event
-        if (action === 'click')
+        if (action === 'click' && !isVacationDay(timeSlotStart))
             setNewAppointmentDate({
                 start: getISODateStringWithCorrectOffset(timeSlotStart),
                 end: getISODateStringWithCorrectOffset(
@@ -201,6 +243,7 @@ const useCalendar = () => {
         if (from && to) {
             getBookings({ from, to, workplace: selectedWorkspace })
             fetchDoctorServicesByRange({ start: from, end: to, workplace: parseInt(selectedWorkspace) })
+            getVacations({ from, to, workplace: selectedWorkspace })
         }
     }, [selectedWorkspace, from, to])
 
@@ -208,7 +251,15 @@ const useCalendar = () => {
         getDoctorsForSelectedAmbulance(parseInt(selectedWorkspace))
     }, [selectedWorkspace])
 
-    const allEvents = useMemo(() => [...events, ...blockedEvents], [events, blockedEvents])
+    const filteredBlockedEvents = useMemo(
+        () => blockedEvents.filter((e) => !isVacationDay(e.start)),
+        [blockedEvents, vacationEvents],
+    )
+
+    const allEvents = useMemo(
+        () => [...events, ...filteredBlockedEvents, ...vacationEvents],
+        [events, filteredBlockedEvents, vacationEvents],
+    )
 
     return {
         openEventDialogEvent,

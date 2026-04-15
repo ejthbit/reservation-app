@@ -7,8 +7,27 @@ const AdministrationCalendarEvent = ({ event }: { event: Event }) => {
         <Box height="100%">
             <Grid container direction="column">
                 <Grid item>
-                    <Typography variant="body2">{title}</Typography>
-                    {resource.phone && <Typography variant="body2">{resource.phone}</Typography>}
+                    <Typography
+                        variant="body2"
+                        sx={(theme) => ({
+                            textTransform: 'capitalize',
+                            fontWeight: '600',
+                            color: theme.palette.getContrastText(theme.palette.primary.main),
+                        })}
+                    >
+                        {title}
+                    </Typography>
+                    {resource.phone && (
+                        <Typography
+                            variant="body2"
+                            sx={(theme) => ({
+                                textTransform: 'capitalize',
+                                color: theme.palette.getContrastText(theme.palette.primary.main),
+                            })}
+                        >
+                            {resource.phone}
+                        </Typography>
+                    )}
                 </Grid>
                 {resource.completed && (
                     <Hidden mdDown>

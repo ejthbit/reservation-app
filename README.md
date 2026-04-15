@@ -34,15 +34,15 @@ When used as an npm library, the consumer app's `.env` provides these values —
 
 The library exports from `src/index.ts`:
 
-| Export | Description |
-| --- | --- |
-| `ReservationDialog` | Patient-facing reservation stepper dialog. Self-contained (includes its own providers). |
+| Export               | Description                                                                                                                               |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `ReservationDialog`  | Patient-facing reservation stepper dialog. Self-contained (includes its own providers).                                                   |
 | `AdministrationPage` | Admin dashboard with calendar, services, announcements. Uses `<Routes>` internally — must be rendered inside a `<Route path="/admin/*">`. |
-| `Login` | Login/registration page. Requires `UserProvider` and a router. |
-| `UserProvider` | Context provider for authentication state. Wrap around `Login`, `ProtectedRoute`, and `AdministrationPage`. |
-| `useUser` | Hook to access user auth state (`isLoggedIn`, `logIn`, `logOut`, etc.). |
-| `ProtectedRoute` | Route guard that redirects unauthenticated users. Requires `UserProvider`. |
-| `AnnouncementsList` | Standalone announcements list component. |
+| `Login`              | Login/registration page. Requires `UserProvider` and a router.                                                                            |
+| `UserProvider`       | Context provider for authentication state. Wrap around `Login`, `ProtectedRoute`, and `AdministrationPage`.                               |
+| `useUser`            | Hook to access user auth state (`isLoggedIn`, `logIn`, `logOut`, etc.).                                                                   |
+| `ProtectedRoute`     | Route guard that redirects unauthenticated users. Requires `UserProvider`.                                                                |
+| `AnnouncementsList`  | Standalone announcements list component.                                                                                                  |
 
 ## Tech Stack
 
@@ -78,7 +78,7 @@ import { ThemeProvider, createTheme, CssBaseline } from '@mui/material'
 
 const theme = createTheme({
     palette: {
-        primary: { main: '#6A11CB' },
+        primary: { main: '#eaccb5' },
     },
     typography: {
         fontFamily: ['Poppins', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
@@ -118,12 +118,7 @@ function App() {
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom'
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material'
 import { SnackbarProvider } from 'notistack'
-import {
-    AdministrationPage,
-    Login,
-    UserProvider,
-    ProtectedRoute,
-} from '@ejthbit/reservation-app'
+import { AdministrationPage, Login, UserProvider, ProtectedRoute } from '@ejthbit/reservation-app'
 
 const theme = createTheme({
     palette: { primary: { main: '#1976d2' } },
@@ -143,12 +138,7 @@ function AppRoutes() {
             />
             <Route
                 path="/login"
-                element={
-                    <Login
-                        onGetUser={() => navigate('/admin')}
-                        isRegistrationEnabled={false}
-                    />
-                }
+                element={<Login onGetUser={() => navigate('/admin')} isRegistrationEnabled={false} />}
             />
         </Routes>
     )
@@ -174,7 +164,7 @@ function App() {
 
 Standalone component, no providers needed:
 
-```tsx
+````tsx
 import { AnnouncementsList } from '@ejthbit/reservation-app'
 
 function NewsPage() {
@@ -196,7 +186,7 @@ pnpm version minor
 
 # major (2.1.4 → 3.0.0)
 pnpm version major
-```
+````
 
 This updates `package.json` and creates a git tag.
 

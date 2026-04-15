@@ -16,7 +16,7 @@ const defaultStepsConfiguration = [
         step: 'FIRST',
     },
     {
-        label: 'Preference lékaře',
+        label: 'Preference zaměstnance',
         component: <ReservationDoctorSelect step={'SECOND'} />,
         step: 'SECOND',
     },

@@ -44,7 +44,12 @@ type DoctorForm = {
     preferred_service_start: string
 }
 
-const emptyForm = (): DoctorForm => ({ name: '', workplace_id: [], categories: [], preferred_service_start: '' })
+const emptyForm = (): DoctorForm => ({
+    name: '',
+    workplace_id: [],
+    categories: [],
+    preferred_service_start: '',
+})
 
 const createFetcher = async (key: string, { arg }: { arg: DoctorForm }) =>
     (await axiosGynInstance.post(key, arg)).data
@@ -66,8 +71,14 @@ const AdministrationEmployees = () => {
     const [deleteTarget, setDeleteTarget] = useState<Doctor | null>(null)
     const [form, setForm] = useState<DoctorForm>(emptyForm())
 
-    const { trigger: createDoctor, isMutating: isCreating } = useSWRMutation('administration/doctor', createFetcher)
-    const { trigger: updateDoctor, isMutating: isUpdating } = useSWRMutation('administration/doctor', updateFetcher)
+    const { trigger: createDoctor, isMutating: isCreating } = useSWRMutation(
+        'administration/doctor',
+        createFetcher,
+    )
+    const { trigger: updateDoctor, isMutating: isUpdating } = useSWRMutation(
+        'administration/doctor',
+        updateFetcher,
+    )
     const { trigger: deleteDoctor } = useSWRMutation('administration/doctor', deleteFetcher)
 
     const {
@@ -171,7 +182,9 @@ const AdministrationEmployees = () => {
                 fullWidth
             />
             <Box>
-                <Typography variant="caption" color="text.secondary">Pracoviště *</Typography>
+                <Typography variant="caption" color="text.secondary">
+                    Pracoviště *
+                </Typography>
                 <Select
                     multiple
                     fullWidth
@@ -183,12 +196,16 @@ const AdministrationEmployees = () => {
                     }
                 >
                     {ambulanceOptions.map((a) => (
-                        <MenuItem key={a.workplace_id} value={String(a.workplace_id)}>{a.name}</MenuItem>
+                        <MenuItem key={a.workplace_id} value={String(a.workplace_id)}>
+                            {a.name}
+                        </MenuItem>
                     ))}
                 </Select>
             </Box>
             <Box>
-                <Typography variant="caption" color="text.secondary">Kategorie</Typography>
+                <Typography variant="caption" color="text.secondary">
+                    Kategorie
+                </Typography>
                 <Select
                     multiple
                     fullWidth
@@ -200,7 +217,9 @@ const AdministrationEmployees = () => {
                     }
                 >
                     {categoryOptions.map((c) => (
-                        <MenuItem key={c.category_id} value={String(c.category_id)}>{c.name}</MenuItem>
+                        <MenuItem key={c.category_id} value={String(c.category_id)}>
+                            {c.name}
+                        </MenuItem>
                     ))}
                 </Select>
             </Box>
@@ -219,12 +238,7 @@ const AdministrationEmployees = () => {
             <Box sx={{ width: '100%' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                     <Typography variant="h6">Zaměstnanci</Typography>
-                    <Button
-                        variant="contained"
-                        startIcon={<Add />}
-                        onClick={openAdd}
-                        sx={{ background: 'linear-gradient(to right, #6A11CB, #2575FC)' }}
-                    >
+                    <Button variant="contained" startIcon={<Add />} onClick={openAdd}>
                         Přidat zaměstnance
                     </Button>
                 </Box>
@@ -268,7 +282,9 @@ const AdministrationEmployees = () => {
                                                         </Tooltip>
                                                     ))
                                                 ) : (
-                                                    <Typography variant="body2" color="text.secondary">—</Typography>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        —
+                                                    </Typography>
                                                 )}
                                             </Box>
                                         </TableCell>
@@ -279,7 +295,10 @@ const AdministrationEmployees = () => {
                                                 </IconButton>
                                             </Tooltip>
                                             <Tooltip title="Smazat">
-                                                <IconButton color="error" onClick={() => setDeleteTarget(doctor)}>
+                                                <IconButton
+                                                    color="error"
+                                                    onClick={() => setDeleteTarget(doctor)}
+                                                >
                                                     <Delete />
                                                 </IconButton>
                                             </Tooltip>
@@ -306,7 +325,11 @@ const AdministrationEmployees = () => {
                     {DoctorFormFields}
                     <DialogActions>
                         <Button onClick={() => setAddOpen(false)}>Zrušit</Button>
-                        <Button variant="contained" onClick={handleAdd} disabled={!isFormValid || isSubmitting}>
+                        <Button
+                            variant="contained"
+                            onClick={handleAdd}
+                            disabled={!isFormValid || isSubmitting}
+                        >
                             {isCreating ? <CircularProgress size={20} /> : 'Přidat'}
                         </Button>
                     </DialogActions>
@@ -318,7 +341,11 @@ const AdministrationEmployees = () => {
                     {DoctorFormFields}
                     <DialogActions>
                         <Button onClick={() => setEditTarget(null)}>Zrušit</Button>
-                        <Button variant="contained" onClick={handleEdit} disabled={!isFormValid || isSubmitting}>
+                        <Button
+                            variant="contained"
+                            onClick={handleEdit}
+                            disabled={!isFormValid || isSubmitting}
+                        >
                             {isUpdating ? <CircularProgress size={20} /> : 'Uložit'}
                         </Button>
                     </DialogActions>

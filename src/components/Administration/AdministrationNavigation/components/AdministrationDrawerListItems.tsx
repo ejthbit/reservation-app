@@ -26,50 +26,55 @@ const AdministrationDrawerListItems = ({
     return (
         <List disablePadding>
             {arrayOfItems.map(({ id, icon, text, link, disabled, onClick, hiddenMobile = false }) => (
-                    <ListItem key={text} disablePadding title={text}>
-                        <Hidden smDown={hiddenMobile}>
-                            <ListItemButton
-                                sx={{
-                                    minHeight: 48,
-                                    justifyContent: isOpen ? 'initial' : 'center',
-                                    px: 2.5,
-                                    '&:hover, &.Mui-selected, &.Mui-selected:hover': {
-                                        backgroundColor: 'black',
-                                    },
-                                }}
-                                disabled={disabled}
-                                selected={id === selectedItem}
-                                onClick={() => {
-                                    onClick && onClick(navigate)
-                                }}
-                                {...(!isNilOrEmpty(link) && { to: link, component: Link })}
-                            >
-                                {icon && (
-                                    <ListItemIcon
-                                        sx={{
-                                            minWidth: 0,
-                                            mr: isOpen ? 2 : 'auto',
-                                            justifyContent: 'center',
-                                            '& svg': {
-                                                fill: 'white',
-                                            },
-                                        }}
-                                    >
-                                        {icon}
-                                    </ListItemIcon>
-                                )}
-                                {isOpen && (
-                                    <ListItemText
-                                        primary={text}
-                                        sx={{
-                                            fontWeight: id === selectedItem ? '700' : '400',
-                                        }}
-                                    />
-                                )}
-                            </ListItemButton>
-                        </Hidden>
-                    </ListItem>
-                ))}
+                <ListItem key={text} disablePadding title={text}>
+                    <Hidden smDown={hiddenMobile}>
+                        <ListItemButton
+                            sx={(theme) => ({
+                                minHeight: 48,
+                                justifyContent: isOpen ? 'initial' : 'center',
+                                px: 2.5,
+                                '&.Mui-selected': {
+                                    backgroundColor: theme.palette.secondary.main,
+                                    color: theme.palette.getContrastText(theme.palette.secondary.main),
+                                },
+                                '&:hover, &.Mui-selected:hover': {
+                                    backgroundColor: theme.palette.secondary.main,
+                                    color: theme.palette.getContrastText(theme.palette.secondary.main),
+                                },
+                            })}
+                            disabled={disabled}
+                            selected={id === selectedItem}
+                            onClick={() => {
+                                onClick && onClick(navigate)
+                            }}
+                            {...(!isNilOrEmpty(link) && { to: link, component: Link })}
+                        >
+                            {icon && (
+                                <ListItemIcon
+                                    sx={(theme) => ({
+                                        minWidth: 0,
+                                        mr: isOpen ? 2 : 'auto',
+                                        justifyContent: 'center',
+                                        '& svg': {
+                                            fill: theme.palette.secondary.main,
+                                        },
+                                    })}
+                                >
+                                    {icon}
+                                </ListItemIcon>
+                            )}
+                            {isOpen && (
+                                <ListItemText
+                                    primary={text}
+                                    sx={{
+                                        fontWeight: id === selectedItem ? '700' : '400',
+                                    }}
+                                />
+                            )}
+                        </ListItemButton>
+                    </Hidden>
+                </ListItem>
+            ))}
         </List>
     )
 }

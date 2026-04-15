@@ -61,17 +61,30 @@ const AdministrationUsers = () => {
     const [editTarget, setEditTarget] = useState<UserRow | null>(null)
     const [deleteTarget, setDeleteTarget] = useState<UserRow | null>(null)
 
-    const [addForm, setAddForm] = useState<AddUserForm>({ name: '', email: '', password: '', default_workplace: '' })
-    const [editForm, setEditForm] = useState<EditUserForm>({ name: '', email: '', default_workplace: '', role: 'user' })
+    const [addForm, setAddForm] = useState<AddUserForm>({
+        name: '',
+        email: '',
+        password: '',
+        default_workplace: '',
+    })
+    const [editForm, setEditForm] = useState<EditUserForm>({
+        name: '',
+        email: '',
+        default_workplace: '',
+        role: 'user',
+    })
 
-    const { data: users, isLoading, mutate: refetchUsers } = useSWR<UserRow[]>(
-        'administration/users?limit=100',
-        usersFetcher,
-        { revalidateOnFocus: false },
-    )
+    const {
+        data: users,
+        isLoading,
+        mutate: refetchUsers,
+    } = useSWR<UserRow[]>('administration/users?limit=100', usersFetcher, { revalidateOnFocus: false })
 
     const { trigger: signUp, isMutating: isAdding } = useSWRMutation('administration/signUp', signUpFetcher)
-    const { trigger: updateUser, isMutating: isUpdating } = useSWRMutation('administration/user', updateUserFetcher)
+    const { trigger: updateUser, isMutating: isUpdating } = useSWRMutation(
+        'administration/user',
+        updateUserFetcher,
+    )
     const { trigger: deleteUser } = useSWRMutation('administration/user', deleteUserFetcher)
 
     const sortedUsers = [...(users ?? [])].sort((a, b) => a.id - b.id)
@@ -129,12 +142,7 @@ const AdministrationUsers = () => {
             <Box sx={{ width: '100%' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                     <Typography variant="h6">Uživatelé</Typography>
-                    <Button
-                        variant="contained"
-                        startIcon={<Add />}
-                        onClick={() => setAddOpen(true)}
-                        sx={{ background: 'linear-gradient(to right, #6A11CB, #2575FC)' }}
-                    >
+                    <Button variant="contained" startIcon={<Add />} onClick={() => setAddOpen(true)}>
                         Přidat uživatele
                     </Button>
                 </Box>
@@ -164,7 +172,11 @@ const AdministrationUsers = () => {
                                         <TableCell>{user.email}</TableCell>
                                         <TableCell>{user.default_workplace ?? '—'}</TableCell>
                                         <TableCell>
-                                            <Chip label={user.role} size="small" color={roleColor(user.role)} />
+                                            <Chip
+                                                label={user.role}
+                                                size="small"
+                                                color={roleColor(user.role)}
+                                            />
                                         </TableCell>
                                         <TableCell align="right">
                                             <Tooltip title="Upravit">
@@ -173,7 +185,10 @@ const AdministrationUsers = () => {
                                                 </IconButton>
                                             </Tooltip>
                                             <Tooltip title="Smazat">
-                                                <IconButton color="error" onClick={() => setDeleteTarget(user)}>
+                                                <IconButton
+                                                    color="error"
+                                                    onClick={() => setDeleteTarget(user)}
+                                                >
                                                     <Delete />
                                                 </IconButton>
                                             </Tooltip>
@@ -197,19 +212,23 @@ const AdministrationUsers = () => {
                 {/* Add dialog */}
                 <Dialog open={addOpen} onClose={() => setAddOpen(false)} fullWidth maxWidth="xs">
                     <DialogTitle>Přidat uživatele</DialogTitle>
-                    <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '12px !important' }}>
+                    <DialogContent
+                        sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '12px !important' }}
+                    >
                         <TextField
                             label="Jméno"
                             value={addForm.name}
                             onChange={(e) => setAddForm((f) => ({ ...f, name: e.target.value }))}
-                            required fullWidth
+                            required
+                            fullWidth
                         />
                         <TextField
                             label="E-mail"
                             type="email"
                             value={addForm.email}
                             onChange={(e) => setAddForm((f) => ({ ...f, email: e.target.value }))}
-                            required fullWidth
+                            required
+                            fullWidth
                         />
                         <TextField
                             label="Heslo"
@@ -217,7 +236,8 @@ const AdministrationUsers = () => {
                             value={addForm.password}
                             onChange={(e) => setAddForm((f) => ({ ...f, password: e.target.value }))}
                             helperText="Alespoň 8 znaků"
-                            required fullWidth
+                            required
+                            fullWidth
                         />
                         <AmbulanceSelect
                             showLabel
@@ -238,19 +258,23 @@ const AdministrationUsers = () => {
                 {/* Edit dialog */}
                 <Dialog open={!!editTarget} onClose={() => setEditTarget(null)} fullWidth maxWidth="xs">
                     <DialogTitle>Upravit uživatele</DialogTitle>
-                    <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '12px !important' }}>
+                    <DialogContent
+                        sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '12px !important' }}
+                    >
                         <TextField
                             label="Jméno"
                             value={editForm.name}
                             onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
-                            required fullWidth
+                            required
+                            fullWidth
                         />
                         <TextField
                             label="E-mail"
                             type="email"
                             value={editForm.email}
                             onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
-                            required fullWidth
+                            required
+                            fullWidth
                         />
                         <AmbulanceSelect
                             showLabel
@@ -260,7 +284,9 @@ const AdministrationUsers = () => {
                             }
                         />
                         <Box>
-                            <Typography variant="caption" color="text.secondary">Role</Typography>
+                            <Typography variant="caption" color="text.secondary">
+                                Role
+                            </Typography>
                             <Select
                                 fullWidth
                                 value={editForm.role}
@@ -274,7 +300,11 @@ const AdministrationUsers = () => {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={() => setEditTarget(null)}>Zrušit</Button>
-                        <Button variant="contained" onClick={handleEdit} disabled={!isEditValid || isUpdating}>
+                        <Button
+                            variant="contained"
+                            onClick={handleEdit}
+                            disabled={!isEditValid || isUpdating}
+                        >
                             {isUpdating ? <CircularProgress size={20} /> : 'Uložit'}
                         </Button>
                     </DialogActions>
