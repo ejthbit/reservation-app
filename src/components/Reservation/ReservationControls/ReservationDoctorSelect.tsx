@@ -16,7 +16,8 @@ const ReservationDoctorSelect = ({ step }: { step: string }) => {
         api: { getDoctorsForSelectedAmbulance },
     } = useReservation()
 
-    useReservationButton({ step, isRequired: true })
+    // FIXME not preference enables all categories
+    useReservationButton({ dependency: [selectedDoctor], step, isRequired: true })
 
     useEffect(() => {
         if (selectedAmbulance && getDoctorsForSelectedAmbulance)
@@ -32,7 +33,6 @@ const ReservationDoctorSelect = ({ step }: { step: string }) => {
                 if (!isNilOrEmpty(selectedTime)) setSelectedTime('')
                 if (!isNilOrEmpty(selectedCategory)) setSelectedCategory('')
             }}
-            notSelectedLabel="Nemám preferenci"
             options={makeArrayOfLabelValue('name', 'doctor_id', doctorsForSelectedAmbulance)}
         />
     ) : null

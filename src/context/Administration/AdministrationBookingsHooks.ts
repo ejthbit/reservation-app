@@ -16,6 +16,7 @@ export const useGetImmediateBookings = ({
     const { data, error, isLoading, isValidating } = useSWR(
         ['administration/bookings', { from, to, workplace }],
         ([_, arg]) => fetchBookings(arg),
+        { refreshInterval: 300_000 },
     )
 
     return { data, error, isLoading, isValidating }

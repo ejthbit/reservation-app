@@ -1,4 +1,5 @@
 export { default as AdministrationDrawer } from './AdministrationDrawer'
-export { default as AdministrationDrawerListItems } from './AdministrationDrawerListItems'
 export { default as AdministrationLayout } from './AdministrationLayout'
+export { default as AdministrationSidebar, SIDEBAR_WIDTH } from './AdministrationSidebar'
+export { default as AdministrationSidebarNavItem } from './AdministrationSidebarNavItem'
 export { default as AdministrationTopbar } from './AdministrationTopbar'

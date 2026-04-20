@@ -1,7 +1,7 @@
-import { Box, CircularProgress, List, ListItem, ListItemText, ListSubheader } from '@mui/material'
+import { Box, CircularProgress, List, ListItem, ListItemText } from '@mui/material'
 import { useMemo } from 'react'
-import { isNilOrEmpty } from '../../utils'
 import { useAnnouncements } from '../../hooks'
+import { isNilOrEmpty } from '../../utils'
 
 const AnnouncementsList = ({ width = '100%' }) => {
     const { announcements, isFetchingAnnouncements } = useAnnouncements()
@@ -10,22 +10,20 @@ const AnnouncementsList = ({ width = '100%' }) => {
         () => announcements?.filter(({ enabled }) => enabled),
         [announcements],
     )
+    if (!enabledAnnouncements) {
+        return null
+    }
 
     return (
-        <Box sx={{ bgcolor: 'rgba(255,192,203, 0.5)', m: 'auto', borderRadius: 6, width }}>
+        <Box sx={{ bgcolor: 'rgb(244, 196, 204)', m: 'auto', width, position: 'relative' }}>
             {isFetchingAnnouncements && <CircularProgress />}
             {!isNilOrEmpty(enabledAnnouncements) && (
-                <List
-                    sx={{ width: '100%' }}
-                    subheader={
-                        <ListSubheader sx={{ bgcolor: 'transparent', borderRadius: 6 }}>
-                            Oznámení
-                        </ListSubheader>
-                    }
-                >
-                    {enabledAnnouncements?.map(({ id, name, description }) => (
+                <List sx={{ width: '100%' }}>
+                    {enabledAnnouncements?.map(({ id, description = '' }) => (
                         <ListItem key={id}>
-                            <ListItemText primary={name} secondary={description} />
+                            <ListItemText
+                                secondary={<div dangerouslySetInnerHTML={{ __html: description }} />}
+                            />
                         </ListItem>
                     ))}
                 </List>

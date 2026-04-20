@@ -65,7 +65,6 @@ const AdministrationEventDetail = ({
         return null
     }
     const handlePatchBooking = async (updatedBooking: Omit<UpdatedBooking, 'id' | 'workplace'>) => {
-        console.log(updatedBooking)
         if (event.id) {
             await updateBooking({
                 ...updatedBooking,

@@ -13,7 +13,7 @@ export const fetchBookings = async ({
     to: string
     workplace: string
 }) => {
-    const { data } = await axiosGynInstance.get<Booking[]>(`bookings/getBookings/${from}/${to}/${workplace}`)
+    const { data } = await axiosGynInstance.get<Booking[]>(`bookings/getBookings/${from}/${to}/${workplace}`, { params: { limit: 500 } })
     return data
 }
 

@@ -9,6 +9,9 @@ import { fileURLToPath } from 'node:url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig(({ mode }) => ({
+    define: {
+        'process.env': 'import.meta.env',
+    },
     plugins: [
         react(),
         eslint(),

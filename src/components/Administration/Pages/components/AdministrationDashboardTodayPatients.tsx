@@ -39,7 +39,7 @@ const AdministrationDashboardTodayPatients = () => {
             <List
                 sx={{
                     width: '100%',
-                    bgcolor: '#F9F9FB',
+                    bgcolor: '#ffffff',
                     borderRadius: 6,
                     maxHeight: '40vh',
                     overflow: 'auto',

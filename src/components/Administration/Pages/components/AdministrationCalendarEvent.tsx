@@ -3,6 +3,7 @@ import { Event } from 'react-big-calendar'
 
 const AdministrationCalendarEvent = ({ event }: { event: Event }) => {
     const { title, resource } = event
+
     return (
         <Box height="100%">
             <Grid container direction="column">
@@ -19,7 +20,7 @@ const AdministrationCalendarEvent = ({ event }: { event: Event }) => {
                     </Typography>
                     {resource.phone && (
                         <Typography
-                            variant="body2"
+                            variant="caption"
                             sx={(theme) => ({
                                 textTransform: 'capitalize',
                                 color: theme.palette.getContrastText(theme.palette.primary.main),
@@ -32,7 +33,7 @@ const AdministrationCalendarEvent = ({ event }: { event: Event }) => {
                 {resource.completed && (
                     <Hidden mdDown>
                         <Grid item>
-                            <Typography variant="body2">Dokončeno</Typography>
+                            <Typography variant="caption">Dokončeno</Typography>
                         </Grid>
                     </Hidden>
                 )}

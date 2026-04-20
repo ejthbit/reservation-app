@@ -7,7 +7,7 @@ import cs from 'date-fns/locale/cs'
 import './css/custom-calendar.css'
 
 import { CalendarProvider, useCalendarContext } from '../../../context/Calendar/CalendarProvider'
-import { Box, CircularProgress, Fade, Typography, useTheme } from '@mui/material'
+import { Box, CircularProgress, Fade, useTheme } from '@mui/material'
 import {
     AdministrationCalendarToolbar,
     AdministrationCalendarEvent,
@@ -84,9 +84,6 @@ const AdministrationCalendarInner = () => {
                     flexDirection: 'column',
                 }}
             >
-                <Typography variant="h6" sx={{ mb: 2 }}>
-                    Kalendář
-                </Typography>
                 <DragAndDropCalendar
                     style={{ flex: 1, minHeight: 0 }}
                     formats={calendarFormats}
@@ -108,8 +105,9 @@ const AdministrationCalendarInner = () => {
                         return {
                             className: 'slot',
                             style: {
-                                backgroundColor: theme.palette.primary.main,
-                                color: '#fff',
+                                borderLeft: `2px solid ${theme.palette.primary.dark}`,
+                                backgroundColor: theme.palette.primary.light,
+                                color: 'black',
                                 ...(event?.resource?.doctorService && {
                                     backgroundColor: '#fff',
                                     color: '#333',
@@ -117,18 +115,21 @@ const AdministrationCalendarInner = () => {
                                     opacity: 1,
                                 }),
                                 ...(event?.resource?.blocked && {
-                                    backgroundColor: 'grey',
-                                    color: 'linen',
+                                    borderLeft: 'none',
+                                    backgroundColor: theme.palette.grey[300],
+                                    color: 'black',
                                     opacity: 1,
+                                    cursor: 'default',
                                 }),
                                 ...(event?.resource?.completed && {
-                                    backgroundColor: 'green',
-                                    color: 'linen',
+                                    borderLeft: `2px solid ${theme.palette.success.dark}`,
+                                    backgroundColor: theme.palette.success.light,
+                                    color: 'black',
                                     opacity: 0.7,
                                 }),
                                 ...(event?.resource?.vacation && {
-                                    backgroundColor: '#FF8F00',
-                                    color: '#fff',
+                                    backgroundColor: theme.palette.warning.light,
+                                    color: 'black',
                                     opacity: 0.7,
                                     pointerEvents: 'none' as const,
                                     cursor: 'default',

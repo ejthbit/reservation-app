@@ -1,31 +1,20 @@
 import { Box } from '@mui/material'
 import { Outlet } from 'react-router-dom'
-import { drawerWidth } from '../../../common'
 import AutomaticLogoutDialog from '../../../common/AutomaticLogOutDialog'
+import { SIDEBAR_WIDTH } from './AdministrationSidebar'
 
-const AdministrationLayout = ({ isDrawerOpen }: { isDrawerOpen: boolean }) => {
+const AdministrationLayout = () => {
     return (
         <Box
             component="main"
-            sx={(theme) => ({
-                height: `calc(100vh - 64px)`,
+            sx={{
+                minHeight: '100vh',
                 display: 'flex',
                 flexDirection: 'column',
-                backgroundColor: '#f9fafb',
-                ml: isDrawerOpen ? `${drawerWidth}px` : 7,
-                flexGrow: 1,
-                p: 6,
-                pt: 3,
-                transition: !isDrawerOpen
-                    ? theme.transitions.create('margin', {
-                          easing: theme.transitions.easing.sharp,
-                          duration: theme.transitions.duration.enteringScreen,
-                      })
-                    : theme.transitions.create('margin', {
-                          easing: theme.transitions.easing.sharp,
-                          duration: theme.transitions.duration.leavingScreen,
-                      }),
-            })}
+                backgroundColor: '#f8f7f4',
+                ml: `${SIDEBAR_WIDTH}px`,
+                p: '24px 28px',
+            }}
         >
             <AutomaticLogoutDialog />
             <Outlet />

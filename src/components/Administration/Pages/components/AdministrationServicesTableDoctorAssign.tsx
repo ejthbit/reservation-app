@@ -1,5 +1,5 @@
-import { MenuItem, TableRow, useTheme } from '@mui/material'
-import { Control, useFieldArray, UseFormSetValue, UseFormTrigger } from 'react-hook-form'
+import { MenuItem, TableRow } from '@mui/material'
+import { Control, useFieldArray, UseFormSetValue, UseFormTrigger, useWatch } from 'react-hook-form'
 import { getHalfHourTimeIncrements } from '../../../../utils'
 import { FormInput, FormSelectInput } from '../../../common'
 import { getTimeValuesToFilterOut } from '../utils/Services/utils'
@@ -37,14 +37,12 @@ const AdministrationServicesTableDoctorAssign = ({
     doctors: doctorsForSelectedAmbulance,
     isLoadingDoctors: isLoading,
 }: AdministrationServicesTableDoctorAssignProps) => {
-    const theme = useTheme()
-
-    const { fields, append, remove, update } = useFieldArray({
+    const { fields, append, remove } = useFieldArray({
         control,
         name: `data.${idx}.doctors`,
     })
+    const watchedDoctors = useWatch({ control, name: `data.${idx}.doctors` })
     const handleRemoveDoctorFromDay = (doctorIndex: number) => remove(doctorIndex)
-
     const handleAssignDoctorToDay = () => {
         append({
             doctorId: '',
@@ -55,15 +53,11 @@ const AdministrationServicesTableDoctorAssign = ({
         trigger(`data.${idx}.doctors`)
     }
 
-    const handleUpdateFieldValue = (doctorIndex: number, property: string, value: string) =>
-        update(doctorIndex, {
-            ...fields[doctorIndex],
-            [`fields[${doctorIndex}][${property}]`]: value,
-        } as DoctorService)
+    const hasDoctorAssigned = watchedDoctors?.some(({ doctorId }) => doctorId !== '')
 
     return fields.map(({ id, start }, index) => (
         <TableRow key={id}>
-            <StyledCell sx={{ width: fields.some(({ doctorId }) => doctorId !== '') ? '25%' : '75%' }}>
+            <StyledCell sx={{ width: hasDoctorAssigned ? '25%' : '75%' }}>
                 <FormSelectInput
                     name={`data.${idx}.doctors.${index}.doctorId`}
                     control={control}
@@ -88,19 +82,13 @@ const AdministrationServicesTableDoctorAssign = ({
                     </MenuItem>
                     {doctorsForSelectedAmbulance &&
                         doctorsForSelectedAmbulance.map(({ doctor_id, name }) => (
-                            <MenuItem
-                                key={doctor_id}
-                                value={doctor_id}
-                                onClick={(e) =>
-                                    handleUpdateFieldValue(index, 'doctorId', doctor_id /* e.target.value */)
-                                }
-                            >
+                            <MenuItem key={doctor_id} value={String(doctor_id)}>
                                 {name}
                             </MenuItem>
                         ))}
                 </FormSelectInput>
             </StyledCell>
-            {fields.some(({ doctorId }) => doctorId !== '') && (
+            {hasDoctorAssigned && (
                 <>
                     <StyledCell sx={{ width: '10%' }}>
                         <FormSelectInput
@@ -110,24 +98,13 @@ const AdministrationServicesTableDoctorAssign = ({
                             required
                         >
                             {(fields.length > 1 && start == ''
-                                    ? getTimeValuesToFilterOut(fields, openingHours)
-                                    : openingHours
+                                ? getTimeValuesToFilterOut(fields, openingHours)
+                                : openingHours
                             ).map((entry) => (
-                                    <MenuItem
-                                        key={entry}
-                                        value={`${date}T${entry}:00.000Z`}
-                                        onClick={(e) => {
-                                            trigger(`data.${idx}.doctors.${index}.end`)
-                                            return handleUpdateFieldValue(
-                                                index,
-                                                'start',
-                                                `${date}T${entry}:00.000Z`,
-                                            )
-                                        }}
-                                    >
-                                        {entry}
-                                    </MenuItem>
-                                ))}
+                                <MenuItem key={entry} value={`${date}T${entry}:00.000Z`}>
+                                    {entry}
+                                </MenuItem>
+                            ))}
                         </FormSelectInput>
                     </StyledCell>
                     <StyledCell sx={{ width: '10%' }}>
@@ -138,21 +115,10 @@ const AdministrationServicesTableDoctorAssign = ({
                             required
                         >
                             {openingHours.map((entry) => (
-                                    <MenuItem
-                                        key={entry}
-                                        value={`${date}T${entry}:00.000Z`}
-                                        onClick={(e) => {
-                                            trigger(`data.${idx}.doctors.${index}.start`)
-                                            return handleUpdateFieldValue(
-                                                index,
-                                                'end',
-                                                `${date}T${entry}:00.000Z`,
-                                            )
-                                        }}
-                                    >
-                                        {entry}
-                                    </MenuItem>
-                                ))}
+                                <MenuItem key={entry} value={`${date}T${entry}:00.000Z`}>
+                                    {entry}
+                                </MenuItem>
+                            ))}
                         </FormSelectInput>
                     </StyledCell>
                     <StyledCell sx={{ width: '30%' }}>
