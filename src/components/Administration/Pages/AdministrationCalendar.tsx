@@ -8,6 +8,7 @@ import './css/custom-calendar.css'
 
 import { CalendarProvider, useCalendarContext } from '../../../context/Calendar/CalendarProvider'
 import { Box, CircularProgress, Fade, useTheme } from '@mui/material'
+import { isMobile } from '../../../utils'
 import {
     AdministrationCalendarToolbar,
     AdministrationCalendarEvent,
@@ -15,7 +16,6 @@ import {
     AdministrationCreateCalendarEventDialog,
     AdministrationCalendarHeader,
 } from './components'
-import { isMobile } from '../../../utils'
 import { BookingEvent, BookingEventResource } from '../../../utils/makeCalendarEventsFromBookings'
 
 const DragAndDropCalendar = withDragAndDrop<BookingEvent, BookingEventResource>(Calendar)
@@ -71,6 +71,8 @@ const AdministrationCalendarInner = () => {
         onSelectSlot,
         handleCloseEventDialog,
         handleToggleCreationModal,
+        openFastBooking,
+        handleCloseFastBooking,
     } = useCalendarContext()
     const theme = useTheme()
     return (
@@ -79,7 +81,7 @@ const AdministrationCalendarInner = () => {
                 sx={{
                     zIndex: '1000',
                     width: '100%',
-                    height: 'calc(100vh - 90px)',
+                    height: isMobile ? 'calc(100vh - 56px)' : 'calc(100vh - 90px)',
                     display: 'flex',
                     flexDirection: 'column',
                 }}
@@ -169,6 +171,12 @@ const AdministrationCalendarInner = () => {
                         open={!!newAppointmentDate.start}
                         handleClose={handleToggleCreationModal}
                         data={newAppointmentDate}
+                    />
+                )}
+                {openFastBooking && (
+                    <AdministrationCreateCalendarEventDialog
+                        open={openFastBooking}
+                        handleClose={handleCloseFastBooking}
                     />
                 )}
                 {openEventDialogEvent && (

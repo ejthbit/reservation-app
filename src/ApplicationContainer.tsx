@@ -2,7 +2,7 @@ import { CssBaseline, ThemeProvider, createTheme } from '@mui/material'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 
-const PRIMARY_COLOR = import.meta.env.VITE_PRIMARY_COLOR
+const PRIMARY_COLOR = import.meta.env.VITE_PRIMARY_COLOR ?? '#4875c9'
 const devTheme = createTheme({
     palette: {
         primary: { main: PRIMARY_COLOR },

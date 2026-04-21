@@ -8,6 +8,7 @@ interface AdministrationSidebarNavItemProps {
     link: string
     exact?: boolean
     badge?: ReactNode
+    iconOnly?: boolean
 }
 
 const AdministrationSidebarNavItem = ({
@@ -16,6 +17,7 @@ const AdministrationSidebarNavItem = ({
     link,
     exact = false,
     badge,
+    iconOnly = false,
 }: AdministrationSidebarNavItemProps) => {
     const location = useLocation()
     const isActive = exact ? location.pathname === link : location.pathname.startsWith(link)
@@ -26,10 +28,12 @@ const AdministrationSidebarNavItem = ({
                 component={Link}
                 to={link}
                 selected={isActive}
+                title={iconOnly ? text : undefined}
                 sx={(theme) => ({
                     borderRadius: '8px',
-                    mx: 1,
+                    mx: 0.5,
                     mb: 0.5,
+                    justifyContent: iconOnly ? 'center' : 'flex-start',
                     '&.Mui-selected': {
                         backgroundColor: theme.palette.primary.light,
                         color: theme.palette.getContrastText(theme.palette.primary.main),
@@ -47,20 +51,23 @@ const AdministrationSidebarNavItem = ({
             >
                 <ListItemIcon
                     sx={(theme) => ({
-                        minWidth: 36,
+                        minWidth: iconOnly ? 0 : 36,
+                        justifyContent: 'center',
                         color: isActive ? theme.palette.primary.main : theme.palette.text.secondary,
                     })}
                 >
                     {icon}
                 </ListItemIcon>
-                <ListItemText
-                    primary={text}
-                    primaryTypographyProps={{
-                        fontSize: 14,
-                        fontWeight: isActive ? 600 : 400,
-                    }}
-                />
-                {badge && <Box sx={{ ml: 'auto' }}>{badge}</Box>}
+                {!iconOnly && (
+                    <ListItemText
+                        primary={text}
+                        primaryTypographyProps={{
+                            fontSize: 14,
+                            fontWeight: isActive ? 600 : 400,
+                        }}
+                    />
+                )}
+                {!iconOnly && badge && <Box sx={{ ml: 'auto' }}>{badge}</Box>}
             </ListItemButton>
         </ListItem>
     )

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SlotInfo } from 'react-big-calendar'
 import { useGetBookings, useUpdateBooking } from '../context/Administration/AdministrationBookingsHooks'
 import { useAdministration } from '../context/Administration/AdministrationProvider'
+import { useSnackbar } from 'notistack'
 
 import {
     getDateWithCorrectOffset,
@@ -90,9 +91,11 @@ const removeContainedEntries = (array1: Intervals, array2: Intervals) => {
     })
 }
 const useCalendar = () => {
+    const { enqueueSnackbar } = useSnackbar()
     const [draggedEvent, setDraggedEvent] = useState<BookingEvent | null>(null)
     const [openEventDialogEvent, setOpenEventDialogEvent] = useState<BookingEvent | null>(null)
     const [newAppointmentDate, setNewAppointmentDate] = useState<{ start: string; end: string } | null>(null)
+    const [openFastBooking, setOpenFastBooking] = useState(false)
     const { selectedViewDateRange, selectedWorkspace } = useAdministration()
     const { from = '', to = '' } = selectedViewDateRange ?? {}
 
@@ -241,14 +244,20 @@ const useCalendar = () => {
 
     useEffect(() => {
         if (from && to) {
-            getBookings({ from, to, workplace: selectedWorkspace })
+            getBookings({ from, to, workplace: selectedWorkspace }).catch(() =>
+                enqueueSnackbar('Nepodařilo se načíst rezervace.', { variant: 'error' }),
+            )
             fetchDoctorServicesByRange({ start: from, end: to, workplace: parseInt(selectedWorkspace) })
-            getVacations({ from, to, workplace: selectedWorkspace })
+            getVacations({ from, to, workplace: selectedWorkspace }).catch(() =>
+                enqueueSnackbar('Nepodařilo se načíst dovolené.', { variant: 'error' }),
+            )
         }
     }, [selectedWorkspace, from, to])
 
     useEffect(() => {
-        getDoctorsForSelectedAmbulance(parseInt(selectedWorkspace))
+        getDoctorsForSelectedAmbulance(parseInt(selectedWorkspace)).catch(() =>
+            enqueueSnackbar('Nepodařilo se načíst lékaře.', { variant: 'error' }),
+        )
     }, [selectedWorkspace])
 
     const filteredBlockedEvents = useMemo(
@@ -280,6 +289,9 @@ const useCalendar = () => {
         refetchBookings: () => {
             if (from && to) getBookings({ from, to, workplace: selectedWorkspace })
         },
+        openFastBooking,
+        handleOpenFastBooking: () => setOpenFastBooking(true),
+        handleCloseFastBooking: () => setOpenFastBooking(false),
         doctors,
         servicesDays,
     }

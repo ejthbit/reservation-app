@@ -1,4 +1,4 @@
-import { ArrowBack, ArrowForward } from '@mui/icons-material'
+import { Add, ArrowBack, ArrowForward } from '@mui/icons-material'
 import { Box, Button, IconButton, Typography, useTheme } from '@mui/material'
 import { endOfDay, parse, startOfDay } from 'date-fns'
 import { useEffect, useState } from 'react'
@@ -17,7 +17,7 @@ const AdministrationCalendarToolbar = ({
 }: ToolbarProps<BookingEvent, BookingEventResource>) => {
     const [viewState, setViewState] = useState<'day' | 'work_week'>(isMobile ? 'day' : 'work_week')
     const theme = useTheme()
-    const { events } = useCalendarContext()
+    const { events, handleOpenFastBooking } = useCalendarContext()
     const { selectViewDateRange } = useAdministration()
 
     const bookingCount = events.filter(
@@ -59,8 +59,9 @@ const AdministrationCalendarToolbar = ({
     const navButtonSx = {
         width: 34,
         height: 34,
+        color: '#fff',
         borderRadius: '9px',
-        backgroundColor: '#fff',
+        backgroundColor: theme.palette.primary.main,
         border: '0.5px solid',
         borderColor: theme.palette.divider,
         '&:hover': {
@@ -74,22 +75,40 @@ const AdministrationCalendarToolbar = ({
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
                 {/* Left: title + subtitle */}
                 <Box>
-                    <Typography sx={{ fontSize: 22, fontWeight: 500, lineHeight: 1.2 }}>
-                        Kalendář
-                    </Typography>
+                    <Typography sx={{ fontSize: 22, fontWeight: 500, lineHeight: 1.2 }}>Kalendář</Typography>
                     <Typography sx={{ fontSize: 13, color: 'text.secondary', mt: 0.25 }}>
                         <Box component="span" sx={{ color: 'primary.main', fontWeight: 500 }}>
                             {bookingCount}
                         </Box>
                         {' objednávek · '}
-                        {viewState === 'work_week' ? 'Pracovní týden' : 'Den'}
-                        {' '}
-                        {label}
+                        {viewState === 'work_week' ? 'Pracovní týden' : 'Den'} {label}
                     </Typography>
                 </Box>
 
                 {/* Right: view toggle + navigation */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {isMobile ? (
+                        <IconButton onClick={handleOpenFastBooking} sx={navButtonSx}>
+                            <Add sx={{ fontSize: 18 }} />
+                        </IconButton>
+                    ) : (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleOpenFastBooking}
+                            disableElevation
+                            startIcon={<Add />}
+                            sx={{
+                                borderRadius: '9px',
+                                textTransform: 'none',
+                                fontSize: 13,
+                                height: 34,
+                                px: 2,
+                            }}
+                        >
+                            Nová objednávka
+                        </Button>
+                    )}
                     {/* View toggle pill */}
                     <Box
                         sx={{
@@ -116,8 +135,7 @@ const AdministrationCalendarToolbar = ({
                                 minWidth: 0,
                                 backgroundColor:
                                     viewState === 'work_week' ? theme.palette.secondary.main : 'transparent',
-                                color:
-                                    viewState === 'work_week' ? '#fff' : theme.palette.text.secondary,
+                                color: viewState === 'work_week' ? '#fff' : theme.palette.text.secondary,
                                 '&:hover': {
                                     backgroundColor:
                                         viewState === 'work_week'
@@ -141,8 +159,7 @@ const AdministrationCalendarToolbar = ({
                                 minWidth: 0,
                                 backgroundColor:
                                     viewState === 'day' ? theme.palette.secondary.main : 'transparent',
-                                color:
-                                    viewState === 'day' ? '#fff' : theme.palette.text.secondary,
+                                color: viewState === 'day' ? '#fff' : theme.palette.text.secondary,
                                 '&:hover': {
                                     backgroundColor:
                                         viewState === 'day'
@@ -181,7 +198,7 @@ const AdministrationCalendarToolbar = ({
             </Box>
 
             {/* Legend bar */}
-            <Box
+            {!isMobile && <Box
                 sx={{
                     backgroundColor: '#fff',
                     border: '0.5px solid',
@@ -216,7 +233,7 @@ const AdministrationCalendarToolbar = ({
                         <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>{text}</Typography>
                     </Box>
                 ))}
-            </Box>
+            </Box>}
         </Box>
     )
 }

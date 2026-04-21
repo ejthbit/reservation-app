@@ -12,10 +12,12 @@ import { Avatar, Box, Divider, IconButton, List, Typography } from '@mui/materia
 import { useNavigate } from 'react-router-dom'
 import { useAdministration } from '../../../../context/Administration/AdministrationProvider'
 import { useUser } from '../../../../context/User/UserProvider'
+import { isMobile } from '../../../../utils'
 import AmbulanceSelect from '../../../common/AmbulanceSelect'
 import AdministrationSidebarNavItem from './AdministrationSidebarNavItem'
 
 export const SIDEBAR_WIDTH = 232
+export const MOBILE_SIDEBAR_WIDTH = 56
 
 const mainNavLinks = [
     { icon: <Home fontSize="small" />, text: 'Přehled', link: '/admin', exact: true },
@@ -45,10 +47,12 @@ const AdministrationSidebar = () => {
 
     const roleLabel = userRole === 'admin' ? 'Administrátor' : 'Uživatel'
 
+    const sidebarWidth = isMobile ? MOBILE_SIDEBAR_WIDTH : SIDEBAR_WIDTH
+
     return (
         <Box
             sx={{
-                width: SIDEBAR_WIDTH,
+                width: sidebarWidth,
                 height: '100vh',
                 position: 'fixed',
                 top: 0,
@@ -61,32 +65,34 @@ const AdministrationSidebar = () => {
                 zIndex: (theme) => theme.zIndex.drawer,
             }}
         >
-            <Box sx={{ p: 2, pb: 1 }}>
-                <AmbulanceSelect
-                    variant="outlined"
-                    selectedValueId={selectedWorkspace}
-                    onAmbulanceSelect={(e) => selectWorkspace(e.target.value as string)}
-                    sx={{
-                        width: '100%',
-                    }}
-                />
-            </Box>
+            {!isMobile && (
+                <Box sx={{ p: 2, pb: 1 }}>
+                    <AmbulanceSelect
+                        variant="outlined"
+                        selectedValueId={selectedWorkspace}
+                        onAmbulanceSelect={(e) => selectWorkspace(e.target.value as string)}
+                        sx={{ width: '100%' }}
+                    />
+                </Box>
+            )}
 
             <Box sx={{ flex: 1, overflow: 'auto', pt: 1 }}>
-                <Typography
-                    variant="caption"
-                    sx={{
-                        px: 2,
-                        py: 0.5,
-                        display: 'block',
-                        color: 'text.secondary',
-                        fontWeight: 600,
-                        letterSpacing: '0.08em',
-                        fontSize: 11,
-                    }}
-                >
-                    HLAVNÍ
-                </Typography>
+                {!isMobile && (
+                    <Typography
+                        variant="caption"
+                        sx={{
+                            px: 2,
+                            py: 0.5,
+                            display: 'block',
+                            color: 'text.secondary',
+                            fontWeight: 600,
+                            letterSpacing: '0.08em',
+                            fontSize: 11,
+                        }}
+                    >
+                        HLAVNÍ
+                    </Typography>
+                )}
                 <List disablePadding>
                     {mainNavLinks.map((item) => (
                         <AdministrationSidebarNavItem
@@ -95,25 +101,28 @@ const AdministrationSidebar = () => {
                             text={item.text}
                             link={item.link}
                             exact={item.exact}
+                            iconOnly={isMobile}
                         />
                     ))}
                 </List>
 
-                <Typography
-                    variant="caption"
-                    sx={{
-                        px: 2,
-                        py: 0.5,
-                        mt: 1,
-                        display: 'block',
-                        color: 'text.secondary',
-                        fontWeight: 600,
-                        letterSpacing: '0.08em',
-                        fontSize: 11,
-                    }}
-                >
-                    SPRÁVA
-                </Typography>
+                {!isMobile && (
+                    <Typography
+                        variant="caption"
+                        sx={{
+                            px: 2,
+                            py: 0.5,
+                            mt: 1,
+                            display: 'block',
+                            color: 'text.secondary',
+                            fontWeight: 600,
+                            letterSpacing: '0.08em',
+                            fontSize: 11,
+                        }}
+                    >
+                        SPRÁVA
+                    </Typography>
+                )}
                 <List disablePadding>
                     {managementNavLinks.map((item) => (
                         <AdministrationSidebarNavItem
@@ -121,6 +130,7 @@ const AdministrationSidebar = () => {
                             icon={item.icon}
                             text={item.text}
                             link={item.link}
+                            iconOnly={isMobile}
                         />
                     ))}
                     {userRole === 'admin' && (
@@ -128,6 +138,7 @@ const AdministrationSidebar = () => {
                             icon={<ManageAccounts fontSize="small" />}
                             text="Uživatelé"
                             link="/admin/users"
+                            iconOnly={isMobile}
                         />
                     )}
                 </List>
@@ -136,40 +147,43 @@ const AdministrationSidebar = () => {
             <Divider />
             <Box
                 sx={{
-                    p: 2,
+                    p: isMobile ? 1 : 2,
                     display: 'flex',
+                    flexDirection: isMobile ? 'column' : 'row',
                     alignItems: 'center',
                     gap: 1,
                 }}
             >
                 <Avatar
                     sx={(theme) => ({
-                        width: 36,
-                        height: 36,
+                        width: 32,
+                        height: 32,
                         bgcolor: theme.palette.primary.main,
-                        fontSize: 14,
+                        fontSize: 13,
                         fontWeight: 600,
                     })}
                 >
                     {initials}
                 </Avatar>
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography
-                        variant="body2"
-                        sx={{
-                            fontWeight: 600,
-                            lineHeight: 1.2,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                        }}
-                    >
-                        {name ?? email}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                        {roleLabel}
-                    </Typography>
-                </Box>
+                {!isMobile && (
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                fontWeight: 600,
+                                lineHeight: 1.2,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                            }}
+                        >
+                            {name ?? email}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                            {roleLabel}
+                        </Typography>
+                    </Box>
+                )}
                 <IconButton
                     size="small"
                     title="Odhlásit se"

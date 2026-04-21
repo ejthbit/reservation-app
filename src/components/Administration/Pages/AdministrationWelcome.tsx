@@ -15,7 +15,8 @@ import {
     subMonths,
 } from 'date-fns'
 import { cs } from 'date-fns/locale'
-import { useMemo, useState } from 'react'
+import { useSnackbar } from 'notistack'
+import { useEffect, useMemo, useState } from 'react'
 import { useGetImmediateBookings } from '../../../context/Administration/AdministrationBookingsHooks'
 import { useAdministration } from '../../../context/Administration/AdministrationProvider'
 import { useUser } from '../../../context/User/UserProvider'
@@ -74,8 +75,9 @@ const AdministrationWelcome = () => {
     const { name } = useUser()
     const { data: categories } = useGetCategories()
     const { selectedWorkspace } = useAdministration()
+    const { enqueueSnackbar } = useSnackbar()
 
-    const { data: todayBookingsReal } = useGetImmediateBookings({
+    const { data: todayBookingsReal, error: todayError } = useGetImmediateBookings({
         from: getISODateStringWithCorrectOffset(startOfToday()),
         to: getISODateStringWithCorrectOffset(endOfToday()),
         workplace: selectedWorkspace,
@@ -83,13 +85,13 @@ const AdministrationWelcome = () => {
 
     const todayBookings = todayBookingsReal ?? []
 
-    const { data: bookingsInLastMonth, isLoading: isLoadingLast30 } = useGetImmediateBookings({
+    const { data: bookingsInLastMonth, isLoading: isLoadingLast30, error: lastMonthError } = useGetImmediateBookings({
         from: getISODateStringWithCorrectOffset(subDays(startOfToday(), 30)),
         to: getISODateStringWithCorrectOffset(startOfToday()),
         workplace: selectedWorkspace,
     })
 
-    const { data: currentMonthBookings } = useGetImmediateBookings({
+    const { data: currentMonthBookings, error: currentMonthError } = useGetImmediateBookings({
         from: getISODateStringWithCorrectOffset(startOfMonth(heatmapDate)),
         to: getISODateStringWithCorrectOffset(endOfMonth(heatmapDate)),
         workplace: selectedWorkspace,
@@ -106,12 +108,18 @@ const AdministrationWelcome = () => {
     const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 })
     const weekEnd = endOfWeek(new Date(), { weekStartsOn: 1 })
 
-    const { data: thisWeekBookings } = useGetImmediateBookings({
+    const { data: thisWeekBookings, error: weekError } = useGetImmediateBookings({
         from: getISODateStringWithCorrectOffset(weekStart),
         to: getISODateStringWithCorrectOffset(weekEnd),
         workplace: selectedWorkspace,
     })
     const weekCount = thisWeekBookings?.length ?? 0
+
+    useEffect(() => {
+        if (todayError || lastMonthError || currentMonthError || weekError) {
+            enqueueSnackbar('Nepodařilo se načíst data přehledu.', { variant: 'error' })
+        }
+    }, [todayError, lastMonthError, currentMonthError, weekError, enqueueSnackbar])
     const avgPerDay = bookingsInLastMonth ? Math.round(bookingsInLastMonth.length / 30) : 0
     const firstName = name?.split(' ')[0] ?? name
     const theme = useTheme()

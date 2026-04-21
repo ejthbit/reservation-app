@@ -63,6 +63,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         onSuccess: (data) => {
             localStorage.setItem('user', JSON.stringify(data))
             setStoredUser(data)
+            logOutAutomatically(false)
         },
     })
 
@@ -79,24 +80,39 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         }
     }, [userError, enqueueSnackbar])
 
-    const value: UserContextType = useMemo(() => ({
-        userError,
-        isLoadingUser,
-        isLoggedIn,
-        automaticallyLoggedOut,
-        id,
-        email,
-        name,
-        defaultWorkplace,
-        userRole,
-        logIn,
-        logOut: () => {
-            reset()
-            localStorage.removeItem('user')
-            setStoredUser(undefined)
-        },
-        logOutAutomatically: () => logOutAutomatically((state) => !state),
-    }), [userError, isLoadingUser, isLoggedIn, automaticallyLoggedOut, id, email, name, defaultWorkplace, userRole, logIn, reset])
+    const value: UserContextType = useMemo(
+        () => ({
+            userError,
+            isLoadingUser,
+            isLoggedIn,
+            automaticallyLoggedOut,
+            id,
+            email,
+            name,
+            defaultWorkplace,
+            userRole,
+            logIn,
+            logOut: () => {
+                reset()
+                localStorage.removeItem('user')
+                setStoredUser(undefined)
+            },
+            logOutAutomatically: () => logOutAutomatically(true),
+        }),
+        [
+            userError,
+            isLoadingUser,
+            isLoggedIn,
+            automaticallyLoggedOut,
+            id,
+            email,
+            name,
+            defaultWorkplace,
+            userRole,
+            logIn,
+            reset,
+        ],
+    )
 
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>
 }

@@ -1,19 +1,17 @@
-import { Dialog, DialogContent, DialogContentText, DialogTitle, Slide } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from '@mui/material'
 import { forwardRef } from 'react'
 import { useUser } from '../../context/User/UserProvider'
 import { TransitionProps } from '@mui/material/transitions'
 
-const AutomaticLogoutDialog = () => {
-    const { automaticallyLoggedOut } = useUser()
+const Transition = forwardRef(function Transition(
+    props: TransitionProps & { children: React.ReactElement<any, any> },
+    ref: React.Ref<unknown>,
+) {
+    return <Slide direction="up" ref={ref} {...props} />
+})
 
-    const Transition = forwardRef(function Transition(
-        props: TransitionProps & {
-            children: React.ReactElement<any, any>
-        },
-        ref: React.Ref<unknown>,
-    ) {
-        return <Slide direction="up" ref={ref} {...props} />
-    })
+const AutomaticLogoutDialog = () => {
+    const { automaticallyLoggedOut, logOut } = useUser()
 
     return (
         automaticallyLoggedOut && (
@@ -26,6 +24,11 @@ const AutomaticLogoutDialog = () => {
                         prosím znovu přihlašte.
                     </DialogContentText>
                 </DialogContent>
+                <DialogActions>
+                    <Button onClick={logOut} variant="contained">
+                        Odhlásit se nyní
+                    </Button>
+                </DialogActions>
             </Dialog>
         )
     )
