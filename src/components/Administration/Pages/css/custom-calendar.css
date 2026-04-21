@@ -20,6 +20,10 @@
     pointer-events: none;
 }
 
+.rbc-event slot {
+    /* border-radius: 10px; */
+}
+
 .rbc-time-header.rbc-overflowing {
     border-right: none;
 }
@@ -31,7 +35,7 @@
 
 .rbc-time-content {
     border-top: none;
-    border-radius: 6px;
+    /* border-radius: 6px; */
 }
 
 .rbc-today {
@@ -39,19 +43,22 @@
 }
 
 .rbc-header.rbc-today {
-    background-color: rgba(220, 20, 60, 0.305);
+    background-color: crimson;
 }
 
 .rbc-time-view {
-    border-left: none;
-    border-top: none;
-    border: 1px solid #eaeaea;
-    box-shadow: -2px 4px 6px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(199, 199, 199, 0.25);
-    border-radius: 8px;
+    /* border: none; */
+    /* border-left: none; */
+    /* border-top: none; */
+    /* border: 1px solid #eaeaea; */
+    /* box-shadow:
+        -2px 4px 6px rgba(0, 0, 0, 0.08),
+        0px 2px 4px rgba(199, 199, 199, 0.25); */
+    /* border-radius: 8px; */
     background-color: #f9f9fb;
     padding-right: 0 !important;
     padding-left: 0.6rem;
-    display: contents;
+    overflow: hidden;
 }
 
 .rbc-timeslot-group {
@@ -75,15 +82,17 @@
 .rbc-event {
     color: black;
     font-weight: 600;
-    width: 100% !important;
+    width: 'auto';
+    /* width: 100% !important; */
 }
 
 .rbc-day-slot .rbc-event {
     background: #8f8f8f8b;
     border: none;
     pointer-events: 'none';
+    /* border-color: #4825a8; */
     cursor: 'pointer';
-    left: 0% !important;
+    /* left: 0% !important; */
     z-index: 1001;
 }
 

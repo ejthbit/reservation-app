@@ -1,33 +1,22 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import eslint from 'vite-plugin-eslint'
-import federation from '@originjs/vite-plugin-federation'
-export default defineConfig({
+import dts from 'vite-plugin-dts'
+import tsConfigPaths from 'vite-tsconfig-paths'
+import { resolve, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+export default defineConfig(({ mode }) => ({
+    define: {
+        'process.env': 'import.meta.env',
+    },
     plugins: [
         react(),
         eslint(),
-        federation({
-            name: 'reservation-app',
-            filename: 'remoteEntry.js',
-            exposes: {
-                './Button': './src/components/Reservation/ReservationButton/ReservationButton.jsx',
-                './ReservationDialog': './src/components/Reservation/ReservationDialog/ReservationDialog.jsx',
-                './ProtectedRoute': './src/components/common/ProtectedRoute.jsx',
-                './AdministrationPage': './src/components/Administration/AdministrationPage.jsx',
-                './Login': './src/components/Login/Login.jsx',
-                './ReservationProvider': './src/store/ReservationProvider.jsx',
-                './AnnouncementsList': './src/components/common/AnnouncementsList.jsx',
-            },
-            remotes: {
-                app: {
-                    external: `../../app.js`,
-                    // external: `http://127.0.0.1:5001/assets/app.js`,
-                    from: 'vite',
-                    externalType: 'url',
-                },
-            },
-            shared: ['react', 'react-dom', 'react-router-dom'],
-        }),
+        tsConfigPaths(),
+        dts({ tsconfigPath: './tsconfig.json', rollupTypes: true }),
     ],
     preview: {
         host: '127.0.0.1',
@@ -38,20 +27,47 @@ export default defineConfig({
         },
     },
     build: {
-        target: 'esnext',
         minify: false,
-        cssCodeSplit: false,
-        rollupOptions: {
-            onwarn(warning, warn) {
-                if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
-                    return
-                }
-                warn(warning)
-            },
+        reportCompressedSize: true,
+        lib: {
+            entry: resolve(__dirname, 'src/index.ts'),
+            fileName: 'index',
+            formats: ['es'],
         },
+        rollupOptions: {
+            external: [
+                'react',
+                'react-dom',
+                'react/jsx-runtime',
+                '@emotion/react',
+                '@emotion/styled',
+                '@mui/material',
+                '@mui/icons-material',
+                '@mui/x-date-pickers',
+                '@mui/x-charts',
+                'react-router-dom',
+                'react-hook-form',
+                '@hookform/resolvers',
+                '@hookform/resolvers/zod',
+                'swr',
+                'swr/mutation',
+                'notistack',
+                'date-fns',
+                'axios',
+                'react-big-calendar',
+                'react-big-calendar/lib/addons/dragAndDrop',
+                'react-google-recaptcha',
+                'react-text-mask',
+                'react-to-print',
+                'zod',
+            ],
+        },
+        sourcemap: mode === 'development',
+        // Clears the output directory before building.
+        emptyOutDir: true,
     },
     server: {
         port: 3003,
         host: 'localhost',
     },
-})
+}))
